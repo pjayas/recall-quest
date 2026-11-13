@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<!-- 💡 애플 기기(iPhone/iPad) 화면 맞춤 및 앱 모드 메타 태그 -->
+<!-- 애플 기기(iPhone/iPad) 화면 맞춤 및 앱 모드 메타 태그 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -17,7 +17,6 @@
 <style>
 :root{--ink:#243044;--muted:#718096;--line:#e6ebf1;--bg:#f5f8fc;--white:#fff;--green:#3b9b58;--blue:#397fe8;--red:#e66b70}
 *{box-sizing:border-box}
-/* 💡 아이폰 노치(안전 영역) 침범 방지 패딩 적용 */
 body{margin:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:var(--bg);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:var(--ink);-webkit-text-size-adjust:100%}
 button{font:inherit;cursor:pointer}
 .shell{max-width:1060px;margin:auto;display:grid;grid-template-columns:210px 1fr;min-height:100vh}
@@ -35,9 +34,9 @@ main{padding:28px 32px 70px;max-width:850px;width:100%;margin:0 auto}
 .pill{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:750;font-size:13px;color:#4a5568;display:inline-block}
 
 /* 잔디 심기 */
-.grass-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;align-items:flex-end}
+.grass-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;align-items:flex-start}
 .grass-title{font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px}
-.grass-grid{display:flex;gap:4px}
+.grass-grid{display:flex;gap:4px;flex-wrap:wrap}
 .grass-day{width:12px;height:12px;border-radius:3px;background:#ebedf0;position:relative}
 .grass-day[data-level="1"]{background:#9be9a8}
 .grass-day[data-level="2"]{background:#40c463}
@@ -99,7 +98,6 @@ details.box-card summary:hover{background:#f1f5f9}
 .formgrid{display:grid;grid-template-columns:1fr;gap:10px}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
 .field label{font-size:12px;font-weight:800;color:#58677a}
-/* 💡 아이폰 자동 확대(Auto-zoom) 방지를 위해 폰트 사이즈를 16px로 고정 */
 .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 10px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
 .field textarea{min-height:90px;resize:vertical;line-height:1.5}
 .wide{grid-column:1/-1}
@@ -116,7 +114,6 @@ details.box-card summary:hover{background:#f1f5f9}
 .problemrow small{color:var(--muted);background:#f1f5f9;padding:3px 8px;border-radius:6px;font-weight:700}
 
 .search-box{padding:12px 16px;background:#f8fafc;border-bottom:1px solid var(--line)}
-/* 💡 검색창 아이폰 자동 확대 방지 (16px) */
 .search-box input{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:10px 12px;font-size:16px;outline:none;transition:border-color .15s}
 .search-box input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #edf4ff}
 
@@ -151,7 +148,6 @@ details.box-card summary:hover{background:#f1f5f9}
 .btn-google{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid #cbd5e1;padding:12px 20px;border-radius:12px;font-weight:800;color:#1e293b;transition:.15s;width:100%;justify-content:center}
 .btn-google:hover{background:#f8fafc;border-color:#94a3b8}
 
-/* 💡 아이패드 세로모드(820px) 및 스마트폰 레이아웃 분기점 확장 */
 @media(max-width:820px){
  .shell{display:block}
  aside{position:relative;height:auto;padding:12px 14px;border-right:0;border-bottom:1px solid var(--line);display:flex;flex-direction:row;align-items:center;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -161,8 +157,7 @@ details.box-card summary:hover{background:#f1f5f9}
  .user-profile span{display:none}
  main{padding:20px 14px 55px}
  .top{flex-direction:column;align-items:flex-start}
- .grass-box{width:100%;align-items:center}
- .grass-grid{flex-wrap:wrap;justify-content:center}
+ .grass-box{width:100%;align-items:flex-start}
 }
 </style>
 </head>
@@ -207,7 +202,7 @@ details.box-card summary:hover{background:#f1f5f9}
   </div>
   
   <div class="grass-box">
-    <div class="grass-title">최근 35일 학습 기록</div>
+    <div class="grass-title">최근 35일 학습 기록 (오늘이 맨 앞입니다)</div>
     <div class="grass-grid" id="grassGrid"></div>
   </div>
  </div>
@@ -245,8 +240,8 @@ details.box-card summary:hover{background:#f1f5f9}
     </div>
    </div>
 
-   <details class="box-card">
-    <summary class="box-header">➕ 직접 문제 1개씩 추가하기 (이미지 지원 - 완전무료)</summary>
+   <details class="box-card" id="manualAddDetails">
+    <summary class="box-header">➕ 직접 문제 추가 / 수정하기</summary>
     <div class="box-body" style="border-top:1px solid var(--line);">
      <div class="formgrid">
       <div class="field wide"><label for="bankQuestion">문제</label><input id="bankQuestion" placeholder="문제를 입력하세요."></div>
@@ -256,7 +251,11 @@ details.box-card summary:hover{background:#f1f5f9}
        <input type="file" id="bankImage" accept="image/*" style="padding:8px">
       </div>
      </div>
-     <button class="smallbtn primary" id="addQuestion" style="margin-top:10px">개별 문제 등록</button>
+     <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="smallbtn primary" id="addQuestion">개별 문제 등록</button>
+      <!-- 💡 수정 취소 버튼 추가 -->
+      <button class="smallbtn" id="cancelEditBtn" style="display:none">수정 취소</button>
+     </div>
     </div>
    </details>
 
@@ -300,13 +299,13 @@ details.box-card summary:hover{background:#f1f5f9}
 
 <script type="module">
 // ==========================================
-// 1. Firebase 설정 (Auth, Firestore)
+// 1. Firebase 설정
 // ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// ⭐ 본인의 Firebase 정보로 채워주세요! 
+// ⭐ 본인의 Firebase 정보로 채워주세요!
 const firebaseConfig = {
   apiKey: "AIzaSyCwvTehw3pcXE3Y4kJN9EPcPndrUECfOOU",
   authDomain: "recallquest-91895.firebaseapp.com",
@@ -316,8 +315,6 @@ const firebaseConfig = {
   appId: "1:261874108147:web:073d6ef77cbd586ce7d986",
   measurementId: "G-1402K7N583"
 };
-
-
 const app = initializeApp(firebaseConfig);
 const fsDb = getFirestore(app);
 const auth = getAuth(app);
@@ -342,6 +339,9 @@ let db={};
 let customQuestions=[];
 let selected=subjects[0].name,queue=[],queueIndex=0,current=null;
 let docRef = null; 
+
+// 💡 현재 수정 중인 문제의 ID를 저장할 변수
+let editingId = null;
 
 marked.setOptions({
  highlight: function(code, lang) {
@@ -373,12 +373,14 @@ function dueQuestions(){return allQuestions().filter(q=>due(q))}
 function weakQuestions(){return allQuestions().filter(q=>["partial","missed"].includes(rec(q).status))}
 function addDays(str,n){let [y,m,d]=str.split("-").map(Number),x=new Date(y,m-1,d);x.setDate(x.getDate()+n);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`}
 
+// 💡 잔디 심기 방향을 "오늘이 왼쪽(앞)에 오도록" 수정
 function renderGrass() {
  const grid = $("grassGrid");
  grid.innerHTML = "";
  if(!db._history) db._history = {};
  
- for(let i = 34; i >= 0; i--) {
+ // 0(오늘) 부터 34(34일 전) 까지 차례대로 렌더링 (오늘이 화면 맨 앞/왼쪽에 배치됨)
+ for(let i = 0; i <= 34; i++) {
   let d = new Date();
   d.setDate(d.getDate() - i);
   let dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
@@ -393,7 +395,8 @@ function renderGrass() {
   let block = document.createElement("div");
   block.className = "grass-day";
   block.dataset.level = level;
-  block.title = `${dateStr}: ${count}문제 복습 완료`;
+  if(i === 0) block.style.border = "2px solid #cbd5e1"; // 오늘 날짜 칸 강조
+  block.title = `${i===0?'오늘':dateStr}: ${count}문제 복습 완료`;
   grid.appendChild(block);
  }
 }
@@ -621,7 +624,6 @@ function compressImageToBase64(file) {
      height *= MAX_WIDTH / width;
      width = MAX_WIDTH;
     }
-
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
@@ -634,12 +636,28 @@ function compressImageToBase64(file) {
  });
 }
 
+// 💡 수정 취소 기능
+$("cancelEditBtn").onclick = () => {
+ editingId = null;
+ $("bankQuestion").value = "";
+ $("bankAnswer").value = "";
+ $("bankImage").value = "";
+ $("addQuestion").textContent = "개별 문제 등록";
+ $("addQuestion").classList.remove("blue");
+ $("addQuestion").classList.add("primary");
+ $("cancelEditBtn").style.display = "none";
+};
+
+// 💡 문제 추가 및 '수정 적용' 로직 통합
 $("addQuestion").onclick=async ()=>{
  let subject=$("bankSubject").value, q=$("bankQuestion").value.trim(), a=$("bankAnswer").value.trim();
  let fileInput=$("bankImage");
  
  if(!q||!a){alert("문제와 정답을 모두 입력해 주세요.");return}
- if(allQuestions().some(x=>x.q===q)){alert("이미 동일한 문제가 등록되어 있습니다.");return}
+ 
+ // 새 문제 추가이거나, 기존 문제를 수정하면서 문제 내용을 바꿨을 때 중복 검사
+ let isDuplicate = customQuestions.some(x => x.q === q && x.id !== editingId);
+ if(isDuplicate){alert("이미 동일한 문제(질문)가 등록되어 있습니다.");return}
  
  $("addQuestion").textContent = "저장 중...";
  $("addQuestion").disabled = true;
@@ -649,14 +667,44 @@ $("addQuestion").onclick=async ()=>{
   imgBase64 = await compressImageToBase64(fileInput.files[0]);
  }
 
- customQuestions.push({subject, q, a, imgBase64, id:Date.now()});
+ if(editingId) {
+  // 기존 문제 수정
+  let idx = customQuestions.findIndex(x => x.id === editingId);
+  if(idx > -1) {
+   let oldQ = customQuestions[idx].q;
+   // 문제(질문 텍스트)가 바뀌었으면 복습 기록(학습 스케줄)도 새 문제명으로 이전
+   if(oldQ !== q && db[oldQ]) {
+    db[q] = db[oldQ];
+    delete db[oldQ];
+    save(); // 스케줄 변경사항 DB 저장
+   }
+   customQuestions[idx].subject = subject;
+   customQuestions[idx].q = q;
+   customQuestions[idx].a = a;
+   if(imgBase64) {
+    customQuestions[idx].imgBase64 = imgBase64; // 새 이미지를 올렸을 때만 덮어쓰기
+   }
+  }
+  
+  editingId = null;
+  $("cancelEditBtn").style.display = "none";
+  alert("문제가 성공적으로 수정되었습니다.");
+ } else {
+  // 새 문제 등록
+  customQuestions.push({subject, q, a, imgBase64, id:Date.now()});
+  alert("문제가 정상적으로 등록되었습니다.");
+ }
+ 
  saveCustom();
  
  $("bankQuestion").value="";$("bankAnswer").value=""; fileInput.value="";
  $("addQuestion").textContent = "개별 문제 등록";
+ $("addQuestion").classList.remove("blue");
+ $("addQuestion").classList.add("primary");
  $("addQuestion").disabled = false;
- renderBankList();renderSubjects();renderPath();
- alert("문제가 정상적으로 등록되었습니다.");
+ 
+ renderBankList($("bankSearch").value);
+ renderSubjects();renderPath();
 };
 
 function renderBankList(searchQuery = ""){
@@ -701,16 +749,45 @@ function renderBankList(searchQuery = ""){
    let shortAnswer = q.a.length > 35 ? q.a.substring(0, 35) + "..." : q.a;
    info.innerHTML = `<strong>${q.q}${imgIcon}</strong><small>${shortAnswer}</small>`;
    
+   // 💡 액션 버튼 컨테이너 (수정, 삭제)
+   let actionDiv = document.createElement("div");
+   actionDiv.style.whiteSpace = "nowrap";
+
+   // 수정 버튼
+   let editBtn = document.createElement("button");
+   editBtn.className = "smallbtn blue";
+   editBtn.textContent = "수정";
+   editBtn.style.marginRight = "6px";
+   editBtn.onclick = () => {
+    editingId = q.id;
+    $("bankSubject").value = q.subject;
+    $("bankQuestion").value = q.q;
+    $("bankAnswer").value = q.a;
+    $("bankImage").value = ""; // 이미지 파일 경로는 보안상 자동 채움 불가
+    
+    $("manualAddDetails").open = true;
+    $("manualAddDetails").scrollIntoView({behavior: "smooth"});
+    
+    $("addQuestion").textContent = "수정 완료";
+    $("addQuestion").classList.remove("primary");
+    $("addQuestion").classList.add("blue");
+    $("cancelEditBtn").style.display = "inline-block";
+   };
+   
+   // 삭제 버튼
    let del = document.createElement("button");
    del.className = "smallbtn danger";
    del.textContent = "삭제";
    del.onclick = () => {
+    if(!confirm("정말로 이 문제를 삭제하시겠습니까?")) return;
     customQuestions = customQuestions.filter(item => item !== q);
     if(db[q.q]) { delete db[q.q]; save(); }
     saveCustom(); renderBankList($("bankSearch").value); renderSubjects();renderPath();updateTop();
    };
    
-   row.append(info, del);
+   actionDiv.appendChild(editBtn);
+   actionDiv.appendChild(del);
+   row.append(info, actionDiv);
    content.appendChild(row);
   });
   details.appendChild(content); list.appendChild(details);
