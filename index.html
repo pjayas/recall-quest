@@ -119,8 +119,11 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 </head>
 <body>
 <div id="loginScreen"><div class="login-box">
-<h1>✦ RECALL</h1><p>나만의 정보 임용 스마트 복습 노트<br>데이터 보호를 위해 로그인해 주세요.</p>
-<button class="btn-google" id="loginBtn">구글 계정으로 로그인</button></div></div>
+<h1>✦ RECALL</h1><p>나만의 정보 임용 스마트 복습 노트<br>접근 번호를 입력해 주세요.</p>
+<input id="codeInput" type="password" autocomplete="current-password" placeholder="접근 번호 (6자 이상)" aria-label="접근 번호" style="width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px;font-size:16px;margin-bottom:10px;text-align:center">
+<label style="display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:12px"><input type="checkbox" id="remember" checked> 이 기기에서 기억하기</label>
+<button class="btn-google" id="loginBtn">입장</button>
+<p id="diag" style="color:#be123c;font-size:12px;margin:14px 0 0;word-break:break-all"></p></div></div>
 <div id="loader" class="hide"><div class="spinner"></div><span>데이터 동기화 중...</span></div>
 
 <div class="shell">
@@ -130,15 +133,15 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <button class="nav" id="reviewNav"><span>🔁 오늘의 복습</span><b id="reviewCount">0</b></button>
 <button class="nav" id="wrongNav"><span>🎯 취약 문제</span><b id="weakCount">0</b></button>
 <button class="nav" id="bankNav">🤖 문제 관리 / 추가</button>
-<div class="user-profile"><img id="userImg" src="" alt=""><span id="userName">사용자</span>
-<button class="smallbtn" id="logoutBtn" style="padding:6px 10px;font-size:12px;margin-left:auto">로그아웃</button></div>
+<div class="user-profile"><span id="userName">🔒 내 노트</span>
+<button class="smallbtn" id="logoutBtn" style="padding:6px 10px;font-size:12px;margin-left:auto">잠금</button></div>
 </aside>
 <main>
 <div class="warn" id="warn">클라우드 데이터를 불러오지 못해 저장이 잠겨 있습니다. 기존 데이터 보호를 위해 새로고침 후 다시 시도해 주세요.</div>
 <div class="top">
 <div><h1>정보·컴퓨터 임용 복습 노트</h1>
 <span class="pill">오늘 학습 <span id="todayCount">0</span>문제</span><span class="pill">연속 <span id="streak">0</span>일</span></div>
-<div class="grass-box"><div class="grass-title">최근 35일 학습 기록</div><div class="grass-grid" id="grassGrid"></div></div>
+<div class="grass-box"><div class="grass-title">최근 35일 학습 기록 (오늘이 맨 앞)</div><div class="grass-grid" id="grassGrid"></div></div>
 </div>
 
 <div id="studyView">
@@ -194,13 +197,22 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <div class="feedback" id="feedback"></div>
 </div></div>
 
+<script>
+(function(){
+ var d=function(m){var e=document.getElementById("diag");if(e)e.textContent=m};
+ window.__ok=false;
+ addEventListener("error",function(e){var t=e.target;d("불러오기 실패: "+((t&&(t.src||t.href))||e.message))},true);
+ addEventListener("unhandledrejection",function(e){d("오류: "+((e.reason&&e.reason.message)||e.reason))});
+ document.getElementById("loginBtn").onclick=function(){if(!window.__ok)alert("앱 스크립트가 로드되지 않았습니다.\n광고/콘텐츠 차단기를 끄고 Safari 탭에서 새로고침해 주세요.\n(아래 빨간 글씨에 실패한 주소가 표시됩니다)")};
+})();
+</script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,getDoc,setDoc,deleteDoc,collection,getDocs,writeBatch,increment} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import {getAuth,signInWithPopup,signInWithRedirect,GoogleAuthProvider,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {getAuth,signInAnonymously} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // ⭐ 본인의 Firebase 정보로 채워주세요
-const const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyCwvTehw3pcXE3Y4kJN9EPcPndrUECfOOU",
   authDomain: "recallquest-91895.firebaseapp.com",
   projectId: "recallquest-91895",
@@ -211,7 +223,7 @@ const const firebaseConfig = {
 };
 const app=initializeApp(firebaseConfig);
 let fs;try{fs=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){fs=getFirestore(app)}
-const auth=getAuth(app),provider=new GoogleAuthProvider();
+const auth=getAuth(app);
 
 const subjects=[
 {name:"논리회로",icon:"🔌",color:"#e6a044",tint:"#fff4e5"},{name:"컴퓨터구조",icon:"🖥️",color:"#477fce",tint:"#edf4ff"},
@@ -232,8 +244,8 @@ let Q=[],R={},H={},uid=null,ready=false;
 let sel=subjects[0].name,flt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set();
 
 // Firestore 경로: users/{uid}/questions/{id}, records/{id}, meta/history
-const qCol=()=>collection(fs,"users",uid,"questions"),rCol=()=>collection(fs,"users",uid,"records");
-const qDoc=id=>doc(fs,"users",uid,"questions",id),rDoc=id=>doc(fs,"users",uid,"records",id),hDoc=()=>doc(fs,"users",uid,"meta","history");
+const qCol=()=>collection(fs,"vaults",uid,"questions"),rCol=()=>collection(fs,"vaults",uid,"records");
+const qDoc=id=>doc(fs,"vaults",uid,"questions",id),rDoc=id=>doc(fs,"vaults",uid,"records",id),hDoc=()=>doc(fs,"vaults",uid,"meta","history");
 
 // 저장: 로드 실패 시 잠금, 실패하면 알림 (오프라인에서도 멈추지 않도록 await 하지 않고 호출)
 function cloud(fn){
@@ -245,8 +257,9 @@ async function batchSet(items){
 }
 
 // 마크다운 + 수식 보호 + 새니타이징
-marked.use(markedHighlight.markedHighlight({langPrefix:"hljs language-",highlight:(c,l)=>hljs.highlight(c,{language:hljs.getLanguage(l)?l:"plaintext"}).value}));
-function md(t){
+try{marked.use(markedHighlight.markedHighlight({langPrefix:"hljs language-",highlight:(c,l)=>hljs.highlight(c,{language:hljs.getLanguage(l)?l:"plaintext"}).value}))}catch(e){console.error(e)}
+function md(t){try{return md2(t)}catch(e){return"<p>"+esc(t).replace(/\n/g,"<br>")+"</p>"}}
+function md2(t){
  const m=[];t=t.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g,s=>{m.push(s);return`@@M${m.length-1}@@`});
  return DOMPurify.sanitize(marked.parse(t)).replace(/@@M(\d+)@@/g,(_,i)=>esc(m[i]));
 }
@@ -497,39 +510,40 @@ $("importFile").onchange=async e=>{
  }catch(err){alert("파일을 읽을 수 없습니다: "+err.message)}
 };
 
-$("loginBtn").onclick=()=>signInWithPopup(auth,provider).catch(err=>{
- console.error(err);
- if(["auth/popup-blocked","auth/operation-not-supported-in-this-environment","auth/web-storage-unsupported"].includes(err.code))signInWithRedirect(auth,provider);
- else if(err.code!=="auth/popup-closed-by-user"&&err.code!=="auth/cancelled-popup-request")alert("로그인 중 오류가 발생했습니다.");
-});
-$("logoutBtn").onclick=()=>signOut(auth).then(()=>location.reload());
-
-// 구버전(users/{uid} 단일 문서) 데이터를 새 구조로 1회 이전
-async function migrateOld(){
- const s=await getDoc(doc(fs,"users",uid));if(!s.exists())return;
- const d=s.data(),old=d.customQuestions||[];if(!old.length)return;
- const items=[];
- old.forEach(o=>{
-  const n={id:newId(),subject:o.subject,q:o.q,a:o.a};if(o.imgBase64)n.img=o.imgBase64;
-  Q.push(n);items.push([qDoc(n.id),n]);
-  const r=d.db&&d.db[o.q];if(r&&Object.keys(r).length){R[n.id]=r;items.push([rDoc(n.id),r])}
- });
- const h=d.db&&d.db._history;if(h){H={...h};items.push([hDoc(),{days:H}])}
- await batchSet(items);
+// 접근 번호 방식: 번호를 해시한 값이 곧 저장 공간(vaults/{해시}) 이름입니다. 익명 로그인으로 Firestore에 접속합니다.
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+async function hashCode(c){
+ const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("recall-quest:"+c));
+ return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,40);
 }
-
-onAuthStateChanged(auth,async user=>{
- if(!user){$("loginScreen").classList.remove("hide");$("loader").classList.add("hide");return}
+function showLogin(msg){$("loader").classList.add("hide");$("loginScreen").classList.remove("hide");$("diag").textContent=msg||""}
+async function start(id,fresh,remember){
  $("loginScreen").classList.add("hide");$("loader").classList.remove("hide");
- $("userName").textContent=user.displayName||"";$("userImg").src=user.photoURL||"";uid=user.uid;
+ try{await signInAnonymously(auth)}
+ catch(e){console.error(e);return showLogin(e.code==="auth/operation-not-allowed"?"Firebase 콘솔 → Authentication → 로그인 방법에서 '익명'을 사용 설정해 주세요.":"접속 오류: "+(e.code||e.message))}
+ uid=id;
  try{
   const[qs,rs,hs]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc())]);
+  if(fresh&&qs.empty&&rs.empty&&!hs.exists()&&!confirm("이 번호로 저장된 노트가 없습니다.\n새 노트를 만들까요?\n(번호를 잘못 입력했다면 '취소')")){uid=null;return showLogin()}
   Q=qs.docs.map(d=>({...d.data(),id:d.id}));R={};rs.docs.forEach(d=>R[d.id]=d.data());H=hs.exists()?hs.data().days||{}:{};
   ready=true;$("warn").style.display="none";
-  if(!Q.length)try{await migrateOld()}catch(e){console.error("이전 실패:",e)}
- }catch(e){console.error("데이터 로드 실패:",e);ready=false;$("warn").style.display="block"}
+  if(remember)LS.set("rq_vault",id);
+ }catch(e){
+  console.error("데이터 로드 실패:",e);ready=false;
+  $("warn").textContent=e.code==="permission-denied"?"접근이 거부되었습니다. Firestore 보안 규칙을 확인해 주세요.":"클라우드 데이터를 불러오지 못해 저장이 잠겨 있습니다. 새로고침 후 다시 시도해 주세요.";
+  $("warn").style.display="block";
+ }
  renderSubjects();renderPath();updateTop();$("loader").classList.add("hide");
-});
+}
+$("loginBtn").onclick=async()=>{
+ const c=$("codeInput").value.trim();
+ if(c.length<6)return alert("접근 번호는 6자 이상으로 입력해 주세요.");
+ start(await hashCode(c),true,$("remember").checked);
+};
+$("codeInput").onkeydown=e=>{if(e.key==="Enter")$("loginBtn").click()};
+$("logoutBtn").onclick=()=>{LS.del("rq_vault");location.reload()};
+window.__ok=true;
+const saved=LS.get("rq_vault");if(saved)start(saved,false,true);
 </script>
 </body>
 </html>
