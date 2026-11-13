@@ -370,7 +370,7 @@ function initBankForm(){
 $("copyPromptBtn").onclick=()=>{
  const subj=$("bankSubject").value;
  const subjectGuide=subjects.map(s=>`- ${s.name}`).join("\n");
- const prompt=`오늘 내가 복습한 내용을 바탕으로 임용고시 인출 학습용 문제와 정답을 만들어줘.
+ const prompt=`내가 함께 첨부한 파일(문서, PDF, 사진 등)의 내용을 읽고, 이를 바탕으로 임용고시 인출 학습용 문제와 정답을 만들어줘.
 다른 설명 없이 아래 JSON 배열 형식으로만 출력해줘.
 
 [출력 형식]
@@ -379,8 +379,9 @@ $("copyPromptBtn").onclick=()=>{
 ]
 
 [선택 가능한 과목 목록]
-${subjectGuide}
-
+${subjectGuide}`;
+ navigator.clipboard.writeText(prompt).then(()=>alert("AI 프롬프트가 복사되었습니다!\nAI 채팅창에 프롬프트를 붙여넣고, 공부한 파일(PDF, 사진 등)을 첨부해서 전송해 보세요."));
+};
 [오늘 복습한 내용]
 (여기에 오늘 공부한 내용을 붙여넣으세요)`;
  navigator.clipboard.writeText(prompt).then(()=>alert("AI 프롬프트가 복사되었습니다!\nChatGPT나 Gemini에 붙여넣고 오늘 공부한 내용을 함께 입력해 보세요."));
