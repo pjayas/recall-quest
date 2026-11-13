@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recall Quest | 정보 임용 심플 복습 노트 (Firebase 연동)</title>
+<style>
+:root{--ink:#243044;--muted:#718096;--line:#e6ebf1;--bg:#f5f8fc;--white:#fff;--green:#3b9b58;--blue:#397fe8;--red:#e66b70}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:var(--ink)}
+button{font:inherit;cursor:pointer}
+.shell{max-width:1060px;margin:auto;display:grid;grid-template-columns:210px 1fr;min-height:100vh}
+aside{background:#fff;border-right:1px solid var(--line);padding:24px 16px;position:sticky;top:0;height:100vh}
+.brand{font-size:20px;font-weight:900;letter-spacing:-.5px;color:var(--green);padding:4px 10px 24px}.brand span{color:#27374b}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;color:#58677a;font-size:14px;font-weight:750;margin:4px 0;border:1px solid transparent;cursor:pointer}
+.nav.active{background:#eaf7ed;color:#2b7a43;border-color:#d5efda}
+.nav b{background:#fff;padding:2px 8px;border-radius:99px;font-size:12px;border:1px solid var(--line)}
+main{padding:28px 32px 70px;max-width:850px;width:100%;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}
+.top h1{font-size:22px;letter-spacing:-.5px;margin:0}
+.pill{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:750;font-size:13px;color:#4a5568}
+
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 12px}
+.sectionhead h2{font-size:17px;margin:0}
+.subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.subject{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;text-align:left;transition:.15s;width:100%}
+.subject:hover{border-color:#cbd5e1}
+.subject.selected{border:2px solid var(--accent);padding:13px;background:var(--tint)}
+.subjecticon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:var(--tint);flex-shrink:0}
+.subjectinfo{min-width:0;flex:1}.subjectinfo strong{display:block;font-size:14px}.subjectinfo small{color:var(--muted);font-size:11px}
+.subjectprogress{height:5px;background:#edf0f4;border-radius:9px;margin-top:6px;overflow:hidden}.subjectprogress i{display:block;height:100%;background:var(--accent);width:0}
+
+.pathhead{display:flex;align-items:center;justify-content:space-between;margin:26px 2px 12px}
+.pathhead h2{font-size:17px;margin:0}
+.path{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+.unit-group{margin-bottom:22px}
+.unit-group:last-child{margin-bottom:0}
+.unit-title{font-size:14px;font-weight:800;color:#334155;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.q-list{display:flex;flex-direction:column;gap:8px}
+.q-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fafbfc;text-align:left;width:100%;transition:.12s}
+.q-card:hover{background:#f0f4f8;border-color:#cbd5e1}
+.q-card .q-text{font-size:14px;font-weight:650;color:var(--ink);flex:1;line-height:1.45}
+.badge{font-size:11px;font-weight:800;padding:4px 8px;border-radius:8px;white-space:nowrap}
+.badge.known{background:#e6f6eb;color:#26783e}
+.badge.weak{background:#fff1f2;color:#be123c}
+.badge.new{background:#edf2f7;color:#4a5568}
+.emptylesson{padding:30px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6}
+
+.panel{display:none;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin:18px 0}
+.panel.active{display:block}
+.panel h2{margin:0 0 6px;font-size:18px}
+.subtle{font-size:12.5px;color:var(--muted);margin:0 0 16px;line-height:1.5}
+.ai-box{background:#f8fafc;border:1px solid #dbe4f0;border-radius:14px;padding:16px;margin-bottom:22px}
+.ai-box h3{margin:0 0 6px;font-size:15px;color:#1e293b;display:flex;align-items:center;gap:6px}
+.formgrid{display:grid;grid-template-columns:1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.field label{font-size:12px;font-weight:800;color:#58677a}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:13px;background:#fff;color:var(--ink)}
+.field textarea{min-height:110px;resize:vertical;line-height:1.5}
+.wide{grid-column:1/-1}
+.actionrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.smallbtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 13px;font-size:12.5px;font-weight:800;color:#475569}
+.smallbtn:hover{background:#f8fafc}
+.smallbtn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.smallbtn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
+.smallbtn.danger{color:var(--red);border-color:#fecdd3}
+.problemrow{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding:11px 0;font-size:12px}
+.problemrow strong{display:block;font-size:13.5px;margin-bottom:3px}
+.problemrow small{color:var(--muted)}
+
+.modalback{position:fixed;inset:0;background:#17253888;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}
+.modalback.open{display:flex}
+.modal{width:min(620px,100%);background:#fff;border-radius:20px;padding:24px;box-shadow:0 20px 60px #0003}
+.modalhead{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:800}
+.close{border:0;background:#f1f4f7;border-radius:9px;padding:7px 11px;font-weight:700}
+.bar{height:8px;border-radius:20px;background:#e2e8f0;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--green);transition:width .2s}
+.question{font-size:19px;line-height:1.55;margin:22px 0 18px;font-weight:800}
+.answer{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:16px;line-height:1.7;white-space:pre-wrap;font-size:14.5px}
+.answer.hide{display:none}
+.modalactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.action{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 14px;font-weight:800;font-size:13px;color:#475569}
+.action.primary{background:var(--green);border-color:var(--green);color:#fff}
+.action:disabled{opacity:.35;cursor:not-allowed}
+.feedback{margin-top:12px;color:var(--muted);font-size:12px;min-height:18px}
+
+/* 로딩 화면 스타일 */
+#loader{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--ink);transition:opacity .3s}
+#loader.hide{opacity:0;pointer-events:none}
+.spinner{width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:var(--green);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:760px){
+ .shell{display:block}
+ aside{position:relative;height:auto;padding:12px 14px;border-right:0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px;overflow:auto}
+ .brand{padding:0 10px 0 0;white-space:nowrap}
+ .nav{white-space:nowrap;padding:8px 11px;margin:0;gap:6px}
+ main{padding:20px 14px 55px}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="spinner"></div>
+  <span>Firebase 데이터 불러오는 중...</span>
+</div>
+
+<div class="shell">
+<aside>
+ <div class="brand">✦ <span>RECALL</span></div>
+ <div class="nav active" id="studyNav"><span>📚 과목별 학습</span></div>
+ <div class="nav" id="reviewNav"><span>🔁 오늘의 복습</span> <b id="reviewCount">0</b></div>
+ <div class="nav" id="wrongNav"><span>🎯 취약 문제</span> <b id="weakCount">0</b></div>
+ <div class="nav" id="bankNav"><span>🤖 문제 관리 / AI 등록</span></div>
+</aside>
+
+<main>
+ <div class="top">
+  <h1>정보·컴퓨터 임용 복습 노트</h1>
+  <div class="pill">오늘 학습 <span id="todayCount">0</span>문제</div>
+ </div>
+
+ <div id="studyView">
+  <div class="sectionhead"><h2>과목 선택</h2></div>
+  <section class="subjects" id="subjects"></section>
+
+  <div class="pathhead">
+   <h2 id="pathTitle">문제 목록</h2>
+  </div>
+  <section class="path" id="nodes"></section>
+ </div>
+
+ <section class="panel" id="bankPanel">
+  <h2>문제 관리 및 AI 일괄 등록</h2>
+  <p class="subtle">오늘 복습한 내용을 AI(ChatGPT, Gemini 등)에게 문제로 만들어달라고 한 뒤, 한 번에 붙여넣어 등록할 수 있습니다.</p>
+
+  <div class="ai-box">
+   <h3>🤖 AI로 오늘 복습한 내용 한 번에 넣기</h3>
+   <p class="subtle" style="margin-bottom:12px">
+    1. <b>[AI 프롬프트 복사]</b>를 눌러 AI에게 복습한 개념/노트와 함께 보내세요.<br>
+    2. AI가 출력해 준 결과를 아래 입력창에 그대로 붙여넣고 <b>[한 번에 등록하기]</b>를 누르세요.<br>
+    <small style="color:#64748b">* JSON 배열 형식, 또는 <code>Q: 질문 / A: 정답</code>, <code>질문 | 정답</code> 줄바꿈 형식을 모두 자동으로 인식합니다.</small>
+   </p>
+   <div class="formgrid">
+    <div class="field wide"><label for="bankSubject">기본 적용 과목 (텍스트 입력 시 사용)</label><select id="bankSubject"></select></div>
+    <div class="field wide">
+     <label for="bulkInput">AI 생성 결과 또는 문제 목록 붙여넣기</label>
+     <textarea id="bulkInput" placeholder='예시 1 (AI JSON 출력):
+[{"subject":"운영체제","q":"임계 구역 문제의 해결 조건 3가지는?","a":"상호 배제, 진행, 한정 대기"}]
+
+예시 2 (간편 텍스트):
+Q: 가상 메모리의 페이지 폴트란?
+A: CPU가 접근하려는 페이지가 물리 메모리에 없는 상태'></textarea>
+    </div>
+   </div>
+   <div class="actionrow">
+    <button class="smallbtn blue" id="copyPromptBtn">📋 AI 프롬프트 복사</button>
+    <button class="smallbtn primary" id="bulkAddBtn">⚡ 한 번에 등록하기</button>
+   </div>
+  </div>
+
+  <details style="margin-bottom:18px;border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+   <summary style="font-weight:800;font-size:13.5px;cursor:pointer">➕ 개별 문제 1개씩 직접 추가하기</summary>
+   <div class="formgrid" style="margin-top:12px">
+    <div class="field wide"><label for="bankQuestion">문제</label><input id="bankQuestion" placeholder="문제를 입력하세요."></div>
+    <div class="field wide"><label for="bankAnswer">정답 및 해설</label><textarea id="bankAnswer" style="min-height:70px" placeholder="정답과 핵심 키워드를 입력하세요."></textarea></div>
+   </div>
+   <button class="smallbtn primary" id="addQuestion" style="margin-top:10px">개별 문제 등록</button>
+  </details>
+
+  <div class="actionrow" style="justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:16px">
+   <strong style="font-size:14px">내가 등록한 문제 (<span id="customCount">0</span>)</strong>
+   <div style="display:flex;gap:6px">
+    <button class="smallbtn" id="exportQuestions">백업 저장(JSON)</button>
+    <button class="smallbtn" id="importQuestions">파일 불러오기</button>
+    <input id="importFile" type="file" accept=".json,application/json" hidden>
+   </div>
+  </div>
+  <div id="bankList" style="margin-top:12px"></div>
+ </section>
+</main>
+</div>
+
+<div class="modalback" id="modalback"><div class="modal">
+ <div class="modalhead"><span id="modalmeta">복습</span><button class="close" id="closeModal">닫기 ✕</button></div>
+ <div class="bar" style="margin-top:12px"><i id="lessonbar" style="width:0"></i></div>
+ <div class="question" id="modalquestion"></div>
+ <div class="answer hide" id="modalanswer"></div>
+ <div class="modalactions">
+  <button class="action primary" id="revealBtn">정답 확인 (Space/Enter)</button>
+  <button class="action" data-rate="known">잘 기억함 (1)</button>
+  <button class="action" data-rate="partial">조금 헷갈림 (2)</button>
+  <button class="action" data-rate="missed">다시 볼래요 (3)</button>
+ </div>
+ <div class="feedback" id="feedback">머릿속으로 답을 떠올린 뒤 정답을 확인하세요.</div>
+</div></div>
+
+<script type="module">
+// ==========================================
+// 1. Firebase 연동 설정 (이 부분을 수정하세요)
+// ==========================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "여기에_API_KEY_입력",
+  authDomain: "여기에_AUTH_DOMAIN_입력",
+  projectId: "여기에_PROJECT_ID_입력",
+  storageBucket: "여기에_STORAGE_BUCKET_입력",
+  messagingSenderId: "여기에_MESSAGING_SENDER_ID_입력",
+  appId: "여기에_APP_ID_입력"
+};
+
+const app = initializeApp(firebaseConfig);
+const fsDb = getFirestore(app);
+
+// DB 저장을 위한 단일 문서 참조 (단일 사용자를 위한 심플 구조)
+const docRef = doc(fsDb, "recallquest", "mydata");
+
+// ==========================================
+// 2. 앱 상태 및 로직
+// ==========================================
+const subjects=[
+ {name:"논리회로",icon:"🔌",color:"#e6a044",tint:"#fff4e5"},
+ {name:"컴퓨터구조",icon:"🖥️",color:"#477fce",tint:"#edf4ff"},
+ {name:"운영체제",icon:"⚙️",color:"#8c70cc",tint:"#f3efff"},
+ {name:"데이터베이스",icon:"🗄️",color:"#329c91",tint:"#e9f8f5"},
+ {name:"컴퓨터 네트워크",icon:"🌐",color:"#3a9cbb",tint:"#eaf8fc"},
+ {name:"인공지능",icon:"🤖",color:"#b36eaa",tint:"#fbedf8"},
+ {name:"정보교과교육론",icon:"📚",color:"#5a9b67",tint:"#edf7ee"}
+];
+
+let baseQuestions=[];
+const $=id=>document.getElementById(id);
+let db={};
+let customQuestions=[];
+let selected=subjects[0].name,queue=[],queueIndex=0,current=null;
+
+const today=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+function allQuestions(){return baseQuestions.concat(customQuestions)}
+
+// Firebase에 데이터 저장하는 함수 (비동기 처리)
+function save(){ 
+ setDoc(docRef, { db: db }, { merge: true }).catch(e => console.error("학습 기록 저장 실패:", e));
+}
+function saveCustom(){ 
+ setDoc(docRef, { customQuestions: customQuestions }, { merge: true }).catch(e => console.error("문제 저장 실패:", e));
+}
+
+function rec(q){return db[q.q]||(db[q.q]={})}
+function due(q){return rec(q).next&&rec(q).next<=today()}
+function dueQuestions(){return allQuestions().filter(q=>due(q))}
+function weakQuestions(){return allQuestions().filter(q=>["partial","missed"].includes(rec(q).status))}
+function addDays(str,n){let [y,m,d]=str.split("-").map(Number),x=new Date(y,m-1,d);x.setDate(x.getDate()+n);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`}
+
+function updateTop(){
+ $("reviewCount").textContent=dueQuestions().length;
+ $("weakCount").textContent=weakQuestions().length;
+ let done=Object.values(db).filter(r=>r.last===today()).length;
+ $("todayCount").textContent=done;
+}
+
+function renderSubjects(){
+ $("subjects").innerHTML="";
+ subjects.forEach(s=>{
+  let qs=allQuestions().filter(q=>q.subject===s.name),done=qs.filter(q=>rec(q).status==="known").length;
+  let b=document.createElement("button");b.className="subject"+(selected===s.name?" selected":"");
+  b.style.setProperty("--accent",s.color);b.style.setProperty("--tint",s.tint);
+  b.innerHTML=`<div class="subjecticon">${s.icon}</div><div class="subjectinfo"><strong>${s.name}</strong><small>${qs.length}문제 · 완료 ${done}</small><div class="subjectprogress"><i style="width:${qs.length?done/qs.length*100:0}%"></i></div></div>`;
+  b.onclick=()=>{selected=s.name;renderSubjects();renderPath()};
+  $("subjects").appendChild(b);
+ });
+}
+
+function renderPath(){
+ const s=subjects.find(x=>x.name===selected);
+ $("pathTitle").textContent=s.name+" 전체 문제";
+ drawNodes();
+}
+
+function drawNodes(){
+ $("nodes").innerHTML="";
+ const qs=allQuestions().filter(q=>q.subject===selected);
+ if(!qs.length){
+  $("nodes").innerHTML='<div class="emptylesson">이 과목에는 아직 등록된 문제가 없습니다.<br>좌측 <b>[문제 관리 / AI 등록]</b> 메뉴에서 문제를 추가해 보세요.</div>';
+  return;
+ }
+ 
+ let group=document.createElement("div");group.className="unit-group";
+ let title=document.createElement("div");title.className="unit-title";
+ title.innerHTML=`<span>문제 목록 (${qs.length}개)</span><button class="smallbtn" style="padding:4px 9px;font-size:11px">전체 풀기</button>`;
+ title.querySelector("button").onclick=()=>startLesson(qs,0);
+ group.appendChild(title);
+
+ let list=document.createElement("div");list.className="q-list";
+ qs.forEach((q,j)=>{
+  let r=rec(q),done=r.status==="known",weak=["partial","missed"].includes(r.status);
+  let card=document.createElement("button");card.className="q-card";
+  let badge=done?'<span class="badge known">숙지완료</span>':weak?'<span class="badge weak">취약</span>':'<span class="badge new">미학습</span>';
+  card.innerHTML=`<span class="q-text">${j+1}. ${q.q}</span>${badge}`;
+  card.onclick=()=>startLesson(qs,j);
+  list.appendChild(card);
+ });
+ group.appendChild(list);$("nodes").appendChild(group);
+}
+
+function startLesson(list,index){queue=list;queueIndex=index;openLesson(queue[queueIndex])}
+function openLesson(q){
+ current=q;$("modalmeta").textContent=`${q.subject} (${queueIndex+1}/${queue.length})`;
+ $("modalquestion").textContent=q.q;$("modalanswer").textContent=q.a;
+ $("modalanswer").classList.add("hide");$("revealBtn").textContent="정답 확인 (Space/Enter)";
+ document.querySelectorAll("[data-rate]").forEach(b=>b.disabled=true);
+ $("feedback").textContent="머릿속으로 답을 떠올린 뒤 정답을 확인하세요.";
+ $("lessonbar").style.width=((queueIndex+1)/Math.max(queue.length,1)*100)+"%";
+ $("modalback").classList.add("open");
+}
+
+function revealAnswer(){
+ $("modalanswer").classList.remove("hide");
+ $("revealBtn").textContent="정답 확인 완료";
+ document.querySelectorAll("[data-rate]").forEach(b=>b.disabled=false);
+ $("feedback").textContent="생각한 답과 비교한 뒤 기억 수준을 선택하세요. (단축키 1, 2, 3)";
+}
+$("revealBtn").onclick=revealAnswer;
+
+function rateCurrent(rating){
+ if(!current||$("modalanswer").classList.contains("hide"))return;
+ let r=rec(current),t=today();
+ if(!r.first)r.first=t;r.last=t;r.status=rating;r.count=(r.count||0)+1;
+ let intervals=[1,3,7,14,30];r.step=rating==="known"?Math.min((r.step??-1)+1,4):0;
+ r.next=addDays(t,intervals[r.step]);
+ 
+ save(); // Firebase에 진행도 기록 업데이트
+ updateTop();renderSubjects();drawNodes();
+ $("feedback").textContent=`기록 완료 · 다음 복습일 ${r.next}`;
+ 
+ if(queueIndex<queue.length-1){queueIndex++;setTimeout(()=>openLesson(queue[queueIndex]),350)}
+ else{setTimeout(()=>$("modalback").classList.remove("open"),450)}
+}
+
+document.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>rateCurrent(b.dataset.rate));
+window.addEventListener("keydown",e=>{
+ if(!$("modalback").classList.contains("open"))return;
+ if((e.key===" "||e.key==="Enter")&&$("modalanswer").classList.contains("hide")){e.preventDefault();revealAnswer()}
+ else if(!$("modalanswer").classList.contains("hide")){
+  if(e.key==="1")rateCurrent("known");
+  if(e.key==="2")rateCurrent("partial");
+  if(e.key==="3")rateCurrent("missed");
+ }
+ if(e.key==="Escape")$("modalback").classList.remove("open");
+});
+
+$("closeModal").onclick=()=>$("modalback").classList.remove("open");
+$("modalback").onclick=e=>{if(e.target===$("modalback"))$("modalback").classList.remove("open")};
+
+function setNav(activeId,showBank=false){
+ document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
+ $(activeId).classList.add("active");
+ $("studyView").style.display=showBank?"none":"block";
+ $("bankPanel").classList.toggle("active",showBank);
+}
+$("studyNav").onclick=()=>setNav("studyNav",false);
+$("reviewNav").onclick=()=>{let a=dueQuestions();if(a.length)startLesson(a,0);else alert("오늘 예정된 복습 문제가 없습니다.")};
+$("wrongNav").onclick=()=>{let a=weakQuestions();if(a.length)startLesson(a,0);else alert("현재 취약 문제로 분류된 문제가 없습니다.")};
+$("bankNav").onclick=()=>{setNav("bankNav",true);renderBankList()};
+
+function initBankForm(){
+ $("bankSubject").innerHTML=subjects.map(s=>`<option>${s.name}</option>`).join("");
+}
+
+$("copyPromptBtn").onclick=()=>{
+ const subj=$("bankSubject").value;
+ const subjectGuide=subjects.map(s=>`- ${s.name}`).join("\n");
+ const prompt=`오늘 내가 복습한 내용을 바탕으로 임용고시 인출 학습용 문제와 정답을 만들어줘.
+다른 설명 없이 아래 JSON 배열 형식으로만 출력해줘.
+
+[출력 형식]
+[
+  {"subject": "${subj}", "q": "질문 내용", "a": "핵심 정답 및 설명"}
+]
+
+[선택 가능한 과목 목록]
+${subjectGuide}
+
+[오늘 복습한 내용]
+(여기에 오늘 공부한 내용을 붙여넣으세요)`;
+ navigator.clipboard.writeText(prompt).then(()=>alert("AI 프롬프트가 복사되었습니다!\nChatGPT나 Gemini에 붙여넣고 오늘 공부한 내용을 함께 입력해 보세요."));
+};
+
+function parseBulkInput(raw,defaultSubject){
+ let text=raw.trim();
+ if(!text)return [];
+ text=text.replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,"").trim();
+
+ if(text.startsWith("[")){
+  try{
+   let arr=JSON.parse(text);
+   if(Array.isArray(arr)){
+    return arr.map(item=>({
+     subject:subjects.some(s=>s.name===item.subject)?item.subject:defaultSubject,
+     q:String(item.q||item.question||"").trim(),
+     a:String(item.a||item.answer||"").trim()
+    })).filter(x=>x.q&&x.a);
+   }
+  }catch(e){}
+ }
+
+ let results=[];
+ let lines=text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+ let curQ="",curA="",mode="";
+ for(let line of lines){
+  let qMatch=line.match(/^(?:Q|질문|문제)\s*\d*[:.)]\s*(.+)$/i);
+  let aMatch=line.match(/^(?:A|정답|해설|답)\s*\d*[:.)]\s*(.+)$/i);
+  if(qMatch){
+   if(curQ&&curA){results.push({subject:defaultSubject,q:curQ.trim(),a:curA.trim()});curA=""}
+   curQ=qMatch[1];mode="q";
+  }else if(aMatch){
+   curA=aMatch[1];mode="a";
+  }else if(line.includes("|")&&!curQ){
+   let parts=line.split("|");
+   let q=parts.shift().trim(),a=parts.join("|").trim();
+   if(q&&a)results.push({subject:defaultSubject,q,a});
+  }else{
+   if(mode==="q")curQ+=" "+line;
+   else if(mode==="a")curA+="\n"+line;
+  }
+ }
+ if(curQ&&curA)results.push({subject:defaultSubject,q:curQ.trim(),a:curA.trim()});
+ return results;
+}
+
+$("bulkAddBtn").onclick=()=>{
+ let raw=$("bulkInput").value;
+ let defSubj=$("bankSubject").value;
+ let parsed=parseBulkInput(raw,defSubj);
+ if(!parsed.length){
+  alert("인식된 문제가 없습니다. 형식을 확인해 주세요.");
+  return;
+ }
+ let existing=new Set(allQuestions().map(x=>x.q));
+ let addedCount=0;
+ parsed.forEach(item=>{
+  let sObj=subjects.find(s=>s.name===item.subject)||subjects[0];
+  if(!existing.has(item.q)){
+   customQuestions.push({subject:sObj.name,q:item.q,a:item.a,id:Date.now()+Math.random()});
+   existing.add(item.q);
+   addedCount++;
+  }
+ });
+ saveCustom(); // Firebase에 추가된 문제 저장
+ $("bulkInput").value="";
+ renderBankList();renderSubjects();renderPath();updateTop();
+ alert(`총 ${parsed.length}개 중 ${addedCount}개의 새 문제가 등록되었습니다!`);
+};
+
+$("addQuestion").onclick=()=>{
+ let subject=$("bankSubject").value,q=$("bankQuestion").value.trim(),a=$("bankAnswer").value.trim();
+ if(!q||!a){alert("문제와 정답을 모두 입력해 주세요.");return}
+ if(allQuestions().some(x=>x.q===q)){alert("이미 동일한 문제가 등록되어 있습니다.");return}
+ customQuestions.push({subject,q,a,id:Date.now()});
+ saveCustom(); // Firebase 저장
+ $("bankQuestion").value="";$("bankAnswer").value="";
+ renderBankList();renderSubjects();renderPath();
+ alert("문제가 등록되었습니다.");
+};
+
+function renderBankList(){
+ let list=$("bankList");
+ $("customCount").textContent=customQuestions.length;
+ list.innerHTML="";
+ if(!customQuestions.length){list.innerHTML='<p class="subtle">아직 직접 등록한 문제가 없습니다.</p>';return}
+ customQuestions.slice().reverse().forEach((q)=>{
+  let row=document.createElement("div");row.className="problemrow";
+  let info=document.createElement("div");info.style.flex="1";
+  info.innerHTML=`<strong>${q.q}</strong><small>${q.subject}</small>`;
+  let del=document.createElement("button");del.className="smallbtn danger";del.textContent="삭제";
+  del.onclick=()=>{
+   customQuestions=customQuestions.filter(item=>item!==q);
+   // 해당 문제의 복습 기록도 삭제(선택사항)
+   if(db[q.q]) { delete db[q.q]; save(); }
+   saveCustom();renderBankList();renderSubjects();renderPath();updateTop();
+  };
+  row.append(info,del);list.appendChild(row);
+ });
+}
+
+// JSON 파일 백업 기능은 그대로 유지
+$("exportQuestions").onclick=()=>{
+ let blob=new Blob([JSON.stringify(customQuestions,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="recall-quest-문제은행.json";a.click();URL.revokeObjectURL(url);
+};
+$("importQuestions").onclick=()=>$("importFile").click();
+$("importFile").onchange=async e=>{
+ let file=e.target.files[0];if(!file)return;
+ try{
+  let data=JSON.parse(await file.text());
+  let parsed=parseBulkInput(JSON.stringify(data),$("bankSubject").value);
+  let known=new Set(allQuestions().map(q=>q.q));
+  let added=parsed.filter(q=>!known.has(q.q));
+  customQuestions.push(...added.map(q=>({...q,id:Date.now()+Math.random()})));
+  saveCustom();
+  renderBankList();renderSubjects();renderPath();alert(`${added.length}개 문제를 불러왔습니다.`);
+ }catch(err){alert("올바른 JSON 파일이 아닙니다.")}
+ e.target.value="";
+};
+
+// ==========================================
+// 3. 초기화 (앱 실행 시 Firebase에서 데이터 로드)
+// ==========================================
+async function initApp() {
+ try {
+  const snap = await getDoc(docRef);
+  if(snap.exists()) {
+   const data = snap.data();
+   db = data.db || {};
+   customQuestions = data.customQuestions || [];
+  }
+ } catch(error) {
+  console.error("Firebase 데이터 로드 실패:", error);
+  // 인증 규칙 오류 시 경고창 띄우기
+  if(error.code === 'permission-denied') {
+      alert("데이터베이스 접근 권한이 없습니다. Firebase의 규칙(Rules) 설정을 확인해주세요.");
+  }
+ }
+
+ // 데이터 로드가 완료되면 UI 초기화 및 로딩 화면 숨기기
+ initBankForm();
+ renderSubjects();
+ renderPath();
+ updateTop();
+ $("loader").classList.add("hide");
+}
+
+// 앱 시작
+initApp();
+
+</script>
+</body>
+</html>
