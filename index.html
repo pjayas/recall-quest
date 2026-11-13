@@ -120,7 +120,7 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <body>
 <div id="loginScreen"><div class="login-box">
 <h1>✦ RECALL</h1><p>나만의 정보 임용 스마트 복습 노트<br>접근 번호를 입력해 주세요.</p>
-<input id="codeInput" type="password" autocomplete="current-password" placeholder="접근 번호 (6자 이상)" aria-label="접근 번호" style="width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px;font-size:16px;margin-bottom:10px;text-align:center">
+<input id="codeInput" type="password" autocomplete="current-password" placeholder="접근 번호" aria-label="접근 번호" style="width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:12px;font-size:16px;margin-bottom:10px;text-align:center">
 <label style="display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:12px"><input type="checkbox" id="remember" checked> 이 기기에서 기억하기</label>
 <button class="btn-google" id="loginBtn">입장</button>
 <p id="diag" style="color:#be123c;font-size:12px;margin:14px 0 0;word-break:break-all"></p></div></div>
@@ -209,7 +209,6 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,getDoc,setDoc,deleteDoc,collection,getDocs,writeBatch,increment} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import {getAuth,signInAnonymously} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // ⭐ 본인의 Firebase 정보로 채워주세요
 const firebaseConfig = {
@@ -223,7 +222,6 @@ const firebaseConfig = {
 };
 const app=initializeApp(firebaseConfig);
 let fs;try{fs=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){fs=getFirestore(app)}
-const auth=getAuth(app);
 
 const subjects=[
 {name:"논리회로",icon:"🔌",color:"#e6a044",tint:"#fff4e5"},{name:"컴퓨터구조",icon:"🖥️",color:"#477fce",tint:"#edf4ff"},
@@ -510,40 +508,34 @@ $("importFile").onchange=async e=>{
  }catch(err){alert("파일을 읽을 수 없습니다: "+err.message)}
 };
 
-// 접근 번호 방식: 번호를 해시한 값이 곧 저장 공간(vaults/{해시}) 이름입니다. 익명 로그인으로 Firestore에 접속합니다.
+// 접근 번호 = Firestore 경로 이름(vaults/{번호}). 보안 규칙에 적어 둔 번호의 경로만 열립니다.
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
-async function hashCode(c){
- const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("recall-quest:"+c));
- return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,40);
-}
 function showLogin(msg){$("loader").classList.add("hide");$("loginScreen").classList.remove("hide");$("diag").textContent=msg||""}
-async function start(id,fresh,remember){
+async function start(code,remember){
  $("loginScreen").classList.add("hide");$("loader").classList.remove("hide");
- try{await signInAnonymously(auth)}
- catch(e){console.error(e);return showLogin(e.code==="auth/operation-not-allowed"?"Firebase 콘솔 → Authentication → 로그인 방법에서 '익명'을 사용 설정해 주세요.":"접속 오류: "+(e.code||e.message))}
- uid=id;
+ uid=code;
  try{
   const[qs,rs,hs]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc())]);
-  if(fresh&&qs.empty&&rs.empty&&!hs.exists()&&!confirm("이 번호로 저장된 노트가 없습니다.\n새 노트를 만들까요?\n(번호를 잘못 입력했다면 '취소')")){uid=null;return showLogin()}
   Q=qs.docs.map(d=>({...d.data(),id:d.id}));R={};rs.docs.forEach(d=>R[d.id]=d.data());H=hs.exists()?hs.data().days||{}:{};
   ready=true;$("warn").style.display="none";
-  if(remember)LS.set("rq_vault",id);
+  if(remember)LS.set("rq_code",code);else LS.del("rq_code");
  }catch(e){
   console.error("데이터 로드 실패:",e);ready=false;
-  $("warn").textContent=e.code==="permission-denied"?"접근이 거부되었습니다. Firestore 보안 규칙을 확인해 주세요.":"클라우드 데이터를 불러오지 못해 저장이 잠겨 있습니다. 새로고침 후 다시 시도해 주세요.";
-  $("warn").style.display="block";
+  if(e.code==="permission-denied"){uid=null;LS.del("rq_code");return showLogin("접근 번호가 올바르지 않습니다.")}
+  $("warn").textContent="클라우드 데이터를 불러오지 못해 저장이 잠겨 있습니다. 새로고침 후 다시 시도해 주세요.";$("warn").style.display="block";
  }
  renderSubjects();renderPath();updateTop();$("loader").classList.add("hide");
 }
-$("loginBtn").onclick=async()=>{
+$("loginBtn").onclick=()=>{
  const c=$("codeInput").value.trim();
- if(c.length<6)return alert("접근 번호는 6자 이상으로 입력해 주세요.");
- start(await hashCode(c),true,$("remember").checked);
+ if(!c)return alert("접근 번호를 입력해 주세요.");
+ if(c.includes("/"))return alert("접근 번호에 '/'는 사용할 수 없습니다.");
+ start(c,$("remember").checked);
 };
 $("codeInput").onkeydown=e=>{if(e.key==="Enter")$("loginBtn").click()};
-$("logoutBtn").onclick=()=>{LS.del("rq_vault");location.reload()};
+$("logoutBtn").onclick=()=>{LS.del("rq_code");location.reload()};
 window.__ok=true;
-const saved=LS.get("rq_vault");if(saved)start(saved,false,true);
+const saved=LS.get("rq_code");if(saved)start(saved,true);
 </script>
 </body>
 </html>
