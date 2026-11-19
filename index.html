@@ -181,7 +181,7 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <div class="todo-head"><button class="smallbtn xs" id="tdPrev" aria-label="이전 날">‹</button><strong id="tdDate"></strong><button class="smallbtn xs" id="tdNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="tdToday">오늘</button><span class="pill" id="tdProg" style="margin:0 0 0 auto"></span></div>
 <div class="td-late hide" id="tdLate"></div>
 <div id="tdList"></div>
-<div class="td-add"><input id="tdTime" type="time" aria-label="시간 (선택)"><input id="tdText" placeholder="할 일 추가 (예: 운영체제 3단원 읽기)" aria-label="할 일"><button class="smallbtn primary" id="tdAdd">추가</button></div>
+<div class="td-add"><input id="tdText" placeholder="할 일 입력 (예: 오후 3시 운영체제 3단원)" aria-label="할 일"><button class="smallbtn primary" id="tdAdd">추가</button></div>
 </div>
 <div class="guide"><b>이렇게 공부하세요</b><br>① 공부한 날 바로 <b>[오늘 등록 문제만]</b> 백지복습 → ② 정답 보기 전에 <b>반드시 먼저 써보기</b> → ③ 핵심 키워드 체크로 <b>객관적 채점</b> → ④ 이후엔 <b>[오늘의 백지복습]</b>이 잊어갈 타이밍에 알려줍니다. (과목이 섞여 나오는 건 의도입니다)</div>
 <div class="sectionhead"><h2>과목 선택</h2></div>
@@ -709,9 +709,21 @@ function renderTodo(){
   r.append(c,tm,t,del);box.appendChild(r);
  });
 }
+// 글 안의 시간을 자동 인식: 14:30 / 9시 / 오후 3시 30분 ("1시간"은 시간으로 보지 않음)
+function parseTime(t){
+ const m=t.match(/(오전|오후|아침|저녁|밤)?\s*(\d{1,2})\s*(?::(\d{2})|시(?!간)\s*(?:(\d{1,2})\s*분)?)/);
+ if(!m)return{time:"",text:t};
+ let h=+m[2];const mm=+(m[3]||m[4]||0),pre=m[1];
+ if(h>23||mm>59)return{time:"",text:t};
+ if(pre&&"오후저녁밤".includes(pre)&&h<12)h+=12;
+ else if(!pre&&h>=1&&h<=6)h+=12;
+ const rest=(t.slice(0,m.index)+" "+t.slice(m.index+m[0].length)).replace(/\s+/g," ").trim();
+ return{time:String(h).padStart(2,"0")+":"+String(mm).padStart(2,"0"),text:rest||t};
+}
 function addTodo(){
- const text=$("tdText").value.trim();if(!text)return $("tdText").focus();
- T.push({id:newId(),date:tdDay||today(),time:$("tdTime").value||"",text,done:false});
+ const raw=$("tdText").value.trim();if(!raw)return $("tdText").focus();
+ const{time,text}=parseTime(raw);
+ T.push({id:newId(),date:tdDay||today(),time,text,done:false});
  $("tdText").value="";saveT();renderTodo();$("tdText").focus();
 }
 $("tdAdd").onclick=addTodo;
