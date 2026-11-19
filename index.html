@@ -258,7 +258,7 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 (function(){
  var d=function(m){var e=document.getElementById("diag");if(e)e.textContent=m};
  window.__ok=false;
- addEventListener("error",function(e){var t=e.target;d("불러오기 실패: "+((t&&(t.src||t.href))||e.message))},true);
+ //addEventListener("error",function(e){var t=e.target;d("불러오기 실패: "+((t&&(t.src||t.href))||e.message))},true);
  addEventListener("unhandledrejection",function(e){d("오류: "+((e.reason&&e.reason.message)||e.reason))});
  document.getElementById("loginBtn").onclick=function(){if(!window.__ok)alert("앱 스크립트가 로드되지 않았습니다.\n광고/콘텐츠 차단기를 끄고 새로고침해 주세요.\n(아래 빨간 글씨에 실패한 주소가 표시됩니다)")};
 })();
