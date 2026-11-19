@@ -443,6 +443,31 @@ details.box-card summary{cursor:pointer}
  .user-profile{padding-top:10px}
  main{padding:24px 16px 64px}
  .modal{padding:22px 20px}
+ /* 배경 · 사이드바 · 카드 명도 대비 강화 */
+:root{
+ --bg:#ebe8df;
+ --paper:#ffffff;
+ --soft:#e3dfd3;
+ --line:#d6d1c4;
+ --line-strong:#bfb9aa;
+}
+aside{
+ background:#f6f4ee;
+ border-right:1px solid var(--line);
+}
+.todo,.path,.subject,.brief-card,.panel,.box-card{
+ box-shadow:0 1px 3px rgba(31,30,27,.06);
+}
+.subject:hover{
+ border-color:var(--green);
+}
+.q-card:hover{
+ background:#f6f4ee;
+}
+#tdText,.field input,.field select,.field textarea,.myans{
+ background:#f8f7f3;
+ border-color:var(--line-strong);
+}
 }
 </style>
 </head>
