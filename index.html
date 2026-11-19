@@ -52,28 +52,29 @@ button{font:inherit;cursor:pointer;transition:background .15s,border-color .15s,
 .hide{display:none!important}
 
 /* Layout Shell */
-.shell{max-width:1120px;margin:auto;display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.shell{max-width:1160px;margin:auto;display:grid;grid-template-columns:268px 1fr;min-height:100vh}
 aside{
  background:var(--bg);
  border-right:1px solid var(--line);
- padding:36px 20px 24px;
+ padding:30px 20px 22px;
  position:sticky;top:0;height:100vh;
- display:flex;flex-direction:column;
+ display:flex;flex-direction:column;gap:18px;
+ overflow-y:auto;
 }
 .brand{
  font-family:var(--serif);
  font-size:19px;font-weight:700;letter-spacing:.04em;
  color:var(--green);
- padding:0 12px 28px;
- margin-bottom:12px;
+ padding:0 8px 18px;
  border-bottom:1px solid var(--line);
 }
 .brand span{color:var(--ink);font-weight:600}
+.nav-group{display:flex;flex-direction:column;gap:2px}
 .nav{
  display:flex;align-items:center;justify-content:space-between;
- width:100%;padding:11px 12px;border-radius:8px;
+ width:100%;padding:9px 10px;border-radius:8px;
  color:var(--ink-2);font-size:13.5px;font-weight:500;
- margin:2px 0;border:1px solid transparent;background:none;text-align:left;
+ border:1px solid transparent;background:none;text-align:left;
 }
 .nav:hover{background:var(--soft);color:var(--ink)}
 .nav.active{background:var(--paper);color:var(--ink);font-weight:600;border-color:var(--line)}
@@ -82,52 +83,78 @@ aside{
  padding:1px 8px;border-radius:99px;font-size:11.5px;font-weight:600;border:0;
 }
 .nav.active b{background:var(--green-soft);color:var(--green)}
-.user-profile{
- margin-top:auto;padding-top:18px;border-top:1px solid var(--line);
- display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);font-weight:500;
-}
 
-main{padding:40px 48px 88px;max-width:860px;width:100%;margin:0 auto}
+/* Sidebar Sections (TOC + Briefing) */
+.side-sec{padding-top:16px;border-top:1px solid var(--line)}
+.side-label{
+ font-size:11px;font-weight:600;letter-spacing:.06em;
+ color:var(--muted);padding:0 8px 8px;text-transform:uppercase;
+ display:flex;justify-content:space-between;align-items:center;
+}
+.toc-list{display:flex;flex-direction:column;gap:1px}
+.toc-item{
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ width:100%;padding:6px 8px;border-radius:6px;border:0;background:none;
+ text-align:left;font-size:12.5px;color:var(--ink-2);font-weight:500;
+}
+.toc-item:hover{background:var(--soft);color:var(--ink)}
+.toc-item.active{color:var(--green);font-weight:600;background:var(--green-soft)}
+.toc-item small{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.toc-item.active small{color:var(--green)}
 
-/* Editorial Masthead */
-.top{
- display:flex;justify-content:space-between;align-items:flex-end;gap:20px;
- padding-bottom:24px;margin-bottom:28px;border-bottom:1px solid var(--line);flex-wrap:wrap;
-}
-.top h1{
- font-family:var(--serif);
- font-size:26px;font-weight:600;letter-spacing:-.02em;
- margin:0 0 12px;color:var(--ink);
-}
-.goal{
- display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;
- background:var(--green-soft);border:1px solid #d5e3da;
- border-radius:8px;padding:7px 12px;
- font-size:12.5px;font-weight:600;color:var(--green);margin-bottom:12px;
-}
-.pill{
- background:transparent;border:1px solid var(--line);border-radius:8px;
- padding:5px 10px;font-weight:500;font-size:12.5px;color:var(--ink-2);
- display:inline-block;margin:0 6px 6px 0;
-}
-.pill select{border:0;font:inherit;font-weight:600;background:none;color:var(--ink);cursor:pointer}
-.warn{
- display:none;background:var(--red-soft);border:1px solid #ebd0cb;color:var(--red);
- border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;font-weight:500;
-}
-
-/* Calm Activity Strip */
-.grass-box{
+.brief-card{
  background:var(--paper);border:1px solid var(--line);
- border-radius:10px;padding:12px 16px;
+ border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;
 }
-.grass-title{font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--muted);margin-bottom:8px}
-.grass-grid{display:flex;gap:4px;flex-wrap:wrap}
-.grass-day{width:11px;height:11px;border-radius:2px;background:#ece9e1}
+.brief-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+#goalText{font-size:12.5px;font-weight:600;color:var(--green);line-height:1.45}
+.goal-bar{height:4px;background:var(--soft);border-radius:9px;overflow:hidden}
+.goal-bar i{display:block;height:100%;width:0;background:var(--green);transition:width .25s ease}
+.brief-stats{
+ display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;
+ font-size:11.5px;color:var(--ink-2);padding-top:2px;
+}
+.brief-stats b{color:var(--ink);font-weight:600}
+.brief-stats select{
+ border:1px solid var(--line);border-radius:5px;padding:1px 4px;
+ font:inherit;font-weight:600;background:var(--bg);color:var(--ink);cursor:pointer;
+}
+.grass-wrap{padding-top:8px;border-top:1px solid var(--line)}
+.grass-title{font-size:10.5px;font-weight:600;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.grass-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.grass-day{aspect-ratio:1;border-radius:2px;background:#ece9e1}
 .grass-day[data-level="1"]{background:#c9decb}
 .grass-day[data-level="2"]{background:#8fb998}
 .grass-day[data-level="3"]{background:#558c68}
 .grass-day[data-level="4"]{background:#2f5d46}
+
+.user-profile{
+ margin-top:auto;padding-top:14px;border-top:1px solid var(--line);
+ display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);font-weight:500;
+}
+
+main{padding:38px 48px 88px;max-width:860px;width:100%;margin:0 auto}
+
+/* Minimal Editorial Masthead */
+.top{
+ display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+ padding-bottom:18px;margin-bottom:24px;border-bottom:1px solid var(--line);flex-wrap:wrap;
+}
+.top h1{
+ font-family:var(--serif);
+ font-size:26px;font-weight:600;letter-spacing:-.02em;
+ margin:0;color:var(--ink);
+}
+.top-date{font-size:13px;color:var(--muted);font-weight:500}
+.pill{
+ background:transparent;border:1px solid var(--line);border-radius:8px;
+ padding:4px 10px;font-weight:500;font-size:12px;color:var(--ink-2);
+ display:inline-block;
+}
+.warn{
+ display:none;background:var(--red-soft);border:1px solid #ebd0cb;color:var(--red);
+ border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;font-weight:500;
+}
 
 /* Todo Card */
 .todo{
@@ -267,7 +294,7 @@ details.box-card summary{cursor:pointer}
 .smallbtn.blue:hover{opacity:.92}
 .smallbtn.danger{color:var(--red);border-color:#e5c5c0;background:var(--paper)}
 .smallbtn.danger:hover{background:var(--red-soft)}
-.smallbtn.xs{padding:5px 10px;font-size:11.5px;border-radius:6px}
+.smallbtn.xs{padding:4px 9px;font-size:11px;border-radius:6px}
 .smallbtn:disabled{opacity:.45;cursor:not-allowed}
 
 .problemrow{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:14px 0;font-size:12px}
@@ -404,13 +431,17 @@ details.box-card summary{cursor:pointer}
 .btn-google{background:var(--green);color:#fff;border:1px solid var(--green);padding:12px 20px;border-radius:8px;font-weight:600;width:100%}
 .btn-google:hover{opacity:.92}
 
-@media(max-width:820px){
+@media(max-width:860px){
  .shell{display:block}
- aside{position:relative;height:auto;padding:12px 14px;border-right:0;border-bottom:1px solid var(--line);flex-direction:row;align-items:center;gap:6px;overflow-x:auto}
- .brand{padding:0 12px 0 0;margin:0;border:0;white-space:nowrap}
- .nav{white-space:nowrap;width:auto;padding:9px 12px;margin:0;gap:6px}
- .user-profile{margin:0 0 0 auto;padding:0;border:none}.user-profile span{display:none}
- main{padding:24px 16px 64px}.top{flex-direction:column;align-items:flex-start}.grass-box{width:100%}
+ aside{position:relative;height:auto;padding:16px 16px 18px;border-right:0;border-bottom:1px solid var(--line);gap:12px}
+ .brand{padding:0 0 12px}
+ .nav-group{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:2px}
+ .nav{white-space:nowrap;width:auto;padding:8px 12px;gap:6px}
+ .side-toc{display:none}
+ .side-sec{padding-top:12px}
+ .grass-grid{grid-template-columns:repeat(35,1fr);gap:2px}
+ .user-profile{padding-top:10px}
+ main{padding:24px 16px 64px}
  .modal{padding:22px 20px}
 }
 </style>
@@ -427,20 +458,45 @@ details.box-card summary{cursor:pointer}
 <div class="shell">
 <aside>
 <div class="brand">✦ <span>RECALL</span></div>
+
+<div class="nav-group">
 <button class="nav active" id="studyNav">과목별 학습</button>
 <button class="nav" id="reviewNav"><span>오늘의 백지복습</span><b id="reviewCount">0</b></button>
 <button class="nav" id="wrongNav"><span>취약 문제</span><b id="weakCount">0</b></button>
 <button class="nav" id="bankNav">문제 관리 / 추가</button>
+</div>
+
+<div class="side-sec side-toc">
+<div class="side-label"><span>과목 목차</span></div>
+<div class="toc-list" id="sideToc"></div>
+</div>
+
+<div class="side-sec">
+<div class="side-label"><span>오늘의 브리핑</span><button class="smallbtn xs" id="examBtn">시험일</button></div>
+<div class="brief-card">
+<div class="brief-top"><span id="goalText"></span></div>
+<div class="goal-bar"><i id="goalBar"></i></div>
+<div class="brief-stats">
+<span>오늘 <b id="todayCount">0</b></span>
+<span>연속 <b id="streak">0</b>일</span>
+<span>상한 <select id="capSel" aria-label="하루 복습 상한"><option>10</option><option>20</option><option>30</option><option>50</option></select></span>
+</div>
+<div class="grass-wrap">
+<div class="grass-title"><span>최근 35일 기록</span><span>오늘 →</span></div>
+<div class="grass-grid" id="grassGrid"></div>
+</div>
+</div>
+</div>
+
 <div class="user-profile"><span>내 노트</span>
 <button class="smallbtn xs" id="logoutBtn" style="margin-left:auto">잠금</button></div>
 </aside>
+
 <main>
 <div class="warn" id="warn"></div>
 <div class="top">
-<div><h1>백지복습 노트</h1>
-<div class="goal"><span id="goalText"></span><button class="smallbtn xs" id="examBtn">시험일 설정</button></div>
-<div><span class="pill">오늘 학습 <span id="todayCount">0</span>문제</span><span class="pill">연속 <span id="streak">0</span>일</span><span class="pill">하루 상한 <select id="capSel" aria-label="하루 복습 상한"><option>10</option><option>20</option><option>30</option><option>50</option></select>문제</span></div></div>
-<div class="grass-box"><div class="grass-title">최근 35일 학습 기록</div><div class="grass-grid" id="grassGrid"></div></div>
+<h1>백지복습 노트</h1>
+<span class="top-date" id="topDate"></span>
 </div>
 
 <div id="studyView">
@@ -633,23 +689,36 @@ function renderGrass(){
  $("streak").textContent=n;
 }
 function updateTop(){
+ const now=new Date(),w=["일","월","화","수","목","금","토"][now.getDay()];
+ $("topDate").textContent=`${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${w})`;
  const[a,b]=todayParts();
  $("reviewCount").textContent=a.length+b.length;$("weakCount").textContent=weakQs().length;
  const done=Q.filter(q=>rec(q).last===today()).length;$("todayCount").textContent=done;renderGrass();
  const rem=a.length+b.length,tg=Math.min(cap(),done+rem),ex=ST.exam;
- let dd="시험일을 설정하면 D-day가 표시됩니다";
- if(ex){const n=dayDiff(today(),ex);dd=(n>0?`D-${n}`:n===0?"D-DAY":`D+${-n}`)+` (${ex})`}
- $("goalText").textContent=dd+" · "+(tg===0?"오늘 할 복습이 없어요":(rem===0||done>=tg)?`오늘 목표 완료 (${done}문제)`:`오늘 목표 ${done}/${tg}`);
+ let dd="시험일 미설정";
+ if(ex){const n=dayDiff(today(),ex);dd=(n>0?`D-${n}`:n===0?"D-DAY":`D+${-n}`)+` (${ex.slice(5)})`}
+ $("goalText").textContent=dd+" · "+(tg===0?"복습 없음":(rem===0||done>=tg)?`목표 완료 (${done})`:`${done}/${tg}`);
+ $("goalBar").style.width=(tg?Math.min(100,done/tg*100):0)+"%";
+}
+function selectSubject(name){
+ sel=name;
+ if($("bankPanel").classList.contains("active"))setNav("studyNav",false);
+ renderSubjects();renderPath();
 }
 function renderSubjects(){
  $("subjects").innerHTML="";
+ const toc=$("sideToc");toc.innerHTML="";
  subjects.forEach(s=>{
   const qs=Q.filter(q=>q.subject===s.name),done=qs.filter(q=>rec(q).status==="known").length;
   const rs=qs.map(ret).filter(x=>x!==null),avg=rs.length?` · 기억 ${Math.round(rs.reduce((a,b)=>a+b,0)/rs.length*100)}%`:"";
   const b=document.createElement("button");b.className="subject"+(sel===s.name?" selected":"");
   b.style.setProperty("--accent",s.color);b.style.setProperty("--tint",s.tint);
   b.innerHTML=`<div class="subjecticon">${s.icon}</div><div class="subjectinfo"><strong>${s.name}</strong><small>${qs.length}문제 · 완료 ${done}${avg}</small><div class="subjectprogress"><i style="width:${qs.length?done/qs.length*100:0}%"></i></div></div>`;
-  b.onclick=()=>{sel=s.name;renderSubjects();renderPath()};$("subjects").appendChild(b);
+  b.onclick=()=>selectSubject(s.name);$("subjects").appendChild(b);
+
+  const tb=document.createElement("button");tb.className="toc-item"+(sel===s.name?" active":"");
+  tb.innerHTML=`<span>${s.name}</span><small>${done}/${qs.length}</small>`;
+  tb.onclick=()=>selectSubject(s.name);toc.appendChild(tb);
  });
 }
 const status=q=>{const s=rec(q).status;return s==="known"?"known":s?"weak":"new"};
