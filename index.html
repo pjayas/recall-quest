@@ -117,7 +117,18 @@ details.box-card summary{cursor:pointer}
 .q-image{display:block;max-width:100%;max-height:260px;object-fit:contain;border-radius:8px;margin-bottom:14px;border:1px solid var(--line)}
 .myans{width:100%;min-height:160px;border:2px dashed #cbd5e1;border-radius:12px;padding:12px;font:inherit;font-size:16px;line-height:1.6;resize:vertical;background:#fcfdff;color:var(--ink)}
 .myans:focus{border-color:var(--green);outline:none}
-.wmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px;font-weight:700}
+.wmeta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px;font-weight:700}
+.hint-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px}
+.hint-box{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:700;margin-top:8px;line-height:1.5}
+.conf-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;font-weight:800;color:var(--muted)}
+.conf-btn{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 11px;font-size:12px;font-weight:750;color:#475569}
+.conf-btn.on{background:#eaf7ed;border-color:#9bd9ad;color:#26783e}
+.conf-btn[data-conf="low"].on{background:#fff7ed;border-color:#fdba74;color:#9a3412}
+.rel-box{display:flex;flex-wrap:wrap;gap:6px}
+.rel-chip{border:1px solid #cbd5e1;background:#f8fafc;border-radius:99px;padding:6px 11px;font-size:12px;font-weight:700;color:#334155;text-align:left}
+.rel-chip.on{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+.rel-preview{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:8px;font-size:13.5px;line-height:1.6}
+.rel-preview strong{display:block;margin-bottom:6px;color:var(--ink)}
 .cmp-label{font-size:12px;font-weight:800;color:var(--muted);margin:14px 0 6px}
 .mine{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
 .answer{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:16px;line-height:1.7;font-size:14.5px;word-break:keep-all;overflow-x:auto}
@@ -183,7 +194,7 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <div id="tdList"></div>
 <div class="td-add"><input id="tdText" placeholder="할 일 입력 (예: 오후 3시 운영체제 3단원)" aria-label="할 일"><button class="smallbtn primary" id="tdAdd">추가</button></div>
 </div>
-<div class="guide"><b>이렇게 공부하세요</b><br>① 공부한 날 바로 <b>[오늘 등록 문제만]</b> 백지복습 → ② 정답 보기 전에 <b>반드시 먼저 써보기</b> → ③ 핵심 키워드 체크로 <b>객관적 채점</b> → ④ 이후엔 <b>[오늘의 백지복습]</b>이 잊어갈 타이밍에 알려줍니다. (과목이 섞여 나오는 건 의도입니다)</div>
+<div class="guide"><b>이렇게 공부하세요</b><br>① 공부한 날 바로 <b>[오늘 등록 문제만]</b> 백지복습 → ② 기억이 안 나면 정답 보기 전에 <b>[힌트 보기]</b>로 초성부터 떠올리기 → ③ <b>확신도 체크</b> 후 키워드로 객관적 채점 → ④ 이후엔 <b>[오늘의 백지복습]</b>이 잊어갈 타이밍에 알려줍니다.</div>
 <div class="sectionhead"><h2>과목 선택</h2></div>
 <section class="subjects" id="subjects"></section>
 <div class="pathhead"><h2 id="pathTitle">문제 목록</h2></div>
@@ -194,7 +205,7 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <h2>문제 관리 센터</h2>
 <div class="bank-container">
 <div class="box-card"><div class="box-header">🤖 AI로 한 번에 문제 만들기</div><div class="box-body">
-<p class="subtle">1. <b>[프롬프트 복사]</b> 후 AI에 학습 파일과 함께 전송<br>2. 결과를 붙여넣고 <b>[등록]</b> (마크다운·$수식$ 지원). 핵심 키워드가 함께 만들어져 자가채점에 쓰입니다.</p>
+<p class="subtle">1. <b>[프롬프트 복사]</b> 후 AI에 학습 파일과 함께 전송<br>2. 결과를 붙여넣고 <b>[등록]</b> (마크다운·$수식$ 지원). 핵심 키워드가 함께 만들어져 힌트·자가채점에 쓰입니다.</p>
 <div class="field"><label for="bSubj">과목 (AI 일괄 등록용)</label><select id="bSubj"></select></div>
 <div class="field"><textarea id="bulkInput" placeholder="AI가 만든 JSON을 붙여넣으세요. 앞뒤 설명 문장이 있어도 괜찮습니다."></textarea></div>
 <div class="actionrow"><button class="smallbtn blue" id="copyPromptBtn">📋 프롬프트 복사</button><button class="smallbtn primary" id="bulkAddBtn">⚡ 한 번에 등록</button></div>
@@ -205,7 +216,7 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <div class="field"><label for="mSubj">과목</label><select id="mSubj"></select></div>
 <div class="field"><label for="bQ">문제 (백지에 써볼 주제)</label><input id="bQ" placeholder="예: 교착상태의 4가지 필요조건과 해결 방법을 서술하시오"></div>
 <div class="field"><label for="bA">정답 및 해설</label><textarea id="bA" style="min-height:70px"></textarea></div>
-<div class="field"><label for="bK">핵심 키워드 (쉼표로 구분, 자가채점용)</label><input id="bK" placeholder="상호배제, 점유와 대기, 비선점, 환형 대기"></div>
+<div class="field"><label for="bK">핵심 키워드 (쉼표로 구분, 힌트·자가채점용)</label><input id="bK" placeholder="상호배제, 점유와 대기, 비선점, 환형 대기"></div>
 <div class="field"><label for="bE">보충 설명 (선택 · '이해가 안 돼요'를 눌렀을 때 보여줄 쉬운 설명)</label><textarea id="bE" style="min-height:60px"></textarea></div>
 <div class="field"><label for="bImg">참고 이미지 (자동 압축)</label><input type="file" id="bImg" accept="image/*">
 <label id="delImgLbl" style="display:none;font-weight:600"><input type="checkbox" id="delImg" style="width:auto"> 기존 이미지 삭제</label></div>
@@ -233,13 +244,19 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <div class="question" id="modalquestion"></div>
 <img id="modalimage" class="q-image hide" src="" alt="첨부 이미지">
 <div id="writeBox">
-<textarea class="myans" id="myAns" placeholder="정답을 보기 전에, 아는 것을 전부 써보세요. 모르면 '모름'이라도 적기. (Ctrl+Enter = 정답 확인)"></textarea>
+<textarea class="myans" id="myAns" placeholder="정답을 보기 전에, 아는 것을 전부 써보세요. 막히면 아래 '힌트 보기'를 눌러 초성부터 떠올려 보세요. (Ctrl+Enter = 정답 확인)"></textarea>
 <div class="wmeta"><span>✍️ 떠올리는 과정 자체가 기억을 만듭니다</span><span id="timer">00:00</span></div>
+<div class="hint-row">
+<button class="smallbtn xs" id="hintBtn">💡 힌트 보기</button>
+<div class="conf-row"><span>확신도:</span><button type="button" class="conf-btn" data-conf="high">확신함</button><button type="button" class="conf-btn" data-conf="low">애매함</button></div>
+</div>
+<div id="hintBox" class="hint-box hide"></div>
 </div>
 <div id="reveal" class="hide">
 <div class="cmp-label">내가 쓴 답</div><div class="mine" id="mineBox"></div>
 <div class="cmp-label">정답</div><div class="answer" id="modalanswer"></div>
 <div id="kwWrap" class="hide"><div class="cmp-label">떠올린 키워드를 체크하세요 (빠뜨린 것은 그대로 두기)</div><div class="kwbox" id="kwBox"></div></div>
+<div id="relWrap" class="hide"><div class="cmp-label">🔗 함께 연결해 기억할 관련 개념 (클릭해 확인)</div><div class="rel-box" id="relBox"></div><div id="relPreview" class="rel-preview hide"></div></div>
 </div>
 <div id="explainBox" class="hide"><div class="cmp-label">💡 쉬운 설명</div><div class="explain" id="explainBody"></div></div>
 <div class="modalactions">
@@ -269,7 +286,7 @@ import {getFirestore,initializeFirestore,persistentLocalCache,persistentMultiple
 
 // ⭐ 본인의 Firebase 정보로 채워주세요
 const firebaseConfig = {
-  apiKey: "AIzaSyCwvTehw3pcXE3Y4kJN9EPcPndrUECfOOU",
+   apiKey: "AIzaSyCwvTehw3pcXE3Y4kJN9EPcPndrUECfOOU",
   authDomain: "recallquest-91895.firebaseapp.com",
   projectId: "recallquest-91895",
   storageBucket: "recallquest-91895.firebasestorage.app",
@@ -286,6 +303,7 @@ const subjects=[
 {name:"컴퓨터 네트워크",icon:"🌐",color:"#3a9cbb",tint:"#eaf8fc"},{name:"인공지능",icon:"🤖",color:"#b36eaa",tint:"#fbedf8"},
 {name:"정보교과교육론",icon:"📚",color:"#5a9b67",tint:"#edf7ee"}];
 const IV=[1,3,7,14,30],TARGET=.85,K=Math.log(TARGET)/Math.log(.9);
+const CHO=["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
 const dayDiff=(a,b)=>Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/864e5);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -298,10 +316,13 @@ const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:
 const cap=()=>+(LS.get("rq_cap")||20);
 const dateOf=q=>q.created||"날짜 없음";
 const kwList=v=>Array.isArray(v)?v.map(x=>String(x).trim()).filter(Boolean):String(v||"").split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
+const chosung=s=>[...String(s)].map(ch=>{const c=ch.charCodeAt(0);return c>=0xAC00&&c<=0xD7A3?CHO[Math.floor((c-0xAC00)/588)]:ch}).join("");
+const tokens=q=>new Set((q.q+" "+kwList(q.keywords).join(" ")).toLowerCase().replace(/[^a-z0-9가-힣\s]/g," ").split(/\s+/).filter(w=>w.length>=2));
 
 let Q=[],R={},H={},uid=null,ready=false;
 let T=[],tdDay=null,ST={};
 let sel=subjects[0].name,flt="all",dflt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set(),t0=0,tick=null;
+let hintLv=0,confLv=null;
 
 const qCol=()=>collection(fs,"vaults",uid,"questions"),rCol=()=>collection(fs,"vaults",uid,"records");
 const qDoc=id=>doc(fs,"vaults",uid,"questions",id),rDoc=id=>doc(fs,"vaults",uid,"records",id),hDoc=()=>doc(fs,"vaults",uid,"meta","history");
@@ -327,12 +348,20 @@ const stab=r=>r.S??(r.step!=null?IV[r.step]/K:null);
 const ret=q=>{const r=rec(q),S=stab(r);return S&&r.last?Math.pow(.9,Math.max(0,dayDiff(r.last,today()))/S):null};
 const pct=q=>{const x=ret(q);return x===null?"":" "+Math.round(x*100)+"%"};
 const due=q=>{const x=ret(q);return x!==null&&x<=TARGET};
-const dueQs=()=>Q.filter(due).sort((a,b)=>ret(a)-ret(b)),weakQs=()=>Q.filter(q=>["partial","missed"].includes(rec(q).status));
-// 오늘의 복습: 잊기 직전 순 → 상한 적용 → 남는 자리는 새 문제 → 과목 섞기(인터리빙)
+const dueQs=()=>Q.filter(due).sort((a,b)=>ret(a)-ret(b)),weakQs=()=>Q.filter(q=>["partial","missed"].includes(rec(q).status)||rec(q).overconf);
 function todayParts(){
  const dq=dueQs().slice(0,cap()),left=Math.max(0,cap()-dq.length);
  const nw=Q.filter(q=>!rec(q).last).sort((a,b)=>(b.created||"").localeCompare(a.created||"")).slice(0,left);
  return[dq,nw];
+}
+function findRelated(q){
+ const base=tokens(q),baseKw=new Set(kwList(q.keywords).map(k=>k.toLowerCase()));
+ return Q.filter(x=>x.id!==q.id&&x.subject===q.subject).map(x=>{
+  let score=0;
+  for(const w of tokens(x))if(base.has(w))score+=1;
+  for(const k of kwList(x.keywords))if(baseKw.has(k.toLowerCase()))score+=3;
+  return{q:x,score};
+ }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,3).map(x=>x.q);
 }
 
 function renderGrass(){
@@ -391,9 +420,9 @@ function drawNodes(){
  qs.forEach((q,j)=>{
   const dt=dateOf(q);
   if(dt!==last){last=dt;const h=document.createElement("div");h.className="date-head";h.textContent=`📅 ${dt} · ${qs.filter(x=>dateOf(x)===dt).length}문제`;list.appendChild(h)}
-  const miss=rec(q).miss||[];
+  const r=rec(q),miss=r.miss||[],flags=(r.overconf?"⚠️ 착각 주의 ":"")+(r.confused?"🤔 이해 필요 ":"")+(miss.length?"빠뜨린 키워드: "+esc(miss.join(", ")):"");
   const c=document.createElement("button");c.className="q-card";
-  c.innerHTML=`<span class="q-text">${j+1}. ${esc(q.q)}${(rec(q).confused||miss.length)?`<small>${rec(q).confused?"🤔 이해 필요 ":""}${miss.length?"빠뜨린 키워드: "+esc(miss.join(", ")):""}</small>`:""}</span><span class="badge ${status(q)}">${lbl[status(q)]}${pct(q)}</span>`;
+  c.innerHTML=`<span class="q-text">${j+1}. ${esc(q.q)}${flags?`<small>${flags}</small>`:""}</span><span class="badge ${status(q)}">${lbl[status(q)]}${pct(q)}</span>`;
   c.onclick=()=>startLesson(qs,j);list.appendChild(c);
  });
 }
@@ -402,18 +431,54 @@ function drawNodes(){
 function startLesson(list,i){queue=list.slice();qi=i;again=new Set();openLesson(queue[qi])}
 const mmss=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
 function openLesson(q){
- cur=q;locked=false;clearInterval(tick);
+ cur=q;locked=false;hintLv=0;confLv=null;clearInterval(tick);
  $("modalmeta").textContent=`${q.subject} (${qi+1}/${queue.length})`;
  render("modalquestion",q.q);
  const im=$("modalimage");if(q.img){im.src=q.img;im.classList.remove("hide")}else{im.classList.add("hide");im.removeAttribute("src")}
  $("myAns").value="";$("writeBox").classList.remove("hide");$("reveal").classList.add("hide");$("kwWrap").classList.add("hide");$("autoBtn").classList.add("hide");
+ $("relWrap").classList.add("hide");$("relPreview").classList.add("hide");
+ const kws=kwList(q.keywords);
+ $("hintBtn").classList.toggle("hide",!kws.length);$("hintBtn").disabled=false;$("hintBtn").textContent="💡 힌트 보기";
+ $("hintBox").classList.add("hide");$("hintBox").textContent="";
+ document.querySelectorAll("[data-conf]").forEach(b=>b.classList.remove("on"));
  $("revealBtn").classList.remove("hide");
  document.querySelectorAll("[data-rate]").forEach(b=>{b.disabled=true;b.classList.remove("sug","hide")});$("explainBox").classList.add("hide");$("nextBtn").classList.add("hide");
- $("feedback").textContent="정답을 보기 전에 먼저 써보세요. 쓰는 만큼 오래 기억됩니다.";
+ $("feedback").textContent="정답을 보기 전에 먼저 써보세요. 막히면 힌트를 열어 초성부터 떠올려 보세요.";
  $("lessonbar").style.width=((qi+1)/queue.length*100)+"%";$("modalback").classList.add("open");
  t0=Date.now();$("timer").textContent="00:00";tick=setInterval(()=>$("timer").textContent=mmss(Math.floor((Date.now()-t0)/1000)),500);
  setTimeout(()=>$("myAns").focus(),50);
 }
+
+// 점진적 힌트: 1단계(개수) → 2단계(초성) → 3단계+(키워드 1개씩 공개)
+$("hintBtn").onclick=()=>{
+ if(!cur)return;
+ const kws=kwList(cur.keywords);if(!kws.length)return;
+ hintLv++;
+ const hb=$("hintBox");hb.classList.remove("hide");
+ if(hintLv===1){
+  hb.textContent=`💡 핵심 키워드는 총 ${kws.length}개입니다.`;
+  $("hintBtn").textContent="💡 초성 힌트 보기";
+ }else if(hintLv===2){
+  hb.textContent=`💡 초성 힌트: ${kws.map(chosung).join(" · ")}`;
+  $("hintBtn").textContent="💡 키워드 1개 열기";
+ }else{
+  const open=Math.min(hintLv-2,kws.length);
+  const shown=kws.map((k,i)=>i<open?k:chosung(k));
+  hb.textContent=`💡 키워드 공개 (${open}/${kws.length}): ${shown.join(" · ")}`;
+  if(open>=kws.length){$("hintBtn").textContent="💡 모든 힌트 공개됨";$("hintBtn").disabled=true}
+  else $("hintBtn").textContent=`💡 다음 키워드 열기 (${open}/${kws.length})`;
+ }
+ $("myAns").focus();
+};
+
+// 확신도 체크
+document.querySelectorAll("[data-conf]").forEach(b=>{
+ b.onclick=()=>{
+  const v=b.dataset.conf;confLv=confLv===v?null:v;
+  document.querySelectorAll("[data-conf]").forEach(x=>x.classList.toggle("on",x.dataset.conf===confLv));
+ };
+});
+
 function suggest(){
  const cs=[...document.querySelectorAll("#kwBox input")];if(!cs.length)return null;
  const r=cs.filter(c=>c.checked).length/cs.length;return r>=.8?"known":r>=.5?"partial":"missed";
@@ -434,6 +499,24 @@ function revealAnswer(){
   c.onchange=()=>{l.classList.toggle("on",c.checked);updateSug()};box.appendChild(l);
  });
  $("kwWrap").classList.toggle("hide",!kws.length);$("autoBtn").classList.toggle("hide",!kws.length);
+ // 관련 개념 연결 (스키마)
+ const rels=findRelated(cur),rbox=$("relBox"),rprev=$("relPreview");
+ rbox.innerHTML="";rprev.classList.add("hide");rprev.innerHTML="";
+ $("relWrap").classList.toggle("hide",!rels.length);
+ rels.forEach(rq=>{
+  const chip=document.createElement("button");chip.type="button";chip.className="rel-chip";
+  chip.textContent=rq.q.length>32?rq.q.slice(0,32)+"...":rq.q;
+  chip.onclick=()=>{
+   const on=chip.classList.contains("on");
+   rbox.querySelectorAll(".rel-chip").forEach(x=>x.classList.remove("on"));
+   if(on){rprev.classList.add("hide");return}
+   chip.classList.add("on");
+   rprev.innerHTML=`<strong>Q. ${esc(rq.q)}</strong><div>${md(rq.a)}</div>`;
+   rprev.classList.remove("hide");
+   if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([rprev]).catch(()=>{});
+  };
+  rbox.appendChild(chip);
+ });
  $("writeBox").classList.add("hide");$("reveal").classList.remove("hide");$("revealBtn").classList.add("hide");
  document.querySelectorAll("[data-rate]").forEach(b=>b.disabled=false);
  if(kws.length){updateSug();$("feedback").textContent="키워드를 체크하면 자동 채점됩니다. 직접 고를 수도 있어요. (단축키 1, 2, 3)"}
@@ -469,20 +552,23 @@ function rate(k){
  const kws=kwList(cur.keywords);
  r.miss=kws.length?[...document.querySelectorAll("#kwBox input")].filter(c=>!c.checked).map(c=>c.value):[];
  const conf=k==="confused";if(conf)k="missed";
+ const overconf=confLv==="high"&&k==="missed";
  if(k==="missed")r.lapses=(r.lapses||0)+1;
  let S;
  if(!S0)S={known:3,partial:1.5,missed:.7}[k];
  else if(k==="known")S=S0*(1.6+2.5*(1-R0))*Math.max(.5,1-.1*(r.lapses||0));
  else if(k==="partial")S=Math.max(1,S0*.7);
  else S=Math.max(.7,S0*.25);
+ if(overconf)S=Math.max(.5,S*.8);
  r.S=Math.min(Math.round(S*100)/100,365);delete r.step;
- r.first=r.first||t;r.confused=conf;r.last=t;r.status=k;r.count=(r.count||0)+1;
+ r.first=r.first||t;r.confused=conf;r.overconf=k==="known"?false:(overconf||!!r.overconf);
+ r.last=t;r.status=k;r.count=(r.count||0)+1;
  r.next=addDays(t,Math.max(1,Math.ceil(r.S*K)));H[t]=(H[t]||0)+1;
  cloud(()=>setDoc(rDoc(id),r));cloud(()=>setDoc(hDoc(),{days:{[t]:increment(1)}},{merge:true}));
  if(k==="missed"&&!again.has(id)){again.add(id);queue.push(cur)}
  updateTop();renderSubjects();drawNodes();
- $("feedback").textContent=`기록 완료 · 다음 복습 ${r.next} (기억 안정도 ${r.S}일)`;
- if(conf)showExplain();else setTimeout(advance,qi<queue.length-1?350:450);
+ $("feedback").textContent=overconf?`⚠️ 확신했지만 틀린 문제! 착각 주의로 기록했어요 · 다음 복습 ${r.next}`:`기록 완료 · 다음 복습 ${r.next} (기억 안정도 ${r.S}일)`;
+ if(conf)showExplain();else setTimeout(advance,overconf?900:(qi<queue.length-1?350:450));
 }
 document.querySelectorAll("[data-rate]").forEach(b=>b.onclick=()=>rate(b.dataset.rate));
 addEventListener("keydown",e=>{
@@ -709,7 +795,6 @@ function renderTodo(){
   r.append(c,tm,t,del);box.appendChild(r);
  });
 }
-// 글 안의 시간을 자동 인식: 14:30 / 9시 / 오후 3시 30분 ("1시간"은 시간으로 보지 않음)
 function parseTime(t){
  const m=t.match(/(오전|오후|아침|저녁|밤)?\s*(\d{1,2})\s*(?::(\d{2})|시(?!간)\s*(?:(\d{1,2})\s*분)?)/);
  if(!m)return{time:"",text:t};
