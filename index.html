@@ -173,13 +173,14 @@ main{padding:20px 14px 55px}.top{flex-direction:column;align-items:flex-start}.g
 <div class="bank-container">
 <div class="box-card"><div class="box-header">🤖 AI로 한 번에 문제 만들기</div><div class="box-body">
 <p class="subtle">1. <b>[프롬프트 복사]</b> 후 AI에 학습 파일과 함께 전송<br>2. 결과를 붙여넣고 <b>[등록]</b> (마크다운·$수식$ 지원). 핵심 키워드가 함께 만들어져 자가채점에 쓰입니다.</p>
-<div class="field"><label for="bSubj">과목 (일괄 등록·개별 등록 공통)</label><select id="bSubj"></select></div>
+<div class="field"><label for="bSubj">과목 (AI 일괄 등록용)</label><select id="bSubj"></select></div>
 <div class="field"><textarea id="bulkInput" placeholder="AI가 만든 JSON을 붙여넣으세요. 앞뒤 설명 문장이 있어도 괜찮습니다."></textarea></div>
 <div class="actionrow"><button class="smallbtn blue" id="copyPromptBtn">📋 프롬프트 복사</button><button class="smallbtn primary" id="bulkAddBtn">⚡ 한 번에 등록</button></div>
 </div></div>
 
 <details class="box-card" id="manualAdd"><summary class="box-header">➕ 직접 문제 추가 / 수정</summary>
 <div class="box-body" style="border-top:1px solid var(--line)">
+<div class="field"><label for="mSubj">과목</label><select id="mSubj"></select></div>
 <div class="field"><label for="bQ">문제 (백지에 써볼 주제)</label><input id="bQ" placeholder="예: 교착상태의 4가지 필요조건과 해결 방법을 서술하시오"></div>
 <div class="field"><label for="bA">정답 및 해설</label><textarea id="bA" style="min-height:70px"></textarea></div>
 <div class="field"><label for="bK">핵심 키워드 (쉼표로 구분, 자가채점용)</label><input id="bK" placeholder="상호배제, 점유와 대기, 비선점, 환형 대기"></div>
@@ -449,14 +450,14 @@ $("modalback").onclick=e=>{if(e.target===$("modalback"))closeModal()};
 function setNav(id,bank){
  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));$(id).classList.add("active");
  $("studyView").style.display=bank?"none":"block";$("bankPanel").classList.toggle("active",bank);
- if(bank){$("bankSearch").value="";renderBankList()}
+ if(bank){$("bankSearch").value="";if(!editId)$("mSubj").value=sel;renderBankList()}
 }
 $("studyNav").onclick=()=>setNav("studyNav",false);
 $("reviewNav").onclick=()=>{const[a,b]=todayParts(),l=shuffle([...a,...b]);l.length?startLesson(l,0):alert("오늘 예정된 복습 문제가 없습니다.")};
 $("wrongNav").onclick=()=>{const a=weakQs();a.length?startLesson(shuffle(a),0):alert("취약 문제가 없습니다.")};
 $("bankNav").onclick=()=>setNav("bankNav",true);
 $("capSel").value=String(cap());$("capSel").onchange=e=>{LS.set("rq_cap",e.target.value);updateTop()};
-$("bSubj").innerHTML=subjects.map(s=>`<option>${s.name}</option>`).join("");
+$("bSubj").innerHTML=$("mSubj").innerHTML=subjects.map(s=>`<option>${s.name}</option>`).join("");
 
 $("copyPromptBtn").onclick=()=>{
  const p=`내가 함께 첨부한 파일(문서, PDF, 사진 등)의 내용을 읽고, 이를 바탕으로 임용고시 '백지복습'용 문제와 정답을 만들어줘.
@@ -518,7 +519,7 @@ function resetForm(){
 }
 $("cancelEdit").onclick=resetForm;
 $("addQ").onclick=async()=>{
- const s=$("bSubj").value,q=$("bQ").value.trim(),a=$("bA").value.trim(),kw=kwList($("bK").value),f=$("bImg").files[0];
+ const s=$("mSubj").value,q=$("bQ").value.trim(),a=$("bA").value.trim(),kw=kwList($("bK").value),f=$("bImg").files[0];
  if(!q||!a)return alert("문제와 정답을 모두 입력해 주세요.");
  if(Q.some(x=>x.subject===s&&x.q===q&&x.id!==editId))return alert("이 과목에 동일한 문제가 이미 있습니다.");
  if(!ready)return cloud(()=>{});
@@ -554,7 +555,7 @@ function renderBankList(sq=""){
    row.innerHTML=`<div style="flex:1"><strong>${esc(q.q)}${q.img?" 🖼️":""}</strong><small>${esc(dateOf(q))} · 키워드 ${kn}개 · ${esc(a)}</small></div><div style="white-space:nowrap"><button class="smallbtn blue" style="margin-right:6px">수정</button><button class="smallbtn danger">삭제</button></div>`;
    const [eb,db]=row.querySelectorAll("button");
    eb.onclick=()=>{
-    editId=q.id;$("bSubj").value=q.subject;$("bQ").value=q.q;$("bA").value=q.a;$("bK").value=kwList(q.keywords).join(", ");$("bImg").value="";$("delImg").checked=false;
+    editId=q.id;$("mSubj").value=q.subject;$("bQ").value=q.q;$("bA").value=q.a;$("bK").value=kwList(q.keywords).join(", ");$("bImg").value="";$("delImg").checked=false;
     $("delImgLbl").style.display=q.img?"block":"none";$("manualAdd").open=true;$("manualAdd").scrollIntoView({behavior:"smooth"});
     $("addQ").textContent="수정 완료";$("addQ").className="smallbtn blue";$("cancelEdit").style.display="inline-block";
    };
