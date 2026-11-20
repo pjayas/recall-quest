@@ -209,20 +209,6 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .todo-head strong{font-size:14px;font-weight:600;min-width:104px;text-align:center}
 .td-prog-bar{height:5px;background:var(--soft);border-radius:9px;overflow:hidden;margin-bottom:10px}
 .td-prog-bar i{display:block;height:100%;width:0;background:var(--green);transition:width .25s ease}
-.td-brain-tip{
- font-size:12px;line-height:1.5;color:var(--muted);
- background:var(--input);border:1px solid var(--line);border-radius:8px;
- padding:7px 11px;margin-bottom:10px;
-}
-.td-brain-tip.warn-tip{background:var(--ochre-soft);border-color:var(--ochre-line);color:var(--ochre);font-weight:500}
-.td-brain-tip.done-tip{background:var(--green-soft);border-color:var(--green-line);color:var(--green);font-weight:500}
-.td-timer{
- display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
- background:var(--blue-soft);border:1px solid var(--line);border-left:3px solid var(--blue);
- border-radius:8px;padding:9px 12px;margin-bottom:10px;font-size:13px;color:var(--ink);
-}
-.td-timer strong{font-variant-numeric:tabular-nums;font-size:15px;color:var(--blue);margin-left:6px}
-.td-timer-acts{display:flex;gap:5px}
 .td-group-label{
  font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--muted);
  margin:12px 0 4px;padding:0 2px;display:flex;justify-content:space-between;align-items:center;
@@ -249,11 +235,6 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .td-tag.review{background:var(--green-soft);color:var(--green)}
 .td-cue{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
 .td-acts{display:flex;align-items:center;gap:2px;flex-shrink:0}
-.td-play{
- border:1px solid var(--line-strong);background:var(--paper);color:var(--blue);
- border-radius:6px;font-size:11px;font-weight:600;padding:3px 7px;
-}
-.td-play:hover{background:var(--blue-soft);border-color:var(--blue)}
 .td-x{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 7px;opacity:.6}
 .td-x:hover{opacity:1;color:var(--red)}
 .td-composer{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
@@ -271,10 +252,6 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .td-type-btn.on[data-type="mit"]{background:var(--ochre-soft);border-color:var(--ochre);color:var(--ochre);font-weight:600}
 .td-type-btn.on[data-type="review"]{background:var(--green-soft);border-color:var(--green);color:var(--green);font-weight:600}
 .td-type-btn.on[data-type="normal"]{background:var(--soft);border-color:var(--ink-2);color:var(--ink);font-weight:600}
-#tdMins{
- border:1px solid var(--line-strong);border-radius:7px;padding:4px 8px;
- font:inherit;font-size:11.5px;background:var(--input);color:var(--ink);
-}
 #tdCue{
  flex:1;min-width:190px;border:1px solid var(--line);border-radius:7px;
  padding:5px 10px;font:inherit;font-size:12.5px;background:var(--input);color:var(--ink);
@@ -623,30 +600,18 @@ details.box-card summary{cursor:pointer}
 <div class="todo" id="todoBox">
 <div class="todo-head"><button class="smallbtn xs" id="tdPrev" aria-label="이전 날">‹</button><strong id="tdDate"></strong><button class="smallbtn xs" id="tdNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="tdToday">오늘</button><span class="pill" id="tdProg" style="margin:0 0 0 auto"></span></div>
 <div class="td-prog-bar" aria-hidden="true"><i id="tdBar"></i></div>
-<div class="td-brain-tip" id="tdBrainTip"></div>
-<div class="td-timer hide" id="tdTimer">
-<div><span id="ftLabel"></span><strong id="ftTime">25:00</strong></div>
-<div class="td-timer-acts"><button class="smallbtn xs" id="ftPause">일시정지</button><button class="smallbtn primary xs" id="ftDone">완료</button><button class="smallbtn xs" id="ftStop">종료</button></div>
-</div>
 <div class="td-late hide" id="tdLate"></div>
 <div id="tdList"></div>
 <div class="td-composer">
-<div class="td-add"><input id="tdText" placeholder="언제 + 구체적 행동 (예: 오후 3시 운영체제 교착상태 백지복습)" aria-label="할 일"><button class="smallbtn primary" id="tdAdd">추가</button></div>
+<div class="td-add"><input id="tdText" placeholder="할 일 (예: 오후 3시 운영체제 복습)" aria-label="할 일"><button class="smallbtn primary" id="tdAdd">추가</button></div>
 <div class="td-opts">
 <button type="button" class="td-type-btn on" data-type="mit">🔥 핵심(MIT)</button>
 <button type="button" class="td-type-btn" data-type="review">🔄 복습</button>
 <button type="button" class="td-type-btn" data-type="normal">🌱 가벼운 일</button>
-<select id="tdMins" aria-label="집중 시간">
-<option value="25">25분 집중</option>
-<option value="50">50분 몰입</option>
-<option value="15">15분 가볍게</option>
-<option value="0">시간 미정</option>
-</select>
-<input id="tdCue" placeholder="시작 단서 · 2분 규칙 (예: 책상 앉자마자 목차 3줄 적기)" aria-label="시작 단서">
+<input id="tdCue" placeholder="시작 단서 (선택)" aria-label="시작 단서">
 </div>
 </div>
 </div>
-<div class="guide"><b>학습 흐름</b> — 공부한 날 바로 백지복습을 시작하세요. 막히면 정답을 보기 전에 <b>힌트 보기</b>로 초성부터 떠올리고, <b>확신도</b>를 체크한 뒤 키워드로 객관적 채점을 진행합니다.</div>
 <div class="sectionhead desktop-hide"><h2>과목 선택</h2></div>
 <section class="subjects desktop-hide" id="subjects"></section>
 <div class="pathhead"><h2 id="pathTitle">문제 목록</h2></div>
@@ -657,19 +622,19 @@ details.box-card summary{cursor:pointer}
 <h2>문제 관리 센터</h2>
 <div class="bank-container">
 <div class="box-card"><div class="box-header">AI로 한 번에 문제 만들기</div><div class="box-body">
-<p class="subtle">1. <b>[프롬프트 복사]</b> 후 AI에 학습 파일과 함께 전송<br>2. 결과를 붙여넣고 <b>[등록]</b> (마크다운·$수식$ 지원). 핵심 키워드가 함께 만들어져 힌트·자가채점에 쓰입니다.</p>
+<p class="subtle">프롬프트를 복사해 AI에 보낸 뒤, 결과를 붙여넣고 등록하세요.</p>
 <div class="field"><label for="bSubj">과목 (AI 일괄 등록용)</label><select id="bSubj"></select></div>
-<div class="field"><textarea id="bulkInput" placeholder="AI가 만든 JSON을 붙여넣으세요. 앞뒤 설명 문장이 있어도 괜찮습니다."></textarea></div>
+<div class="field"><textarea id="bulkInput" placeholder="AI가 만든 JSON을 붙여넣으세요"></textarea></div>
 <div class="actionrow"><button class="smallbtn blue" id="copyPromptBtn">프롬프트 복사</button><button class="smallbtn primary" id="bulkAddBtn">한 번에 등록</button></div>
 </div></div>
 
 <details class="box-card" id="manualAdd"><summary class="box-header">직접 문제 추가 / 수정</summary>
 <div class="box-body" style="border-top:1px solid var(--line)">
 <div class="field"><label for="mSubj">과목</label><select id="mSubj"></select></div>
-<div class="field"><label for="bQ">문제 (백지에 써볼 주제)</label><input id="bQ" placeholder="예: 교착상태의 4가지 필요조건과 해결 방법을 서술하시오"></div>
+<div class="field"><label for="bQ">문제</label><input id="bQ" placeholder="예: 교착상태의 4가지 필요조건과 해결 방법을 서술하시오"></div>
 <div class="field"><label for="bA">정답 및 해설</label><textarea id="bA" style="min-height:70px"></textarea></div>
-<div class="field"><label for="bK">핵심 키워드 (쉼표로 구분, 힌트·자가채점용)</label><input id="bK" placeholder="상호배제, 점유와 대기, 비선점, 환형 대기"></div>
-<div class="field"><label for="bE">보충 설명 (선택 · '이해가 안 돼요'를 눌렀을 때 보여줄 쉬운 설명)</label><textarea id="bE" style="min-height:60px"></textarea></div>
+<div class="field"><label for="bK">핵심 키워드 (쉼표로 구분)</label><input id="bK" placeholder="상호배제, 점유와 대기, 비선점, 환형 대기"></div>
+<div class="field"><label for="bE">보충 설명 (선택)</label><textarea id="bE" style="min-height:60px"></textarea></div>
 <div class="field"><label for="bImg">참고 이미지 (자동 압축)</label><input type="file" id="bImg" accept="image/*">
 <label id="delImgLbl" style="display:none;font-weight:500"><input type="checkbox" id="delImg" style="width:auto"> 기존 이미지 삭제</label></div>
 <div class="actionrow"><button class="smallbtn primary" id="addQ">개별 문제 등록</button><button class="smallbtn" id="cancelEdit" style="display:none">수정 취소</button></div>
@@ -696,8 +661,8 @@ details.box-card summary{cursor:pointer}
 <div class="question" id="modalquestion"></div>
 <img id="modalimage" class="q-image hide" src="" alt="첨부 이미지">
 <div id="writeBox">
-<textarea class="myans" id="myAns" placeholder="정답을 보기 전에 아는 것을 자유롭게 적어보세요. 막히면 아래 힌트를 열어 초성부터 떠올려 보세요. (Ctrl+Enter = 정답 확인)"></textarea>
-<div class="wmeta"><span>떠올리는 과정 자체가 기억을 만듭니다</span><span id="timer">00:00</span></div>
+<textarea class="myans" id="myAns" placeholder="아는 것을 적어보세요 (Ctrl+Enter = 정답 확인)"></textarea>
+<div class="wmeta"><span></span><span id="timer">00:00</span></div>
 <div class="hint-row">
 <button class="smallbtn xs" id="hintBtn">힌트 보기</button>
 <div class="conf-row"><span>확신도</span><button type="button" class="conf-btn" data-conf="high">확신함</button><button type="button" class="conf-btn" data-conf="low">애매함</button></div>
@@ -785,7 +750,6 @@ syncTheme();
 
 let Q=[],R={},H={},uid=null,ready=false;
 let T=[],tdDay=null,ST={},tdType="mit";
-let ftId=null,ftLeft=0,ftPaused=false,ftInt=null;
 let sel=subjects[0].name,flt="all",dflt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set(),t0=0,tick=null;
 let hintLv=0,confLv=null;
 
@@ -1274,76 +1238,26 @@ document.querySelectorAll(".td-type-btn").forEach(b=>{
  b.onclick=()=>{tdType=b.dataset.type;syncTdType()};
 });
 
-// 집중 타이머 (포모도로 / 울트라디안 리듬)
-function beep(){
- try{
-  const ctx=new(window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),g=ctx.createGain();
-  osc.type="sine";osc.frequency.value=660;g.gain.value=.08;osc.connect(g);g.connect(ctx.destination);
-  osc.start();osc.stop(ctx.currentTime+.25);
- }catch(e){}
-}
-function stopFocus(markDone){
- clearInterval(ftInt);ftInt=null;
- const doneId=markDone?ftId:null;
- ftId=null;ftPaused=false;
- $("tdTimer").classList.add("hide");
- if(doneId){
-  const item=T.find(x=>x.id===doneId);
-  if(item&&!item.done){item.done=true;saveT();renderTodo()}
- }
-}
-function startFocus(item){
- clearInterval(ftInt);
- ftId=item.id;ftPaused=false;ftLeft=(item.mins||25)*60;
- $("ftLabel").textContent="집중 중: "+(item.text.length>22?item.text.slice(0,22)+"...":item.text);
- $("ftTime").textContent=mmss(ftLeft);
- $("ftPause").textContent="일시정지";
- $("tdTimer").classList.remove("hide");
- ftInt=setInterval(()=>{
-  if(ftPaused)return;
-  ftLeft--;
-  if(ftLeft<=0){
-   beep();
-   const finished=T.find(x=>x.id===ftId);
-   stopFocus(false);
-   if(finished&&confirm(`'${finished.text}' 집중 시간이 끝났습니다!\n완료로 체크할까요?`)){
-    finished.done=true;saveT();renderTodo();
-   }
-   return;
-  }
-  $("ftTime").textContent=mmss(ftLeft);
- },1000);
-}
-$("ftPause").onclick=()=>{ftPaused=!ftPaused;$("ftPause").textContent=ftPaused?"계속":"일시정지"};
-$("ftDone").onclick=()=>stopFocus(true);
-$("ftStop").onclick=()=>stopFocus(false);
-
 function makeTodoRow(x){
  const r=document.createElement("div");
  r.className="td-item"+(x.type==="mit"?" mit-item":"")+(x.done?" done":"");
  const c=document.createElement("input");c.type="checkbox";c.checked=!!x.done;c.setAttribute("aria-label","완료");
- c.onchange=()=>{x.done=c.checked;if(x.done&&ftId===x.id)stopFocus(false);saveT();renderTodo()};
+ c.onchange=()=>{x.done=c.checked;saveT();renderTodo()};
 
  const body=document.createElement("div");body.className="td-body";
  const row=document.createElement("div");row.className="td-row";
  if(x.time){const tm=document.createElement("span");tm.className="td-time";tm.textContent=x.time;row.appendChild(tm)}
  if(x.type==="review"){const tg=document.createElement("span");tg.className="td-tag review";tg.textContent="복습";row.appendChild(tg)}
  const t=document.createElement("span");t.className="td-t";t.textContent=x.text;row.appendChild(t);
- if(x.mins){const mn=document.createElement("span");mn.className="td-tag";mn.textContent=`${x.mins}분`;row.appendChild(mn)}
  body.appendChild(row);
  if(x.cue){
   const cue=document.createElement("div");cue.className="td-cue";
-  cue.textContent=`↳ 2분 시작: ${x.cue}`;body.appendChild(cue);
+  cue.textContent=`↳ ${x.cue}`;body.appendChild(cue);
  }
 
  const acts=document.createElement("div");acts.className="td-acts";
- if(!x.done){
-  const pl=document.createElement("button");pl.className="td-play";pl.textContent="▶";
-  pl.title=`${x.mins||25}분 집중 타이머 시작`;pl.setAttribute("aria-label","집중 타이머 시작");
-  pl.onclick=()=>startFocus(x);acts.appendChild(pl);
- }
  const del=document.createElement("button");del.className="td-x";del.textContent="✕";del.setAttribute("aria-label","삭제");
- del.onclick=()=>{if(ftId===x.id)stopFocus(false);T=T.filter(y=>y.id!==x.id);saveT();renderTodo()};
+ del.onclick=()=>{T=T.filter(y=>y.id!==x.id);saveT();renderTodo()};
  acts.appendChild(del);
 
  r.append(c,body,acts);
@@ -1361,25 +1275,9 @@ function renderTodo(){
  $("tdProg").classList.toggle("done",l.length>0&&doneCnt===l.length);
  $("tdBar").style.width=tdPct+"%";
 
- const tip=$("tdBrainTip");
- tip.className="td-brain-tip";
- if(!l.length){
-  tip.textContent="뇌과학 팁: 전두엽은 모호한 계획을 미룹니다. '언제 + 구체적 행동'과 '첫 2분 시작 단서'를 적어보세요.";
- }else if(doneCnt===l.length){
-  tip.classList.add("done-tip");
-  tip.textContent="오늘 계획을 모두 마쳤습니다! 작은 완료 경험이 도파민 보상 회로를 강화해 내일의 실행력을 높입니다.";
- }else if(mits.length>3){
-  tip.classList.add("warn-tip");
-  tip.textContent=`핵심(MIT)이 ${mits.length}개입니다. 작업기억 과부하를 막기 위해 핵심 몰입은 하루 3개 이하로 줄이는 것이 가장 효과적입니다.`;
- }else if(mits.some(x=>!x.done)){
-  tip.textContent="전두엽 에너지가 가장 높을 때 🔥 핵심(MIT) 1개부터 ▶ 타이머를 켜고 2분 시작 단서만 실행해 보세요.";
- }else{
-  tip.textContent="핵심 몰입을 모두 마쳤습니다! 남은 복습과 가벼운 일로 하루를 부드럽게 마무리하세요.";
- }
-
  const late=T.filter(x=>!x.done&&x.date<today()),lb=$("tdLate");
  lb.classList.toggle("hide",!late.length||tdDay!==today());lb.innerHTML="";
- if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개 (미완료 과제는 작업기억을 계속 소모합니다)`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{late.forEach(x=>x.date=today());saveT();renderTodo()};lb.append(sp,b)}
+ if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{late.forEach(x=>x.date=today());saveT();renderTodo()};lb.append(sp,b)}
 
  const box=$("tdList");box.innerHTML="";
  if(!l.length){
@@ -1387,7 +1285,7 @@ function renderTodo(){
  }else{
   if(mits.length){
    const gh=document.createElement("div");gh.className="td-group-label mit";
-   gh.innerHTML=`<span>🔥 핵심 몰입 (MIT · 전두엽 집중)</span><span>${mits.filter(x=>x.done).length}/${mits.length}</span>`;
+   gh.innerHTML=`<span>🔥 핵심</span><span>${mits.filter(x=>x.done).length}/${mits.length}</span>`;
    box.appendChild(gh);
    mits.forEach(x=>box.appendChild(makeTodoRow(x)));
   }
@@ -1414,10 +1312,8 @@ function addTodo(){
  const day=tdDay||today();
  const{time,text}=parseTime(raw);
  const cue=$("tdCue").value.trim();
- const mins=+$("tdMins").value||0;
- T.push({id:newId(),date:day,time,text,type:tdType,cue,mins,done:false});
+ T.push({id:newId(),date:day,time,text,type:tdType,cue,done:false});
  $("tdText").value="";$("tdCue").value="";
- // 핵심(MIT)이 3개에 도달하면 다음 입력은 자동으로 '복습/일반' 쪽으로 전환해 과부하 방지
  if(tdType==="mit"&&T.filter(x=>x.date===day&&x.type==="mit").length>=3){tdType="normal";syncTdType()}
  saveT();renderTodo();$("tdText").focus();
 }
