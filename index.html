@@ -533,6 +533,7 @@ details.box-card summary{cursor:pointer}
 .pl-edit{display:flex;gap:6px;flex-wrap:wrap;padding:8px 0 10px 52px}
 .pl-edit input{flex:1;min-width:140px}
 .pl-leg{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;font-weight:600;margin-bottom:10px}
+.pl-sub{font-size:11px;font-weight:600;color:var(--green);background:var(--green-soft);border-radius:99px;padding:1px 8px;margin-right:4px}
 .win-in{width:100%;border:1px solid var(--line-strong);border-radius:8px;padding:10px 12px;margin-bottom:8px;font:inherit;background:var(--input);color:var(--ink)}
 </style>
 </head>
@@ -554,7 +555,7 @@ details.box-card summary{cursor:pointer}
 <button class="nav" id="reviewNav"><span>오늘의 백지복습</span><b id="reviewCount">0</b></button>
 <button class="nav" id="wrongNav"><span>취약 문제</span><b id="weakCount">0</b></button>
 <button class="nav" id="bankNav">문제 관리 / 추가</button>
-<button class="nav" id="planNav">오늘의 시간표</button>
+<button class="nav" id="planNav">오늘의 공부 계획</button>
 </div>
 
 <div class="side-sec side-toc">
@@ -642,21 +643,23 @@ details.box-card summary{cursor:pointer}
 </div>
 </section>
 <section class="panel" id="planPanel">
-<h2>과학적 하루 시간표</h2>
+<h2>공부 시간표</h2>
 <div class="pl-head"><button class="smallbtn xs" id="plPrev" aria-label="이전 날">‹</button><strong id="plDate"></strong><button class="smallbtn xs" id="plNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="plToday">오늘</button></div>
 <div class="pl-set"><label>기상 <input type="time" id="plWake"></label><label>점심 <input type="time" id="plLunch"></label><label>취침 <input type="time" id="plSleep"></label></div>
-<div class="box-card"><div class="box-header"><span>🎯 오늘의 핵심 과제 Top 3</span><span class="pill" id="plTopProg"></span></div>
+<div class="td-late" id="plReview" style="margin-bottom:16px"><span id="plRevTxt"></span><button class="smallbtn xs primary" id="plRevBtn">복습 시작</button></div>
+<div class="box-card"><div class="box-header"><span>🎯 오늘의 핵심 공부 Top 3</span><span class="pill" id="plTopProg"></span></div>
 <div class="box-body"><div id="plTopList"></div>
 <div id="plTopForm" style="margin-top:14px">
-<div class="field"><label for="plTitle">과제</label><input id="plTitle" placeholder="예: 보고서 초안 완성"></div>
-<div class="field"><label for="plIf">If · 언제/어디서 시작할까?</label><input id="plIf" placeholder="예: 오전 9시 책상에 앉자마자"></div>
-<div class="field"><label for="plThen">Then · 구체적 행동</label><input id="plThen" placeholder="예: 보고서 목차부터 작성한다"></div>
+<div class="field"><label for="plSubj">과목</label><select id="plSubj"></select></div>
+<div class="field"><label for="plTitle">공부할 내용</label><input id="plTitle" placeholder="예: 교착상태 4가지 필요조건 암기"></div>
+<div class="field"><label for="plIf">If · 언제/어디서 시작할까?</label><input id="plIf" placeholder="예: 저녁 8시 도서관 자리에 앉자마자"></div>
+<div class="field"><label for="plThen">Then · 구체적 행동</label><input id="plThen" placeholder="예: 교재 3단원을 읽고 백지에 먼저 써본다"></div>
 <button class="smallbtn primary" id="plTopAdd">추가</button></div></div></div>
-<div class="box-card" style="margin-top:16px"><div class="box-header"><span>⏱ 타임 블로킹 (30분 단위 · 칸을 눌러 추가/수정)</span></div>
+<div class="box-card" style="margin-top:16px"><div class="box-header"><span>⏱ 공부 타임 블로킹 (30분 단위 · 칸을 눌러 추가/수정)</span></div>
 <div class="box-body">
 <div class="pl-meter"><i id="plMeter"></i></div><div class="subtle" id="plStat" style="margin-bottom:0"></div>
 <div id="plBadge"></div>
-<div class="pl-leg"><span style="color:var(--red)">■ 딥워크</span><span style="color:var(--blue)">■ 단순업무</span><span style="color:var(--green)">■ 휴식/버퍼</span></div>
+<div class="pl-leg"><span style="color:var(--red)">■ 집중 학습</span><span style="color:var(--blue)">■ 복습·암기</span><span style="color:var(--green)">■ 휴식/버퍼</span></div>
 <div id="plTL"></div></div></div>
 </section>
 </main>
@@ -664,8 +667,8 @@ details.box-card summary{cursor:pointer}
 
 <div class="modalback" id="winBack"><div class="modal">
 <h2 style="margin:0 0 8px;font-size:20px">오늘의 핵심 목표 달성 완료! 🎉</h2>
-<p class="subtle">100%를 채우지 못해도 괜찮아요. 핵심 3가지를 해냈다면 충분히 성공한 하루입니다.<br>지금 내일의 Top 3를 미리 적어두면, 아침에 고민 없이 바로 시작할 수 있어요.</p>
-<input class="win-in" placeholder="내일의 핵심 과제 1"><input class="win-in" placeholder="내일의 핵심 과제 2"><input class="win-in" placeholder="내일의 핵심 과제 3">
+<p class="subtle">100%를 채우지 못해도 괜찮아요. 핵심 3가지를 해냈다면 충분히 성공한 하루입니다.<br>내일 공부할 핵심 3가지를 미리 적어두면, 아침에 고민 없이 바로 시작할 수 있어요.</p>
+<input class="win-in" placeholder="내일 공부할 내용 1"><input class="win-in" placeholder="내일 공부할 내용 2"><input class="win-in" placeholder="내일 공부할 내용 3">
 <div class="actionrow"><button class="smallbtn primary" id="winSave">내일 Top 3 저장</button><button class="smallbtn" id="winClose">나중에</button></div>
 </div></div>
 <div class="modalback" id="modalback"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalquestion">
@@ -1302,8 +1305,8 @@ const pDoc=()=>doc(fs,"vaults",uid,"meta","plan");
 const savePlan=()=>cloud(()=>setDoc(pDoc(),P));
 const hm=m=>String(Math.floor(m/60)%24).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
 const toMin=s=>{const[h,m]=(s||"0:0").split(":").map(Number);return h*60+m};
-const PT={deep:["딥워크","t-deep"],simple:["단순업무","t-simple"],rest:["휴식/버퍼","t-rest"]};
-const ZL={peak:"🔥 딥워크 피크 타임",low:"☕ 에너지 저하 구간 - 단순 업무 권장",ref:"🌙 하루 회고 및 내일 준비"};
+const PT={deep:["집중 학습","t-deep"],simple:["복습·암기","t-simple"],rest:["휴식/버퍼","t-rest"]};
+const ZL={peak:"🔥 새 개념 집중 학습 피크 타임",low:"☕ 에너지 저하 구간 - 암기카드·문제풀이 복습 권장",ref:"🌙 오늘 배운 것 백지복습 + 내일 공부 계획"};
 function planDay(){P.days=P.days||{};return P.days[plDay]=P.days[plDay]||{top:[],blocks:[]}}
 function planCfg(){const w=toMin(P.wake||"07:00");let l=toMin(P.lunch||"12:30"),s=toMin(P.sleep||"23:00");if(s<=w)s+=1440;if(l<w)l+=1440;return{w,l,s}}
 function zone(m,c){return m>=c.s-60?"ref":(m>=c.w+120&&m<c.w+240)?"peak":(m>=c.l&&m<c.l+120)?"low":""}
@@ -1312,8 +1315,11 @@ function renderPlan(){
  $("plDate").textContent=dayLabel(plDay);
  $("plWake").value=P.wake||"07:00";$("plLunch").value=P.lunch||"12:30";$("plSleep").value=P.sleep||"23:00";
  const D=planDay(),c=planCfg(),blocks=D.blocks;
+ const[ra,rb]=todayParts(),rn=ra.length+rb.length;
+ $("plRevTxt").textContent=rn?`오늘 백지복습 ${rn}문제가 기다리고 있어요. 복습 블록에 시간을 배정해 보세요.`:"오늘 예정된 백지복습이 없어요 🎉";
+ $("plRevBtn").classList.toggle("hide",!rn);
  const tl=$("plTopList");
- tl.innerHTML=D.top.map(x=>`<div class="pl-top${x.done?" done":""}"><input type="checkbox" data-c="${x.id}" ${x.done?"checked":""} aria-label="완료"><div style="flex:1"><div class="pl-tt">${esc(x.title)}</div>${x.when||x.then?`<div class="pl-if"><b>If</b> ${esc(x.when||"…")} → <b>Then</b> ${esc(x.then||"…")}</div>`:""}</div><button class="td-x" data-x="${x.id}" aria-label="삭제">✕</button></div>`).join("")||'<div class="emptylesson" style="padding:12px">오늘 반드시 끝낼 과제를 최대 3개까지 적어보세요.</div>';
+ tl.innerHTML=D.top.map(x=>`<div class="pl-top${x.done?" done":""}"><input type="checkbox" data-c="${x.id}" ${x.done?"checked":""} aria-label="완료"><div style="flex:1"><div class="pl-tt">${x.subj?`<span class="pl-sub">${esc(x.subj)}</span>`:""}${esc(x.title)}</div>${x.when||x.then?`<div class="pl-if"><b>If</b> ${esc(x.when||"…")} → <b>Then</b> ${esc(x.then||"…")}</div>`:""}</div><button class="td-x" data-x="${x.id}" aria-label="삭제">✕</button></div>`).join("")||'<div class="emptylesson" style="padding:12px">오늘 반드시 끝낼 과제를 최대 3개까지 적어보세요.</div>';
  tl.querySelectorAll("[data-c]").forEach(b=>b.onchange=()=>{
   D.top.find(y=>y.id===b.dataset.c).done=b.checked;savePlan();renderPlan();
   if(D.top.length&&D.top.every(x=>x.done)&&!D.cel){D.cel=1;savePlan();$("winBack").classList.add("open")}
@@ -1323,17 +1329,17 @@ function renderPlan(){
  $("plTopForm").style.display=D.top.length>=3?"none":"block";
  const used=blocks.reduce((a,b)=>a+(b.type==="rest"?0:b.len*30),0),avail=c.s-c.w,rate=avail?used/avail:0;
  $("plMeter").style.width=Math.min(100,rate*100)+"%";$("plMeter").className=rate>.7?"over":"";
- $("plStat").textContent=`가용 ${Math.round(avail/6)/10}시간 중 계획 ${Math.round(used/6)/10}시간 (${Math.round(rate*100)}%) · 권장 70% 이하`;
+ $("plStat").textContent=`공부 가능 ${Math.round(avail/6)/10}시간 중 계획 ${Math.round(used/6)/10}시간 (${Math.round(rate*100)}%) · 권장 70% 이하`;
  $("plBadge").innerHTML=rate>.7?'<span class="pl-warn">⚠️ 여백(버퍼) 시간이 부족합니다. 돌발 변수를 위해 20~30%를 비워두세요!</span>':'<span class="pl-ok">✅ 여백이 충분해요</span>';
  let h="",pz=null;
  for(let m=c.w;m<c.s;m+=30){
   const z=zone(m,c),b=blocks.find(x=>m>=x.start&&m<x.start+x.len*30);
   const zl=z&&z!==pz?`<span class="pl-zl">${ZL[z]}</span>`:"";pz=z;
-  const bh=b?`<div class="pl-blk ${PT[b.type][1]}">${m===b.start?`<b>${PT[b.type][0]}</b> <span>${esc(b.text)}</span>`:"↳"}</div>`:"";
+  const bh=b?`<div class="pl-blk ${PT[b.type][1]}">${m===b.start?`<b>${PT[b.type][0]}</b> <span>${b.subj?`[${esc(b.subj)}] `:""}${esc(b.text)}</span>`:"↳"}</div>`:"";
   h+=`<div class="pl-row"><div class="pl-time">${hm(m)}</div><div class="pl-cell z-${z||"n"}" data-m="${m}">${zl}${bh}</div></div>`;
   if(plEdit&&plEdit.start===m){
    const eb=plEdit.id?blocks.find(x=>x.id===plEdit.id):null;
-   h+=`<div class="pl-edit"><select id="peType" aria-label="유형">${Object.entries(PT).map(([k,v])=>`<option value="${k}"${eb&&eb.type===k?" selected":""}>${v[0]}</option>`).join("")}</select><select id="peLen" aria-label="길이">${[1,2,3,4,5,6].map(n=>`<option value="${n}"${(eb?eb.len:2)===n?" selected":""}>${n*30}분</option>`).join("")}</select><input id="peText" value="${esc(eb?eb.text:"")}" placeholder="내용 (예: 운영체제 3단원)" aria-label="내용"><button class="smallbtn primary xs" id="peSave">저장</button>${eb?'<button class="smallbtn danger xs" id="peDel">삭제</button>':""}<button class="smallbtn xs" id="peCancel">취소</button></div>`;
+   h+=`<div class="pl-edit"><select id="peSubj" aria-label="과목"><option value="">과목 없음</option>${subjects.map(x=>`<option${eb&&eb.subj===x.name?" selected":""}>${x.name}</option>`).join("")}</select><select id="peType" aria-label="유형">${Object.entries(PT).map(([k,v])=>`<option value="${k}"${eb&&eb.type===k?" selected":""}>${v[0]}</option>`).join("")}</select><select id="peLen" aria-label="길이">${[1,2,3,4,5,6].map(n=>`<option value="${n}"${(eb?eb.len:2)===n?" selected":""}>${n*30}분</option>`).join("")}</select><input id="peText" value="${esc(eb?eb.text:"")}" placeholder="내용 (예: 운영체제 3단원)" aria-label="내용"><button class="smallbtn primary xs" id="peSave">저장</button>${eb?'<button class="smallbtn danger xs" id="peDel">삭제</button>':""}<button class="smallbtn xs" id="peCancel">취소</button></div>`;
   }
  }
  $("plTL").innerHTML=h;
@@ -1349,7 +1355,7 @@ function renderPlan(){
    const len=+$("peLen").value,st=plEdit.start;
    if(st+len*30>c.s)return alert("취침 시간을 넘길 수 없습니다.");
    if(blocks.some(x=>x.id!==plEdit.id&&x.start<st+len*30&&st<x.start+x.len*30))return alert("다른 블록과 겹칩니다.");
-   const o={id:plEdit.id||newId(),start:st,len,type:$("peType").value,text:$("peText").value.trim()};
+   const o={id:plEdit.id||newId(),start:st,len,type:$("peType").value,subj:$("peSubj").value,text:$("peText").value.trim()};
    D.blocks=blocks.filter(x=>x.id!==o.id).concat(o);plEdit=null;savePlan();renderPlan();
   };
  }
@@ -1357,7 +1363,7 @@ function renderPlan(){
 $("plTopAdd").onclick=()=>{
  const D=planDay(),t=$("plTitle").value.trim();
  if(!t)return $("plTitle").focus();if(D.top.length>=3)return;
- D.top.push({id:newId(),title:t,when:$("plIf").value.trim(),then:$("plThen").value.trim(),done:false});
+ D.top.push({id:newId(),subj:$("plSubj").value,title:t,when:$("plIf").value.trim(),then:$("plThen").value.trim(),done:false});
  ["plTitle","plIf","plThen"].forEach(i=>$(i).value="");savePlan();renderPlan();
 };
 ["plWake","plLunch","plSleep"].forEach(i=>$(i).onchange=()=>{
@@ -1367,6 +1373,8 @@ $("plPrev").onclick=()=>{plDay=addDays(plDay||today(),-1);plEdit=null;renderPlan
 $("plNext").onclick=()=>{plDay=addDays(plDay||today(),1);plEdit=null;renderPlan()};
 $("plToday").onclick=()=>{plDay=today();plEdit=null;renderPlan()};
 $("planNav").onclick=()=>setNav("planNav",false);
+$("plSubj").innerHTML=subjects.map(x=>`<option>${x.name}</option>`).join("");
+$("plRevBtn").onclick=()=>$("reviewNav").click();
 $("winClose").onclick=()=>$("winBack").classList.remove("open");
 $("winBack").onclick=e=>{if(e.target===$("winBack"))$("winBack").classList.remove("open")};
 $("winSave").onclick=()=>{
