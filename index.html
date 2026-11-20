@@ -191,14 +191,15 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .pill{
  background:transparent;border:1px solid var(--line);border-radius:8px;
  padding:3px 9px;font-weight:500;font-size:11.5px;color:var(--muted);
- display:inline-block;
+ display:inline-block;font-variant-numeric:tabular-nums;
 }
+.pill.done{background:var(--green-soft);border-color:var(--green-line);color:var(--green);font-weight:600}
 .warn{
  display:none;background:var(--red-soft);border:1px solid var(--red-line);color:var(--red);
  border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:13px;font-weight:500;
 }
 
-/* Todo Card */
+/* Brain-Science Todo Card */
 .todo{
  background:var(--paper);border:1px solid var(--line);
  border-radius:12px;padding:16px 20px;margin-bottom:18px;
@@ -206,23 +207,78 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 }
 .todo-head{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
 .todo-head strong{font-size:14px;font-weight:600;min-width:104px;text-align:center}
+.td-prog-bar{height:5px;background:var(--soft);border-radius:9px;overflow:hidden;margin-bottom:10px}
+.td-prog-bar i{display:block;height:100%;width:0;background:var(--green);transition:width .25s ease}
+.td-brain-tip{
+ font-size:12px;line-height:1.5;color:var(--muted);
+ background:var(--input);border:1px solid var(--line);border-radius:8px;
+ padding:7px 11px;margin-bottom:10px;
+}
+.td-brain-tip.warn-tip{background:var(--ochre-soft);border-color:var(--ochre-line);color:var(--ochre);font-weight:500}
+.td-brain-tip.done-tip{background:var(--green-soft);border-color:var(--green-line);color:var(--green);font-weight:500}
+.td-timer{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+ background:var(--blue-soft);border:1px solid var(--line);border-left:3px solid var(--blue);
+ border-radius:8px;padding:9px 12px;margin-bottom:10px;font-size:13px;color:var(--ink);
+}
+.td-timer strong{font-variant-numeric:tabular-nums;font-size:15px;color:var(--blue);margin-left:6px}
+.td-timer-acts{display:flex;gap:5px}
+.td-group-label{
+ font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--muted);
+ margin:12px 0 4px;padding:0 2px;display:flex;justify-content:space-between;align-items:center;
+}
+.td-group-label.mit{color:var(--ochre)}
 .td-item{
- display:flex;align-items:center;gap:12px;
- padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px;
+ display:flex;align-items:flex-start;gap:10px;
+ padding:9px 4px;border-bottom:1px solid var(--line);font-size:14px;
 }
 .td-item:last-child{border-bottom:0}
+.td-item.mit-item{background:var(--ochre-soft);border-radius:8px;padding:9px 10px;margin-bottom:5px;border-bottom:0;border:1px solid var(--ochre-line)}
+.td-item.done{opacity:.65}
 .td-item.done .td-t{text-decoration:line-through;color:var(--muted)}
-.td-item input{width:17px;height:17px;accent-color:var(--green);flex-shrink:0;cursor:pointer}
-.td-t{flex:1;line-height:1.5}
-.td-time{font-size:12px;font-weight:600;color:var(--blue);min-width:42px;font-variant-numeric:tabular-nums}
-.td-x{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 8px;opacity:.6}
+.td-item input{width:17px;height:17px;margin-top:3px;accent-color:var(--green);flex-shrink:0;cursor:pointer}
+.td-body{flex:1;min-width:0}
+.td-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.td-t{line-height:1.5;color:var(--ink)}
+.td-time{font-size:12px;font-weight:600;color:var(--blue);font-variant-numeric:tabular-nums}
+.td-tag{
+ font-size:10.5px;font-weight:600;padding:1px 7px;border-radius:99px;
+ background:var(--soft);color:var(--ink-2);white-space:nowrap;
+}
+.td-tag.mit{background:var(--paper);border:1px solid var(--ochre-line);color:var(--ochre)}
+.td-tag.review{background:var(--green-soft);color:var(--green)}
+.td-cue{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+.td-acts{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.td-play{
+ border:1px solid var(--line-strong);background:var(--paper);color:var(--blue);
+ border-radius:6px;font-size:11px;font-weight:600;padding:3px 7px;
+}
+.td-play:hover{background:var(--blue-soft);border-color:var(--blue)}
+.td-x{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 7px;opacity:.6}
 .td-x:hover{opacity:1;color:var(--red)}
-.td-add{display:flex;gap:8px;margin-top:10px}
+.td-composer{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.td-add{display:flex;gap:8px}
 #tdText{
  flex:1;min-width:0;border:1px solid var(--line-strong);border-radius:8px;
  padding:9px 12px;font-size:14.5px;background:var(--input);color:var(--ink);
 }
-#tdText:focus{background:var(--paper);border-color:var(--green);outline:none}
+#tdText:focus,#tdCue:focus{background:var(--paper);border-color:var(--green);outline:none}
+.td-opts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.td-type-btn{
+ border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-2);
+ border-radius:99px;padding:4px 10px;font-size:11.5px;font-weight:500;
+}
+.td-type-btn.on[data-type="mit"]{background:var(--ochre-soft);border-color:var(--ochre);color:var(--ochre);font-weight:600}
+.td-type-btn.on[data-type="review"]{background:var(--green-soft);border-color:var(--green);color:var(--green);font-weight:600}
+.td-type-btn.on[data-type="normal"]{background:var(--soft);border-color:var(--ink-2);color:var(--ink);font-weight:600}
+#tdMins{
+ border:1px solid var(--line-strong);border-radius:7px;padding:4px 8px;
+ font:inherit;font-size:11.5px;background:var(--input);color:var(--ink);
+}
+#tdCue{
+ flex:1;min-width:190px;border:1px solid var(--line);border-radius:7px;
+ padding:5px 10px;font:inherit;font-size:12.5px;background:var(--input);color:var(--ink);
+}
 .td-late{
  background:var(--ochre-soft);border:1px solid var(--ochre-line);color:var(--ochre);
  border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:500;
@@ -566,9 +622,29 @@ details.box-card summary{cursor:pointer}
 <div id="studyView">
 <div class="todo" id="todoBox">
 <div class="todo-head"><button class="smallbtn xs" id="tdPrev" aria-label="이전 날">‹</button><strong id="tdDate"></strong><button class="smallbtn xs" id="tdNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="tdToday">오늘</button><span class="pill" id="tdProg" style="margin:0 0 0 auto"></span></div>
+<div class="td-prog-bar" aria-hidden="true"><i id="tdBar"></i></div>
+<div class="td-brain-tip" id="tdBrainTip"></div>
+<div class="td-timer hide" id="tdTimer">
+<div><span id="ftLabel"></span><strong id="ftTime">25:00</strong></div>
+<div class="td-timer-acts"><button class="smallbtn xs" id="ftPause">일시정지</button><button class="smallbtn primary xs" id="ftDone">완료</button><button class="smallbtn xs" id="ftStop">종료</button></div>
+</div>
 <div class="td-late hide" id="tdLate"></div>
 <div id="tdList"></div>
-<div class="td-add"><input id="tdText" placeholder="할 일 입력 (예: 오후 3시 운영체제 3단원)" aria-label="할 일"><button class="smallbtn primary" id="tdAdd">추가</button></div>
+<div class="td-composer">
+<div class="td-add"><input id="tdText" placeholder="언제 + 구체적 행동 (예: 오후 3시 운영체제 교착상태 백지복습)" aria-label="할 일"><button class="smallbtn primary" id="tdAdd">추가</button></div>
+<div class="td-opts">
+<button type="button" class="td-type-btn on" data-type="mit">🔥 핵심(MIT)</button>
+<button type="button" class="td-type-btn" data-type="review">🔄 복습</button>
+<button type="button" class="td-type-btn" data-type="normal">🌱 가벼운 일</button>
+<select id="tdMins" aria-label="집중 시간">
+<option value="25">25분 집중</option>
+<option value="50">50분 몰입</option>
+<option value="15">15분 가볍게</option>
+<option value="0">시간 미정</option>
+</select>
+<input id="tdCue" placeholder="시작 단서 · 2분 규칙 (예: 책상 앉자마자 목차 3줄 적기)" aria-label="시작 단서">
+</div>
+</div>
 </div>
 <div class="guide"><b>학습 흐름</b> — 공부한 날 바로 백지복습을 시작하세요. 막히면 정답을 보기 전에 <b>힌트 보기</b>로 초성부터 떠올리고, <b>확신도</b>를 체크한 뒤 키워드로 객관적 채점을 진행합니다.</div>
 <div class="sectionhead desktop-hide"><h2>과목 선택</h2></div>
@@ -708,7 +784,8 @@ $("themeBtn").onclick=()=>{
 syncTheme();
 
 let Q=[],R={},H={},uid=null,ready=false;
-let T=[],tdDay=null,ST={};
+let T=[],tdDay=null,ST={},tdType="mit";
+let ftId=null,ftLeft=0,ftPaused=false,ftInt=null;
 let sel=subjects[0].name,flt="all",dflt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set(),t0=0,tick=null;
 let hintLv=0,confLv=null;
 
@@ -1185,30 +1262,142 @@ $("importFile").onchange=async e=>{
  }catch(err){alert("파일을 읽을 수 없습니다: "+err.message)}
 };
 
-// ---- 할 일 / 하루 계획 ----
+// ---- 뇌과학적 할 일 / 하루 계획 ----
 const tDoc=()=>doc(fs,"vaults",uid,"meta","todos"),sDoc=()=>doc(fs,"vaults",uid,"meta","settings");
 const saveT=()=>cloud(()=>setDoc(tDoc(),{items:T}));
 const dayLabel=d=>{const w=["일","월","화","수","목","금","토"][new Date(d+"T00:00:00").getDay()];return `${d.slice(5).replace("-","/")} (${w})${d===today()?" · 오늘":""}`};
+
+function syncTdType(){
+ document.querySelectorAll(".td-type-btn").forEach(b=>b.classList.toggle("on",b.dataset.type===tdType));
+}
+document.querySelectorAll(".td-type-btn").forEach(b=>{
+ b.onclick=()=>{tdType=b.dataset.type;syncTdType()};
+});
+
+// 집중 타이머 (포모도로 / 울트라디안 리듬)
+function beep(){
+ try{
+  const ctx=new(window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),g=ctx.createGain();
+  osc.type="sine";osc.frequency.value=660;g.gain.value=.08;osc.connect(g);g.connect(ctx.destination);
+  osc.start();osc.stop(ctx.currentTime+.25);
+ }catch(e){}
+}
+function stopFocus(markDone){
+ clearInterval(ftInt);ftInt=null;
+ const doneId=markDone?ftId:null;
+ ftId=null;ftPaused=false;
+ $("tdTimer").classList.add("hide");
+ if(doneId){
+  const item=T.find(x=>x.id===doneId);
+  if(item&&!item.done){item.done=true;saveT();renderTodo()}
+ }
+}
+function startFocus(item){
+ clearInterval(ftInt);
+ ftId=item.id;ftPaused=false;ftLeft=(item.mins||25)*60;
+ $("ftLabel").textContent="집중 중: "+(item.text.length>22?item.text.slice(0,22)+"...":item.text);
+ $("ftTime").textContent=mmss(ftLeft);
+ $("ftPause").textContent="일시정지";
+ $("tdTimer").classList.remove("hide");
+ ftInt=setInterval(()=>{
+  if(ftPaused)return;
+  ftLeft--;
+  if(ftLeft<=0){
+   beep();
+   const finished=T.find(x=>x.id===ftId);
+   stopFocus(false);
+   if(finished&&confirm(`'${finished.text}' 집중 시간이 끝났습니다!\n완료로 체크할까요?`)){
+    finished.done=true;saveT();renderTodo();
+   }
+   return;
+  }
+  $("ftTime").textContent=mmss(ftLeft);
+ },1000);
+}
+$("ftPause").onclick=()=>{ftPaused=!ftPaused;$("ftPause").textContent=ftPaused?"계속":"일시정지"};
+$("ftDone").onclick=()=>stopFocus(true);
+$("ftStop").onclick=()=>stopFocus(false);
+
+function makeTodoRow(x){
+ const r=document.createElement("div");
+ r.className="td-item"+(x.type==="mit"?" mit-item":"")+(x.done?" done":"");
+ const c=document.createElement("input");c.type="checkbox";c.checked=!!x.done;c.setAttribute("aria-label","완료");
+ c.onchange=()=>{x.done=c.checked;if(x.done&&ftId===x.id)stopFocus(false);saveT();renderTodo()};
+
+ const body=document.createElement("div");body.className="td-body";
+ const row=document.createElement("div");row.className="td-row";
+ if(x.time){const tm=document.createElement("span");tm.className="td-time";tm.textContent=x.time;row.appendChild(tm)}
+ if(x.type==="review"){const tg=document.createElement("span");tg.className="td-tag review";tg.textContent="복습";row.appendChild(tg)}
+ const t=document.createElement("span");t.className="td-t";t.textContent=x.text;row.appendChild(t);
+ if(x.mins){const mn=document.createElement("span");mn.className="td-tag";mn.textContent=`${x.mins}분`;row.appendChild(mn)}
+ body.appendChild(row);
+ if(x.cue){
+  const cue=document.createElement("div");cue.className="td-cue";
+  cue.textContent=`↳ 2분 시작: ${x.cue}`;body.appendChild(cue);
+ }
+
+ const acts=document.createElement("div");acts.className="td-acts";
+ if(!x.done){
+  const pl=document.createElement("button");pl.className="td-play";pl.textContent="▶";
+  pl.title=`${x.mins||25}분 집중 타이머 시작`;pl.setAttribute("aria-label","집중 타이머 시작");
+  pl.onclick=()=>startFocus(x);acts.appendChild(pl);
+ }
+ const del=document.createElement("button");del.className="td-x";del.textContent="✕";del.setAttribute("aria-label","삭제");
+ del.onclick=()=>{if(ftId===x.id)stopFocus(false);T=T.filter(y=>y.id!==x.id);saveT();renderTodo()};
+ acts.appendChild(del);
+
+ r.append(c,body,acts);
+ return r;
+}
+
 function renderTodo(){
  if(!tdDay)tdDay=today();
  $("tdDate").textContent=dayLabel(tdDay);
- const l=T.filter(x=>x.date===tdDay).sort((a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99")||a.id.localeCompare(b.id));
- $("tdProg").textContent=l.length?`${l.filter(x=>x.done).length}/${l.length} 완료`:"할 일 없음";
+ const sortFn=(a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99")||a.id.localeCompare(b.id);
+ const l=T.filter(x=>x.date===tdDay).sort(sortFn);
+ const mits=l.filter(x=>x.type==="mit"),others=l.filter(x=>x.type!=="mit");
+ const doneCnt=l.filter(x=>x.done).length,tdPct=l.length?Math.round(doneCnt/l.length*100):0;
+ $("tdProg").textContent=l.length?`${doneCnt}/${l.length} 완료 (${tdPct}%)`:"할 일 없음";
+ $("tdProg").classList.toggle("done",l.length>0&&doneCnt===l.length);
+ $("tdBar").style.width=tdPct+"%";
+
+ const tip=$("tdBrainTip");
+ tip.className="td-brain-tip";
+ if(!l.length){
+  tip.textContent="뇌과학 팁: 전두엽은 모호한 계획을 미룹니다. '언제 + 구체적 행동'과 '첫 2분 시작 단서'를 적어보세요.";
+ }else if(doneCnt===l.length){
+  tip.classList.add("done-tip");
+  tip.textContent="오늘 계획을 모두 마쳤습니다! 작은 완료 경험이 도파민 보상 회로를 강화해 내일의 실행력을 높입니다.";
+ }else if(mits.length>3){
+  tip.classList.add("warn-tip");
+  tip.textContent=`핵심(MIT)이 ${mits.length}개입니다. 작업기억 과부하를 막기 위해 핵심 몰입은 하루 3개 이하로 줄이는 것이 가장 효과적입니다.`;
+ }else if(mits.some(x=>!x.done)){
+  tip.textContent="전두엽 에너지가 가장 높을 때 🔥 핵심(MIT) 1개부터 ▶ 타이머를 켜고 2분 시작 단서만 실행해 보세요.";
+ }else{
+  tip.textContent="핵심 몰입을 모두 마쳤습니다! 남은 복습과 가벼운 일로 하루를 부드럽게 마무리하세요.";
+ }
+
  const late=T.filter(x=>!x.done&&x.date<today()),lb=$("tdLate");
  lb.classList.toggle("hide",!late.length||tdDay!==today());lb.innerHTML="";
- if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{late.forEach(x=>x.date=today());saveT();renderTodo()};lb.append(sp,b)}
+ if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개 (미완료 과제는 작업기억을 계속 소모합니다)`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{late.forEach(x=>x.date=today());saveT();renderTodo()};lb.append(sp,b)}
+
  const box=$("tdList");box.innerHTML="";
- if(!l.length)box.innerHTML='<div class="emptylesson" style="padding:14px">이 날의 계획이 없습니다.</div>';
- l.forEach(x=>{
-  const r=document.createElement("div");r.className="td-item"+(x.done?" done":"");
-  const c=document.createElement("input");c.type="checkbox";c.checked=!!x.done;c.setAttribute("aria-label","완료");
-  c.onchange=()=>{x.done=c.checked;saveT();renderTodo()};
-  const tm=document.createElement("span");tm.className="td-time";tm.textContent=x.time||"";
-  const t=document.createElement("span");t.className="td-t";t.textContent=x.text;
-  const del=document.createElement("button");del.className="td-x";del.textContent="✕";del.setAttribute("aria-label","삭제");
-  del.onclick=()=>{T=T.filter(y=>y.id!==x.id);saveT();renderTodo()};
-  r.append(c,tm,t,del);box.appendChild(r);
- });
+ if(!l.length){
+  box.innerHTML='<div class="emptylesson" style="padding:14px">이 날의 계획이 없습니다.</div>';
+ }else{
+  if(mits.length){
+   const gh=document.createElement("div");gh.className="td-group-label mit";
+   gh.innerHTML=`<span>🔥 핵심 몰입 (MIT · 전두엽 집중)</span><span>${mits.filter(x=>x.done).length}/${mits.length}</span>`;
+   box.appendChild(gh);
+   mits.forEach(x=>box.appendChild(makeTodoRow(x)));
+  }
+  if(others.length){
+   const gh=document.createElement("div");gh.className="td-group-label";
+   gh.innerHTML=`<span>📋 복습 · 가벼운 일</span><span>${others.filter(x=>x.done).length}/${others.length}</span>`;
+   box.appendChild(gh);
+   others.forEach(x=>box.appendChild(makeTodoRow(x)));
+  }
+ }
 }
 function parseTime(t){
  const m=t.match(/(오전|오후|아침|저녁|밤)?\s*(\d{1,2})\s*(?::(\d{2})|시(?!간)\s*(?:(\d{1,2})\s*분)?)/);
@@ -1222,12 +1411,19 @@ function parseTime(t){
 }
 function addTodo(){
  const raw=$("tdText").value.trim();if(!raw)return $("tdText").focus();
+ const day=tdDay||today();
  const{time,text}=parseTime(raw);
- T.push({id:newId(),date:tdDay||today(),time,text,done:false});
- $("tdText").value="";saveT();renderTodo();$("tdText").focus();
+ const cue=$("tdCue").value.trim();
+ const mins=+$("tdMins").value||0;
+ T.push({id:newId(),date:day,time,text,type:tdType,cue,mins,done:false});
+ $("tdText").value="";$("tdCue").value="";
+ // 핵심(MIT)이 3개에 도달하면 다음 입력은 자동으로 '복습/일반' 쪽으로 전환해 과부하 방지
+ if(tdType==="mit"&&T.filter(x=>x.date===day&&x.type==="mit").length>=3){tdType="normal";syncTdType()}
+ saveT();renderTodo();$("tdText").focus();
 }
 $("tdAdd").onclick=addTodo;
 $("tdText").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)addTodo()};
+$("tdCue").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)addTodo()};
 $("tdPrev").onclick=()=>{tdDay=addDays(tdDay||today(),-1);renderTodo()};
 $("tdNext").onclick=()=>{tdDay=addDays(tdDay||today(),1);renderTodo()};
 $("tdToday").onclick=()=>{tdDay=today();renderTodo()};
