@@ -244,6 +244,8 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .dump-item:last-child{border-bottom:0}
 .dump-t{flex:1;min-width:0;line-height:1.5;word-break:break-word}
 .dump-acts{display:flex;gap:4px;flex-shrink:0;align-items:center}
+.dump-item{flex-wrap:wrap}
+.dump-move{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--muted)}
 .td-cue{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
 .td-acts{display:flex;align-items:center;gap:2px;flex-shrink:0}
 .td-x{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 7px;opacity:.6}
@@ -629,6 +631,11 @@ details.box-card summary{cursor:pointer}
 <div class="td-add"><textarea id="dumpText" rows="2" placeholder="떠오르는 대로 적고 Enter (줄바꿈은 Shift+Enter)" aria-label="브레인 덤프"></textarea><button class="smallbtn primary" id="dumpAdd" style="align-self:flex-start">쏟아내기</button></div>
 <div id="dumpList" style="margin-top:8px"></div>
 </div>
+<div class="todo" id="reviewBox">
+<div class="todo-head"><strong style="min-width:0;text-align:left">🔄 오늘의 백지복습</strong><span class="pill" id="rvPill" style="margin:0 0 0 auto"></span></div>
+<div class="subtle" id="rvInfo" style="margin-bottom:10px"></div>
+<div class="actionrow"><button class="smallbtn primary" id="rvStart">복습 시작</button><button class="smallbtn" id="rvWeak">취약 문제 풀기</button></div>
+</div>
 <div class="todo" id="studyBox">
 <div class="todo-head"><strong id="stDate" style="min-width:0;text-align:left"></strong><span style="font-size:14px;font-weight:600">· 순공부 시간</span><span class="pill" id="stTotal" style="margin:0 0 0 auto"></span></div>
 <div class="st-row"><input id="stH" type="number" min="0" max="24" inputmode="numeric" placeholder="0" aria-label="시간"><span>시간</span><input id="stM" type="number" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="분"><span>분</span><button class="smallbtn primary" id="stSave">저장</button></div>
@@ -649,6 +656,7 @@ details.box-card summary{cursor:pointer}
 <button type="button" class="td-type-btn" data-type="review">🔄 복습</button>
 <button type="button" class="td-type-btn" data-type="normal">🌱 가벼운 일</button>
 <input id="tdCue" placeholder="시작 단서 (선택)" aria-label="시작 단서">
+<select id="tdRepeat" class="td-e-sm" aria-label="반복"><option value="">반복 안 함</option><option value="daily">🔁 매일</option><option value="weekdays">🔁 평일(월~금)</option><option value="weekly">🔁 매주 같은 요일</option></select>
 </div>
 </div>
 </div>
@@ -791,7 +799,7 @@ $("themeBtn").onclick=()=>{
 syncTheme();
 
 let Q=[],R={},H={},uid=null,ready=false;
-let T=[],tdDay=null,ST={},tdType="mit",SH={},D=[];
+let T=[],tdDay=null,ST={},tdType="mit",SH={},D=[],RU=[];
 let sel=subjects[0].name,flt="all",dflt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set(),t0=0,tick=null;
 let hintLv=0,confLv=null;
 
@@ -854,6 +862,10 @@ function updateTop(){
  const[a,b]=todayParts();
  $("reviewCount").textContent=a.length+b.length;$("weakCount").textContent=weakQs().length;
  const done=Q.filter(q=>rec(q).last===today()).length;$("todayCount").textContent=done;renderGrass();
+ {const n=a.length+b.length,w=weakQs().length;
+  $("rvPill").textContent=n?`${n}문제 남음`:"오늘 복습 완료";$("rvPill").classList.toggle("done",!n);
+  $("rvInfo").textContent=`복습 예정 ${a.length}개 · 새 문제 ${b.length}개 · 오늘 푼 문제 ${done}개`;
+  $("rvStart").disabled=!n;$("rvWeak").disabled=!w;$("rvWeak").textContent=w?`취약 문제 풀기 (${w})`:"취약 문제 없음"}
  const rem=a.length+b.length,tg=Math.min(cap(),done+rem),ex=ST.exam;
  let dd="시험일 미설정";
  if(ex){const n=dayDiff(today(),ex);dd=(n>0?`D-${n}`:n===0?"D-DAY":`D+${-n}`)+` (${ex.slice(5)})`}
@@ -1081,6 +1093,8 @@ function setNav(id,bank){
  $("pageTitle").textContent={homeNav:"오늘",studyNav:"과목 · 문제",bankNav:"문제 관리"}[id]||"백지복습 노트";
  if(bank){$("bankSearch").value="";if(!editId)$("mSubj").value=sel;renderBankList()}
 }
+$("rvStart").onclick=()=>$("reviewNav").click();
+$("rvWeak").onclick=()=>$("wrongNav").click();
 $("homeNav").onclick=()=>setNav("homeNav",false);
 $("studyNav").onclick=()=>setNav("studyNav",false);
 $("reviewNav").onclick=()=>{const[a,b]=todayParts(),l=shuffle([...a,...b]);l.length?startLesson(l,0):alert("오늘 예정된 복습 문제가 없습니다.")};
@@ -1303,7 +1317,25 @@ $("stReset").onclick=()=>{if(!SH[tdDay||today()]||confirm("이 날의 순공부 
 
 // ---- 뇌과학적 할 일 / 하루 계획 ----
 const tDoc=()=>doc(fs,"vaults",uid,"meta","todos"),sDoc=()=>doc(fs,"vaults",uid,"meta","settings");
-const saveT=()=>cloud(()=>setDoc(tDoc(),{items:T}));
+const saveT=()=>cloud(()=>setDoc(tDoc(),{items:T,rules:RU}));
+const MIT_MAX=3;
+const mitCount=(day,exceptId)=>T.filter(x=>x.date===day&&x.type==="mit"&&x.id!==exceptId).length;
+const mitFull=()=>alert(`핵심(MIT)은 하루 ${MIT_MAX}개까지만 정할 수 있어요. 가장 중요한 일에 집중하기 위한 제한입니다.\n다른 유형으로 바꾸거나 다른 날짜에 넣어 주세요.`);
+const skipRid=x=>{const r=RU.find(r=>r.id===x.rid);if(r){r.exc=r.exc||[];if(!r.exc.includes(x.date))r.exc.push(x.date)}};
+function ruleApplies(r,d){
+ if(d<r.start||(r.exc||[]).includes(d))return false;
+ const dow=new Date(d+"T00:00:00").getDay();
+ return r.freq==="daily"||(r.freq==="weekdays"&&dow>=1&&dow<=5)||(r.freq==="weekly"&&dow===r.dow);
+}
+function ensureRecurring(day){
+ let ch=false;
+ RU.forEach(r=>{
+  if(!ruleApplies(r,day)||T.some(x=>x.rid===r.id&&x.date===day))return;
+  const type=r.type==="mit"&&mitCount(day)>=MIT_MAX?"normal":r.type;
+  T.push({id:newId(),date:day,time:r.time||"",text:r.text,type,cue:r.cue||"",done:false,rid:r.id});ch=true;
+ });
+ if(ch&&ready)saveT();
+}
 const dayLabel=d=>{const w=["일","월","화","수","목","금","토"][new Date(d+"T00:00:00").getDay()];return `${d.slice(5).replace("-","/")} (${w})${d===today()?" · 오늘":""}`};
 
 function syncTdType(){
@@ -1334,13 +1366,27 @@ function makeEditRow(x){
   const raw=txt.value.trim();if(!raw)return txt.focus();
   let time=tm.value,text=raw;
   if(!time){const p=parseTime(raw);time=p.time;text=p.text}
-  Object.assign(x,{text,time,type:sel.value,cue:cue.value.trim(),date:dt.value||x.date});
+  const nd=dt.value||x.date,od=x.date;
+  if(sel.value==="mit"&&mitCount(nd,x.id)>=MIT_MAX)return mitFull();
+  if(x.rid&&nd!==od)skipRid(x);
+  Object.assign(x,{text,time,type:sel.value,cue:cue.value.trim(),date:nd});
+  if(applyAll&&applyAll.checked){
+   const ru=RU.find(q=>q.id===x.rid),v={text,time,type:sel.value,cue:cue.value.trim()};
+   if(ru){Object.assign(ru,v);T.forEach(y=>{if(y.rid===x.rid&&y.date>od&&!y.done)Object.assign(y,v)})}
+  }
   editTd=null;saveT();renderTodo();
  };
  const cancel=()=>{editTd=null;renderTodo()};
  ok.onclick=save;no.onclick=cancel;
  r.onkeydown=e=>{if(e.isComposing)return;if(e.key==="Enter"&&e.target.tagName!=="BUTTON"){e.preventDefault();save()}else if(e.key==="Escape")cancel()};
- body.append(txt,opts,cue,btns);r.appendChild(body);
+ let applyAll=null;
+ if(x.rid&&RU.some(q=>q.id===x.rid)){
+  const lb=document.createElement("label");lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted);margin-top:8px";
+  applyAll=document.createElement("input");applyAll.type="checkbox";
+  lb.append(applyAll,document.createTextNode("앞으로의 반복에도 적용 (날짜 제외)"));
+  body.append(txt,opts,cue,lb,btns);
+ }else body.append(txt,opts,cue,btns);
+ r.appendChild(body);
  setTimeout(()=>txt.focus(),0);
  return r;
 }
@@ -1355,6 +1401,7 @@ function makeTodoRow(x){
  const row=document.createElement("div");row.className="td-row";
  if(x.time){const tm=document.createElement("span");tm.className="td-time";tm.textContent=x.time;row.appendChild(tm)}
  if(x.type==="review"||x.type==="normal"||!x.type){const rv=x.type==="review",tg=document.createElement("span");tg.className="td-tag "+(rv?"review":"light");tg.textContent=rv?"복습":"가벼운 일";row.appendChild(tg)}
+ if(x.rid){const rt=document.createElement("span");rt.className="td-tag";rt.textContent="🔁 반복";rt.title="반복 할 일";row.appendChild(rt)}
  const t=document.createElement("span");t.className="td-t";t.textContent=x.text;t.ondblclick=()=>{editTd=x.id;renderTodo()};row.appendChild(t);
  body.appendChild(row);
  if(x.cue){
@@ -1366,7 +1413,14 @@ function makeTodoRow(x){
  const ed=document.createElement("button");ed.className="td-x";ed.textContent="✎";ed.setAttribute("aria-label","수정");
  ed.onclick=()=>{editTd=x.id;renderTodo()};
  const del=document.createElement("button");del.className="td-x";del.textContent="✕";del.setAttribute("aria-label","삭제");
- del.onclick=()=>{T=T.filter(y=>y.id!==x.id);saveT();renderTodo()};
+ del.onclick=()=>{
+  if(x.rid&&RU.some(r=>r.id===x.rid)){
+   if(confirm("이 날 하루만 삭제할까요?\n(취소를 누르면 앞으로의 반복 전체를 삭제할지 다시 묻습니다)")){skipRid(x);T=T.filter(y=>y.id!==x.id)}
+   else if(confirm("이 할 일의 반복 설정을 지우고, 오늘 이후의 모든 반복 일정을 삭제할까요?")){RU=RU.filter(r=>r.id!==x.rid);T=T.filter(y=>!(y.rid===x.rid&&y.date>=x.date)&&y.id!==x.id)}
+   else return;
+  }else T=T.filter(y=>y.id!==x.id);
+  saveT();renderTodo();
+ };
  acts.append(ed,del);
 
  r.append(c,body,acts);
@@ -1375,6 +1429,7 @@ function makeTodoRow(x){
 
 function renderTodo(){
  if(!tdDay)tdDay=today();
+ ensureRecurring(tdDay);
  renderStudy();
  $("tdDate").textContent=dayLabel(tdDay);
  const sortFn=(a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99")||a.id.localeCompare(b.id);
@@ -1387,7 +1442,13 @@ function renderTodo(){
 
  const late=T.filter(x=>!x.done&&x.date<today()),lb=$("tdLate");
  lb.classList.toggle("hide",!late.length||tdDay!==today());lb.innerHTML="";
- if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{late.forEach(x=>x.date=today());saveT();renderTodo()};lb.append(sp,b)}
+ if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{
+  late.forEach(x=>{
+   if(x.rid){skipRid(x);if(T.some(y=>y!==x&&y.rid===x.rid&&y.date===today())){T=T.filter(y=>y!==x);return}}
+   x.date=today();
+  });
+  saveT();renderTodo();
+ };lb.append(sp,b)}
 
  const box=$("tdList");box.innerHTML="";
  if(!l.length){
@@ -1423,10 +1484,12 @@ function addTodo(){
  const day=tdDay||today();
  const{time,text}=parseTime(raw);
  const cue=$("tdCue").value.trim();
- T.push({id:newId(),date:day,time,text,type:tdType,cue,done:false});
+ if(tdType==="mit"&&mitCount(day)>=MIT_MAX){mitFull();return}
+ const freq=$("tdRepeat").value;
+ if(freq)RU.push({id:newId(),text,time,type:tdType,cue,freq,dow:new Date(day+"T00:00:00").getDay(),start:day,exc:[]});
+ else T.push({id:newId(),date:day,time,text,type:tdType,cue,done:false});
  $("tdText").value="";$("tdCue").value="";
- if(tdType==="mit"&&T.filter(x=>x.date===day&&x.type==="mit").length>=3){tdType="normal";syncTdType()}
- saveT();renderTodo();$("tdText").focus();
+  saveT();renderTodo();if(tdType==="mit"&&mitCount(day)>=MIT_MAX){tdType="normal";syncTdType()}$("tdRepeat").value="";$("tdText").focus();
 }
 $("tdAdd").onclick=addTodo;
 $("tdText").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)addTodo()};
@@ -1439,25 +1502,39 @@ $("tdToday").onclick=()=>{tdDay=today();renderTodo()};
 const dumpDoc=()=>doc(fs,"vaults",uid,"meta","braindump");
 const saveD=()=>cloud(()=>setDoc(dumpDoc(),{items:D}));
 function dumpToTodo(x,type){
+ const day=tdDay||today();
+ if(type==="mit"&&mitCount(day)>=MIT_MAX)return mitFull();
  const{time,text}=parseTime(x.text);
- T.push({id:newId(),date:tdDay||today(),time,text,type,cue:"",done:false});
+ T.push({id:newId(),date:day,time,text,type,cue:"",done:false});
  D=D.filter(y=>y.id!==x.id);saveT();saveD();renderTodo();renderDump();
 }
+let editDump=null;
 function renderDump(){
  $("dumpCount").textContent=D.length?`${D.length}개`:"비어 있음";
  const box=$("dumpList");box.innerHTML="";
  if(!D.length){box.innerHTML='<div class="emptylesson" style="padding:12px">머릿속이 비어 있어요. 떠오르는 게 있으면 바로 적어 보세요.</div>';return}
  D.forEach(x=>{
   const r=document.createElement("div");r.className="dump-item";
-  const t=document.createElement("span");t.className="dump-t";t.textContent=x.text;
-  const a=document.createElement("div");a.className="dump-acts";
-  [["mit","🔥","핵심(MIT) 할 일로"],["review","🔄","복습 할 일로"],["normal","🌱","가벼운 일로"]].forEach(([ty,ic,tt])=>{
-   const b=document.createElement("button");b.className="smallbtn xs";b.textContent=ic;b.title=tt;b.setAttribute("aria-label",tt);
-   b.onclick=()=>dumpToTodo(x,ty);a.appendChild(b);
-  });
-  const del=document.createElement("button");del.className="td-x";del.textContent="✕";del.setAttribute("aria-label","삭제");
+  const mk=(cls,txt,label)=>{const b=document.createElement("button");b.className=cls;b.textContent=txt;if(label)b.setAttribute("aria-label",label);return b};
+  if(editDump===x.id){
+   const inp=document.createElement("input");inp.className="td-e-in";inp.style.cssText="flex:1;min-width:0;width:auto";inp.value=x.text;inp.setAttribute("aria-label","내용 수정");
+   const ok=mk("smallbtn primary xs","저장"),no=mk("smallbtn xs","취소"),acts=document.createElement("div");acts.className="dump-acts";
+   const save=()=>{const v=inp.value.trim();if(!v)return inp.focus();x.text=v;editDump=null;saveD();renderDump()};
+   const cancel=()=>{editDump=null;renderDump()};
+   ok.onclick=save;no.onclick=cancel;
+   inp.onkeydown=e=>{if(e.isComposing)return;if(e.key==="Enter"){e.preventDefault();save()}else if(e.key==="Escape")cancel()};
+   acts.append(ok,no);r.append(inp,acts);box.appendChild(r);setTimeout(()=>inp.focus(),0);return;
+  }
+  const t=document.createElement("span");t.className="dump-t";t.textContent=x.text;t.ondblclick=()=>{editDump=x.id;renderDump()};
+  const acts=document.createElement("div");acts.className="dump-acts";
+  const ed=mk("td-x","✎","수정"),del=mk("td-x","✕","삭제");
+  ed.onclick=()=>{editDump=x.id;renderDump()};
   del.onclick=()=>{D=D.filter(y=>y.id!==x.id);saveD();renderDump()};
-  a.appendChild(del);r.append(t,a);box.appendChild(r);
+  acts.append(ed,del);
+  const mv=document.createElement("div");mv.className="dump-move";
+  const lab=document.createElement("span");lab.textContent="할 일로 옮기기 →";mv.appendChild(lab);
+  [["mit","🔥 핵심"],["review","🔄 복습"],["normal","🌱 가벼운 일"]].forEach(([ty,tx])=>{const b=mk("smallbtn xs",tx);b.onclick=()=>dumpToTodo(x,ty);mv.appendChild(b)});
+  r.append(t,acts,mv);box.appendChild(r);
  });
 }
 function addDump(){
@@ -1484,7 +1561,7 @@ async function start(code,remember){
  try{
   const[qs,rs,hs,ts,ss,shs,dms]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc()),getDoc(tDoc()),getDoc(sDoc()),getDoc(shDoc()),getDoc(dumpDoc())]);
   Q=qs.docs.map(d=>({...d.data(),id:d.id}));R={};rs.docs.forEach(d=>R[d.id]=d.data());H=hs.exists()?hs.data().days||{}:{};
-  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60));tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];
+  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60));tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];RU=ts.exists()?ts.data().rules||[]:[];
   ready=true;$("warn").style.display="none";
   if(remember)LS.set("rq_code",code);else LS.del("rq_code");
  }catch(e){
