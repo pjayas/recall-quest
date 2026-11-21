@@ -238,11 +238,23 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .td-item.light-item{border-left:3px solid var(--blue);padding-left:10px}
 .td-group-label.rev{color:var(--green)}
 .td-group-label.light{color:var(--blue)}
-#dumpText{flex:1;min-width:0;border:1px solid var(--line-strong);border-radius:8px;padding:9px 12px;font:inherit;font-size:14.5px;line-height:1.55;background:var(--input);color:var(--ink);resize:vertical;min-height:44px}
+.dump-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dump-compose{display:flex;gap:8px;margin-top:10px;align-items:flex-end}
+#dumpText{flex:1;min-width:0;border:1px solid var(--line-strong);border-radius:10px;padding:10px 12px;font:inherit;font-size:14.5px;line-height:1.55;background:var(--input);color:var(--ink);resize:none;min-height:46px}
 #dumpText:focus{background:var(--paper);border-color:var(--green);outline:none}
-.dump-item{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid var(--line);font-size:14px}
-.dump-item:last-child{border-bottom:0}
-.dump-t{flex:1;min-width:0;line-height:1.5;word-break:break-word}
+.dump-hint{font-size:11.5px;color:var(--muted);margin-top:6px}
+#dumpList{margin-top:10px;max-height:340px;overflow-y:auto}
+.dump-item{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 8px;padding:11px 2px;border-top:1px solid var(--line)}
+.dump-t{flex:1;min-width:0;font-size:14.5px;line-height:1.55;word-break:break-word;white-space:pre-wrap}
+.dump-acts{display:flex;gap:2px;flex-shrink:0;align-items:center}
+.dump-move{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.dump-lab{font-size:11px;color:var(--muted);margin-right:2px}
+.dump-chip{border:1px solid transparent;border-radius:99px;padding:3px 11px;font-size:11.5px;font-weight:600}
+.dump-chip:hover{filter:brightness(.96)}
+.dump-chip.mit{background:var(--ochre-soft);border-color:var(--ochre-line);color:var(--ochre)}
+.dump-chip.review{background:var(--green-soft);border-color:var(--green-line);color:var(--green)}
+.dump-chip.normal{background:var(--blue-soft);color:var(--blue)}
+.dump-empty{padding:14px 2px 4px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
 .st-label{font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--muted)}
 .rv-main{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-top:8px}
 .rv-num{display:flex;align-items:baseline;gap:7px}
@@ -271,9 +283,6 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .st-row input{width:64px;border:1px solid var(--line-strong);border-radius:8px;padding:6px 8px;font:inherit;font-size:14.5px;background:var(--input);color:var(--ink);text-align:center}
 .st-row input:focus{background:var(--paper);border-color:var(--green);outline:none}
 .st-note{font-size:11.5px;color:var(--muted);flex-basis:100%}
-.dump-acts{display:flex;gap:4px;flex-shrink:0;align-items:center}
-.dump-item{flex-wrap:wrap}
-.dump-move{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--muted)}
 .td-cue{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
 .td-acts{display:flex;align-items:center;gap:2px;flex-shrink:0}
 .td-x{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 7px;opacity:.6}
@@ -645,10 +654,10 @@ details.box-card summary{cursor:pointer}
 
 <div id="homeView">
 <div class="todo" id="dumpBox">
-<div class="todo-head"><strong style="min-width:0;text-align:left">🧠 Brain Dump</strong><span class="pill" id="dumpCount" style="margin:0 0 0 auto"></span></div>
-<div class="subtle" style="margin-bottom:10px">머릿속에 떠오르는 걱정·할 일·아이디어를 정리하지 말고 일단 쏟아내세요. 여러 줄을 붙여넣으면 한 줄씩 따로 저장됩니다. 나중에 🔥 핵심 / 🔄 복습 / 🌱 가벼운 일 버튼으로 선택한 날짜의 할 일로 옮기거나 지우면 됩니다.</div>
-<div class="td-add"><textarea id="dumpText" rows="2" placeholder="떠오르는 대로 적고 Enter (줄바꿈은 Shift+Enter)" aria-label="브레인 덤프"></textarea><button class="smallbtn primary" id="dumpAdd" style="align-self:flex-start">쏟아내기</button></div>
-<div id="dumpList" style="margin-top:8px"></div>
+<div class="dump-head"><span class="st-label">BRAIN DUMP</span><span class="st-sub" id="dumpCount"></span></div>
+<div class="dump-compose"><textarea id="dumpText" rows="1" placeholder="머릿속에 있는 걸 일단 적어 두세요" aria-label="브레인 덤프"></textarea><button class="smallbtn primary" id="dumpAdd">추가</button></div>
+<div class="dump-hint">Enter 저장 · Shift+Enter 줄바꿈 · 여러 줄을 붙여넣으면 한 줄씩 따로 저장돼요</div>
+<div id="dumpList"></div>
 </div>
 <div class="todo" id="reviewBox">
 <span class="st-label">오늘의 백지복습</span>
@@ -1494,9 +1503,9 @@ function dumpToTodo(x,type){
 }
 let editDump=null;
 function renderDump(){
- $("dumpCount").textContent=D.length?`${D.length}개`:"비어 있음";
+ $("dumpCount").textContent=D.length?`${D.length}개`:"";
  const box=$("dumpList");box.innerHTML="";
- if(!D.length){box.innerHTML='<div class="emptylesson" style="padding:12px">머릿속이 비어 있어요. 떠오르는 게 있으면 바로 적어 보세요.</div>';return}
+ if(!D.length){box.innerHTML='<div class="dump-empty">비어 있어요. 떠오르는 게 있으면 바로 적어 보세요.</div>';return}
  D.forEach(x=>{
   const r=document.createElement("div");r.className="dump-item";
   const mk=(cls,txt,label)=>{const b=document.createElement("button");b.className=cls;b.textContent=txt;if(label)b.setAttribute("aria-label",label);return b};
@@ -1516,8 +1525,8 @@ function renderDump(){
   del.onclick=()=>{D=D.filter(y=>y.id!==x.id);saveD();renderDump()};
   acts.append(ed,del);
   const mv=document.createElement("div");mv.className="dump-move";
-  const lab=document.createElement("span");lab.textContent="할 일로 옮기기 →";mv.appendChild(lab);
-  [["mit","🔥 핵심"],["review","🔄 복습"],["normal","🌱 가벼운 일"]].forEach(([ty,tx])=>{const b=mk("smallbtn xs",tx);b.onclick=()=>dumpToTodo(x,ty);mv.appendChild(b)});
+  const lab=document.createElement("span");lab.className="dump-lab";lab.textContent="할 일로 옮기기";mv.appendChild(lab);
+  [["mit","핵심"],["review","복습"],["normal","가벼운 일"]].forEach(([ty,tx])=>{const b=mk("dump-chip "+ty,tx);b.onclick=()=>dumpToTodo(x,ty);mv.appendChild(b)});
   r.append(t,acts,mv);box.appendChild(r);
  });
 }
