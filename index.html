@@ -656,7 +656,6 @@ details.box-card summary{cursor:pointer}
 <button type="button" class="td-type-btn" data-type="review">🔄 복습</button>
 <button type="button" class="td-type-btn" data-type="normal">🌱 가벼운 일</button>
 <input id="tdCue" placeholder="시작 단서 (선택)" aria-label="시작 단서">
-<select id="tdRepeat" class="td-e-sm" aria-label="반복"><option value="">반복 안 함</option><option value="daily">🔁 매일</option><option value="weekdays">🔁 평일(월~금)</option><option value="weekly">🔁 매주 같은 요일</option></select>
 </div>
 </div>
 </div>
@@ -799,7 +798,7 @@ $("themeBtn").onclick=()=>{
 syncTheme();
 
 let Q=[],R={},H={},uid=null,ready=false;
-let T=[],tdDay=null,ST={},tdType="mit",SH={},D=[],RU=[];
+let T=[],tdDay=null,ST={},tdType="mit",SH={},D=[];
 let sel=subjects[0].name,flt="all",dflt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set(),t0=0,tick=null;
 let hintLv=0,confLv=null;
 
@@ -1317,25 +1316,10 @@ $("stReset").onclick=()=>{if(!SH[tdDay||today()]||confirm("이 날의 순공부 
 
 // ---- 뇌과학적 할 일 / 하루 계획 ----
 const tDoc=()=>doc(fs,"vaults",uid,"meta","todos"),sDoc=()=>doc(fs,"vaults",uid,"meta","settings");
-const saveT=()=>cloud(()=>setDoc(tDoc(),{items:T,rules:RU}));
+const saveT=()=>cloud(()=>setDoc(tDoc(),{items:T}));
 const MIT_MAX=3;
 const mitCount=(day,exceptId)=>T.filter(x=>x.date===day&&x.type==="mit"&&x.id!==exceptId).length;
 const mitFull=()=>alert(`핵심(MIT)은 하루 ${MIT_MAX}개까지만 정할 수 있어요. 가장 중요한 일에 집중하기 위한 제한입니다.\n다른 유형으로 바꾸거나 다른 날짜에 넣어 주세요.`);
-const skipRid=x=>{const r=RU.find(r=>r.id===x.rid);if(r){r.exc=r.exc||[];if(!r.exc.includes(x.date))r.exc.push(x.date)}};
-function ruleApplies(r,d){
- if(d<r.start||(r.exc||[]).includes(d))return false;
- const dow=new Date(d+"T00:00:00").getDay();
- return r.freq==="daily"||(r.freq==="weekdays"&&dow>=1&&dow<=5)||(r.freq==="weekly"&&dow===r.dow);
-}
-function ensureRecurring(day){
- let ch=false;
- RU.forEach(r=>{
-  if(!ruleApplies(r,day)||T.some(x=>x.rid===r.id&&x.date===day))return;
-  const type=r.type==="mit"&&mitCount(day)>=MIT_MAX?"normal":r.type;
-  T.push({id:newId(),date:day,time:r.time||"",text:r.text,type,cue:r.cue||"",done:false,rid:r.id});ch=true;
- });
- if(ch&&ready)saveT();
-}
 const dayLabel=d=>{const w=["일","월","화","수","목","금","토"][new Date(d+"T00:00:00").getDay()];return `${d.slice(5).replace("-","/")} (${w})${d===today()?" · 오늘":""}`};
 
 function syncTdType(){
@@ -1368,24 +1352,13 @@ function makeEditRow(x){
   if(!time){const p=parseTime(raw);time=p.time;text=p.text}
   const nd=dt.value||x.date,od=x.date;
   if(sel.value==="mit"&&mitCount(nd,x.id)>=MIT_MAX)return mitFull();
-  if(x.rid&&nd!==od)skipRid(x);
   Object.assign(x,{text,time,type:sel.value,cue:cue.value.trim(),date:nd});
-  if(applyAll&&applyAll.checked){
-   const ru=RU.find(q=>q.id===x.rid),v={text,time,type:sel.value,cue:cue.value.trim()};
-   if(ru){Object.assign(ru,v);T.forEach(y=>{if(y.rid===x.rid&&y.date>od&&!y.done)Object.assign(y,v)})}
-  }
   editTd=null;saveT();renderTodo();
  };
  const cancel=()=>{editTd=null;renderTodo()};
  ok.onclick=save;no.onclick=cancel;
  r.onkeydown=e=>{if(e.isComposing)return;if(e.key==="Enter"&&e.target.tagName!=="BUTTON"){e.preventDefault();save()}else if(e.key==="Escape")cancel()};
- let applyAll=null;
- if(x.rid&&RU.some(q=>q.id===x.rid)){
-  const lb=document.createElement("label");lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted);margin-top:8px";
-  applyAll=document.createElement("input");applyAll.type="checkbox";
-  lb.append(applyAll,document.createTextNode("앞으로의 반복에도 적용 (날짜 제외)"));
-  body.append(txt,opts,cue,lb,btns);
- }else body.append(txt,opts,cue,btns);
+ body.append(txt,opts,cue,btns);
  r.appendChild(body);
  setTimeout(()=>txt.focus(),0);
  return r;
@@ -1401,7 +1374,6 @@ function makeTodoRow(x){
  const row=document.createElement("div");row.className="td-row";
  if(x.time){const tm=document.createElement("span");tm.className="td-time";tm.textContent=x.time;row.appendChild(tm)}
  if(x.type==="review"||x.type==="normal"||!x.type){const rv=x.type==="review",tg=document.createElement("span");tg.className="td-tag "+(rv?"review":"light");tg.textContent=rv?"복습":"가벼운 일";row.appendChild(tg)}
- if(x.rid){const rt=document.createElement("span");rt.className="td-tag";rt.textContent="🔁 반복";rt.title="반복 할 일";row.appendChild(rt)}
  const t=document.createElement("span");t.className="td-t";t.textContent=x.text;t.ondblclick=()=>{editTd=x.id;renderTodo()};row.appendChild(t);
  body.appendChild(row);
  if(x.cue){
@@ -1413,14 +1385,7 @@ function makeTodoRow(x){
  const ed=document.createElement("button");ed.className="td-x";ed.textContent="✎";ed.setAttribute("aria-label","수정");
  ed.onclick=()=>{editTd=x.id;renderTodo()};
  const del=document.createElement("button");del.className="td-x";del.textContent="✕";del.setAttribute("aria-label","삭제");
- del.onclick=()=>{
-  if(x.rid&&RU.some(r=>r.id===x.rid)){
-   if(confirm("이 날 하루만 삭제할까요?\n(취소를 누르면 앞으로의 반복 전체를 삭제할지 다시 묻습니다)")){skipRid(x);T=T.filter(y=>y.id!==x.id)}
-   else if(confirm("이 할 일의 반복 설정을 지우고, 오늘 이후의 모든 반복 일정을 삭제할까요?")){RU=RU.filter(r=>r.id!==x.rid);T=T.filter(y=>!(y.rid===x.rid&&y.date>=x.date)&&y.id!==x.id)}
-   else return;
-  }else T=T.filter(y=>y.id!==x.id);
-  saveT();renderTodo();
- };
+ del.onclick=()=>{T=T.filter(y=>y.id!==x.id);saveT();renderTodo()};
  acts.append(ed,del);
 
  r.append(c,body,acts);
@@ -1429,7 +1394,6 @@ function makeTodoRow(x){
 
 function renderTodo(){
  if(!tdDay)tdDay=today();
- ensureRecurring(tdDay);
  renderStudy();
  $("tdDate").textContent=dayLabel(tdDay);
  const sortFn=(a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99")||a.id.localeCompare(b.id);
@@ -1442,13 +1406,7 @@ function renderTodo(){
 
  const late=T.filter(x=>!x.done&&x.date<today()),lb=$("tdLate");
  lb.classList.toggle("hide",!late.length||tdDay!==today());lb.innerHTML="";
- if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{
-  late.forEach(x=>{
-   if(x.rid){skipRid(x);if(T.some(y=>y!==x&&y.rid===x.rid&&y.date===today())){T=T.filter(y=>y!==x);return}}
-   x.date=today();
-  });
-  saveT();renderTodo();
- };lb.append(sp,b)}
+ if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{late.forEach(x=>x.date=today());saveT();renderTodo()};lb.append(sp,b)}
 
  const box=$("tdList");box.innerHTML="";
  if(!l.length){
@@ -1485,11 +1443,9 @@ function addTodo(){
  const{time,text}=parseTime(raw);
  const cue=$("tdCue").value.trim();
  if(tdType==="mit"&&mitCount(day)>=MIT_MAX){mitFull();return}
- const freq=$("tdRepeat").value;
- if(freq)RU.push({id:newId(),text,time,type:tdType,cue,freq,dow:new Date(day+"T00:00:00").getDay(),start:day,exc:[]});
- else T.push({id:newId(),date:day,time,text,type:tdType,cue,done:false});
+ T.push({id:newId(),date:day,time,text,type:tdType,cue,done:false});
  $("tdText").value="";$("tdCue").value="";
-  saveT();renderTodo();if(tdType==="mit"&&mitCount(day)>=MIT_MAX){tdType="normal";syncTdType()}$("tdRepeat").value="";$("tdText").focus();
+  saveT();renderTodo();if(tdType==="mit"&&mitCount(day)>=MIT_MAX){tdType="normal";syncTdType()}$("tdText").focus();
 }
 $("tdAdd").onclick=addTodo;
 $("tdText").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)addTodo()};
@@ -1561,7 +1517,7 @@ async function start(code,remember){
  try{
   const[qs,rs,hs,ts,ss,shs,dms]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc()),getDoc(tDoc()),getDoc(sDoc()),getDoc(shDoc()),getDoc(dumpDoc())]);
   Q=qs.docs.map(d=>({...d.data(),id:d.id}));R={};rs.docs.forEach(d=>R[d.id]=d.data());H=hs.exists()?hs.data().days||{}:{};
-  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60));tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];RU=ts.exists()?ts.data().rules||[]:[];
+  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60));tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];
   ready=true;$("warn").style.display="none";
   if(remember)LS.set("rq_code",code);else LS.del("rq_code");
  }catch(e){
