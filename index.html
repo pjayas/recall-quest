@@ -623,6 +623,12 @@ details.box-card summary{cursor:pointer}
 </div>
 
 <div id="homeView">
+<div class="todo" id="dumpBox">
+<div class="todo-head"><strong style="min-width:0;text-align:left">🧠 Brain Dump</strong><span class="pill" id="dumpCount" style="margin:0 0 0 auto"></span></div>
+<div class="subtle" style="margin-bottom:10px">머릿속에 떠오르는 걱정·할 일·아이디어를 정리하지 말고 일단 쏟아내세요. 여러 줄을 붙여넣으면 한 줄씩 따로 저장됩니다. 나중에 🔥 핵심 / 🔄 복습 / 🌱 가벼운 일 버튼으로 선택한 날짜의 할 일로 옮기거나 지우면 됩니다.</div>
+<div class="td-add"><textarea id="dumpText" rows="2" placeholder="떠오르는 대로 적고 Enter (줄바꿈은 Shift+Enter)" aria-label="브레인 덤프"></textarea><button class="smallbtn primary" id="dumpAdd" style="align-self:flex-start">쏟아내기</button></div>
+<div id="dumpList" style="margin-top:8px"></div>
+</div>
 <div class="todo" id="studyBox">
 <div class="todo-head"><strong id="stDate" style="min-width:0;text-align:left"></strong><span style="font-size:14px;font-weight:600">· 순공부 시간</span><span class="pill" id="stTotal" style="margin:0 0 0 auto"></span></div>
 <div class="st-row"><input id="stH" type="number" min="0" max="24" inputmode="numeric" placeholder="0" aria-label="시간"><span>시간</span><input id="stM" type="number" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="분"><span>분</span><button class="smallbtn primary" id="stSave">저장</button></div>
@@ -645,12 +651,6 @@ details.box-card summary{cursor:pointer}
 <input id="tdCue" placeholder="시작 단서 (선택)" aria-label="시작 단서">
 </div>
 </div>
-</div>
-<div class="todo" id="dumpBox">
-<div class="todo-head"><strong style="min-width:0;text-align:left">🧠 Brain Dump</strong><span class="pill" id="dumpCount" style="margin:0 0 0 auto"></span></div>
-<div class="subtle" style="margin-bottom:10px">머릿속에 떠오르는 걱정·할 일·아이디어를 정리하지 말고 일단 쏟아내세요. 여러 줄을 붙여넣으면 한 줄씩 따로 저장됩니다. 나중에 🔥 핵심 / 🔄 복습 / 🌱 가벼운 일 버튼으로 선택한 날짜의 할 일로 옮기거나 지우면 됩니다.</div>
-<div class="td-add"><textarea id="dumpText" rows="2" placeholder="떠오르는 대로 적고 Enter (줄바꿈은 Shift+Enter)" aria-label="브레인 덤프"></textarea><button class="smallbtn primary" id="dumpAdd" style="align-self:flex-start">쏟아내기</button></div>
-<div id="dumpList" style="margin-top:8px"></div>
 </div>
 </div>
 <div id="studyView" style="display:none">
