@@ -578,7 +578,8 @@ details.box-card summary{cursor:pointer}
 <div class="brand">✦ <span>RECALL</span></div>
 
 <div class="nav-group">
-<button class="nav active" id="studyNav">과목별 학습</button>
+<button class="nav active" id="homeNav">오늘 · 할 일</button>
+<button class="nav" id="studyNav">과목 · 문제</button>
 <button class="nav" id="reviewNav"><span>오늘의 백지복습</span><b id="reviewCount">0</b></button>
 <button class="nav" id="wrongNav"><span>취약 문제</span><b id="weakCount">0</b></button>
 <button class="nav" id="bankNav">문제 관리 / 추가</button>
@@ -617,11 +618,11 @@ details.box-card summary{cursor:pointer}
 <main>
 <div class="warn" id="warn"></div>
 <div class="top">
-<h1>백지복습 노트</h1>
+<h1 id="pageTitle">오늘</h1>
 <span class="top-date" id="topDate"></span>
 </div>
 
-<div id="studyView">
+<div id="homeView">
 <div class="todo" id="studyBox">
 <div class="todo-head"><strong id="stDate" style="min-width:0;text-align:left"></strong><span style="font-size:14px;font-weight:600">· 순공부 시간</span><span class="pill" id="stTotal" style="margin:0 0 0 auto"></span></div>
 <div class="st-row"><input id="stH" type="number" min="0" max="24" inputmode="numeric" placeholder="0" aria-label="시간"><span>시간</span><input id="stM" type="number" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="분"><span>분</span><button class="smallbtn primary" id="stSave">저장</button></div>
@@ -651,6 +652,8 @@ details.box-card summary{cursor:pointer}
 <div class="td-add"><textarea id="dumpText" rows="2" placeholder="떠오르는 대로 적고 Enter (줄바꿈은 Shift+Enter)" aria-label="브레인 덤프"></textarea><button class="smallbtn primary" id="dumpAdd" style="align-self:flex-start">쏟아내기</button></div>
 <div id="dumpList" style="margin-top:8px"></div>
 </div>
+</div>
+<div id="studyView" style="display:none">
 <div class="sectionhead desktop-hide"><h2>과목 선택</h2></div>
 <section class="subjects desktop-hide" id="subjects"></section>
 <div class="pathhead"><h2 id="pathTitle">문제 목록</h2></div>
@@ -859,7 +862,7 @@ function updateTop(){
 }
 function selectSubject(name){
  sel=name;
- if($("bankPanel").classList.contains("active"))setNav("studyNav",false);
+ if(!$("studyNav").classList.contains("active"))setNav("studyNav",false);
  renderSubjects();renderPath();
 }
 function renderSubjects(){
@@ -1072,9 +1075,13 @@ $("modalback").onclick=e=>{if(e.target===$("modalback"))closeModal()};
 // ---- 내비 / 설정 ----
 function setNav(id,bank){
  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));$(id).classList.add("active");
- $("studyView").style.display=bank?"none":"block";$("bankPanel").classList.toggle("active",bank);
+ $("homeView").style.display=id==="homeNav"?"block":"none";
+ $("studyView").style.display=id==="studyNav"?"block":"none";
+ $("bankPanel").classList.toggle("active",!!bank);
+ $("pageTitle").textContent={homeNav:"오늘",studyNav:"과목 · 문제",bankNav:"문제 관리"}[id]||"백지복습 노트";
  if(bank){$("bankSearch").value="";if(!editId)$("mSubj").value=sel;renderBankList()}
 }
+$("homeNav").onclick=()=>setNav("homeNav",false);
 $("studyNav").onclick=()=>setNav("studyNav",false);
 $("reviewNav").onclick=()=>{const[a,b]=todayParts(),l=shuffle([...a,...b]);l.length?startLesson(l,0):alert("오늘 예정된 복습 문제가 없습니다.")};
 $("wrongNav").onclick=()=>{const a=weakQs();a.length?startLesson(shuffle(a),0):alert("취약 문제가 없습니다.")};
