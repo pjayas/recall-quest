@@ -243,6 +243,34 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .dump-item{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid var(--line);font-size:14px}
 .dump-item:last-child{border-bottom:0}
 .dump-t{flex:1;min-width:0;line-height:1.5;word-break:break-word}
+.st-label{font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--muted)}
+.rv-main{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-top:8px}
+.rv-num{display:flex;align-items:baseline;gap:7px}
+.rv-num b{font-size:34px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--green);font-variant-numeric:tabular-nums}
+.rv-num span{font-size:13.5px;color:var(--ink-2);font-weight:500}
+.rv-info{font-size:12.5px;color:var(--muted);margin-top:8px}
+.rv-btns{display:flex;gap:8px;flex-wrap:wrap}
+.st-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.st-nav{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink)}
+.st-main{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:10px 0 2px}
+.st-big{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
+.st-big.zero{color:var(--line-strong)}
+.st-sub{font-size:12.5px;color:var(--muted)}
+.st-quick{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 2px;align-items:center}
+.st-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:16px 0 2px;align-items:end}
+.st-col{display:flex;flex-direction:column;align-items:center;gap:3px}
+.st-val{font-size:10.5px;color:var(--muted);height:13px;font-variant-numeric:tabular-nums}
+.st-bar{width:60%;max-width:28px;height:40px;display:flex;align-items:flex-end;border-bottom:1px solid var(--line-strong)}
+.st-bar i{display:block;width:100%;background:var(--grass-3);border-radius:3px 3px 0 0;min-height:2px}
+.st-col.cur .st-bar i{background:var(--green)}
+.st-col small{font-size:11px;color:var(--muted)}
+.st-col.cur small{color:var(--ink);font-weight:700}
+.st-manual{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.st-manual summary{cursor:pointer;font-size:12.5px;color:var(--muted);font-weight:500}
+.st-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--ink-2)}
+.st-row input{width:64px;border:1px solid var(--line-strong);border-radius:8px;padding:6px 8px;font:inherit;font-size:14.5px;background:var(--input);color:var(--ink);text-align:center}
+.st-row input:focus{background:var(--paper);border-color:var(--green);outline:none}
+.st-note{font-size:11.5px;color:var(--muted);flex-basis:100%}
 .dump-acts{display:flex;gap:4px;flex-shrink:0;align-items:center}
 .dump-item{flex-wrap:wrap}
 .dump-move{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--muted)}
@@ -254,15 +282,6 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .td-e-in,.td-e-sm{border:1px solid var(--line-strong);border-radius:7px;padding:6px 10px;font:inherit;font-size:13.5px;background:var(--input);color:var(--ink)}
 .td-e-in{width:100%}
 .td-t{cursor:text}
-.st-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:var(--ink-2)}
-.st-row input{width:72px;border:1px solid var(--line-strong);border-radius:8px;padding:8px 10px;font:inherit;font-size:15px;background:var(--input);color:var(--ink);text-align:center}
-.st-row input:focus{background:var(--paper);border-color:var(--green);outline:none}
-.st-week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:14px 0 6px}
-.st-col{display:flex;flex-direction:column;align-items:center;gap:4px}
-.st-bar{width:100%;height:46px;background:var(--soft);border-radius:4px;display:flex;align-items:flex-end;overflow:hidden}
-.st-bar i{display:block;width:100%;background:var(--grass-3)}
-.st-col small{font-size:11px;color:var(--muted)}
-.st-col.cur small{color:var(--ink);font-weight:700}
 .td-composer{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
 .td-add{display:flex;gap:8px}
 #tdText{
@@ -632,17 +651,22 @@ details.box-card summary{cursor:pointer}
 <div id="dumpList" style="margin-top:8px"></div>
 </div>
 <div class="todo" id="reviewBox">
-<div class="todo-head"><strong style="min-width:0;text-align:left">🔄 오늘의 백지복습</strong><span class="pill" id="rvPill" style="margin:0 0 0 auto"></span></div>
-<div class="subtle" id="rvInfo" style="margin-bottom:10px"></div>
-<div class="actionrow"><button class="smallbtn primary" id="rvStart">복습 시작</button><button class="smallbtn" id="rvWeak">취약 문제 풀기</button></div>
+<span class="st-label">오늘의 백지복습</span>
+<div class="rv-main">
+<div><div class="rv-num"><b id="rvNum">0</b><span id="rvUnit">문제 남음</span></div><div class="rv-info" id="rvInfo"></div></div>
+<div class="rv-btns"><button class="smallbtn primary" id="rvStart">복습 시작</button><button class="smallbtn" id="rvWeak">취약 문제 풀기</button></div>
+</div>
+<div class="td-prog-bar" style="margin:14px 0 0" aria-hidden="true"><i id="rvBar"></i></div>
 </div>
 <div class="todo" id="studyBox">
-<div class="todo-head"><strong id="stDate" style="min-width:0;text-align:left"></strong><span style="font-size:14px;font-weight:600">· 순공부 시간</span><span class="pill" id="stTotal" style="margin:0 0 0 auto"></span></div>
-<div class="st-row"><input id="stH" type="number" min="0" max="24" inputmode="numeric" placeholder="0" aria-label="시간"><span>시간</span><input id="stM" type="number" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="분"><span>분</span><button class="smallbtn primary" id="stSave">저장</button></div>
-<div class="st-row"><button class="smallbtn xs" data-st="10">+10분</button><button class="smallbtn xs" data-st="30">+30분</button><button class="smallbtn xs" data-st="60">+1시간</button><button class="smallbtn xs" data-st="-10">-10분</button><button class="smallbtn danger xs" id="stReset">초기화</button></div>
+<div class="st-head"><span class="st-label">순공부 시간</span>
+<div class="st-nav"><button class="smallbtn xs" id="stPrev" aria-label="이전 날">‹</button><span id="stDate"></span><button class="smallbtn xs" id="stNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="stToday">오늘</button></div></div>
+<div class="st-main"><div class="st-big" id="stBig">0분</div><div class="st-sub" id="stSum"></div></div>
 <div class="st-week" id="stWeek"></div>
-<div class="subtle" id="stSum" style="margin:0"></div>
-<div class="subtle" style="margin:4px 0 0">휴대폰·잡담·멍때림을 뺀 집중 공부 시간만 적으세요. 위의 날짜 이동(‹ ›)을 따라갑니다.</div>
+<div class="st-quick"><button class="smallbtn xs" data-st="10">+10분</button><button class="smallbtn xs" data-st="30">+30분</button><button class="smallbtn xs" data-st="60">+1시간</button><button class="smallbtn xs" data-st="-10">-10분</button><button class="smallbtn danger xs" id="stReset">초기화</button></div>
+<details class="st-manual"><summary>직접 입력</summary>
+<div class="st-row"><input id="stH" type="number" min="0" max="24" inputmode="numeric" placeholder="0" aria-label="시간"><span>시간</span><input id="stM" type="number" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="분"><span>분</span><button class="smallbtn primary xs" id="stSave">저장</button><span class="st-note">휴대폰·잡담·멍때림을 뺀 집중 시간만 적으세요.</span></div>
+</details>
 </div>
 <div class="todo" id="todoBox">
 <div class="todo-head"><button class="smallbtn xs" id="tdPrev" aria-label="이전 날">‹</button><strong id="tdDate"></strong><button class="smallbtn xs" id="tdNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="tdToday">오늘</button><span class="pill" id="tdProg" style="margin:0 0 0 auto"></span></div>
@@ -862,8 +886,9 @@ function updateTop(){
  $("reviewCount").textContent=a.length+b.length;$("weakCount").textContent=weakQs().length;
  const done=Q.filter(q=>rec(q).last===today()).length;$("todayCount").textContent=done;renderGrass();
  {const n=a.length+b.length,w=weakQs().length;
-  $("rvPill").textContent=n?`${n}문제 남음`:"오늘 복습 완료";$("rvPill").classList.toggle("done",!n);
-  $("rvInfo").textContent=`복습 예정 ${a.length}개 · 새 문제 ${b.length}개 · 오늘 푼 문제 ${done}개`;
+  $("rvNum").textContent=n;$("rvUnit").textContent=n?"문제 남음":"문제 남음 · 오늘 복습 완료";
+  $("rvInfo").textContent=`복습 예정 ${a.length} · 새 문제 ${b.length} · 오늘 푼 문제 ${done}`;
+  $("rvBar").style.width=(done+n?Math.round(done/(done+n)*100):0)+"%";
   $("rvStart").disabled=!n;$("rvWeak").disabled=!w;$("rvWeak").textContent=w?`취약 문제 풀기 (${w})`:"취약 문제 없음"}
  const rem=a.length+b.length,tg=Math.min(cap(),done+rem),ex=ST.exam;
  let dd="시험일 미설정";
@@ -1297,11 +1322,11 @@ function renderStudy(force){
  if(!tdDay)tdDay=today();
  const m=SH[tdDay]||0;
  $("stDate").textContent=dayLabel(tdDay);
- $("stTotal").textContent=m?fmtMin(m):"기록 없음";
+ $("stBig").textContent=fmtMin(m);$("stBig").classList.toggle("zero",!m);$("stToday").classList.toggle("hide",tdDay===today());
  if(force||stDayShown!==tdDay){stDayShown=tdDay;$("stH").value=m?Math.floor(m/60):"";$("stM").value=m?m%60:""}
  const days=[];for(let i=6;i>=0;i--)days.push(addDays(tdDay,-i));
  const vals=days.map(d=>SH[d]||0),sum=vals.reduce((a,b)=>a+b,0),mx=Math.max(240,...vals),wk=["일","월","화","수","목","금","토"];
- $("stWeek").innerHTML=days.map((d,i)=>`<div class="st-col${d===tdDay?" cur":""}" title="${d}: ${fmtMin(vals[i])}"><div class="st-bar"><i style="height:${vals[i]/mx*100}%"></i></div><small>${wk[new Date(d+"T00:00:00").getDay()]}</small></div>`).join("");
+ $("stWeek").innerHTML=days.map((d,i)=>`<div class="st-col${d===tdDay?" cur":""}" title="${d}: ${fmtMin(vals[i])}"><div class="st-val">${vals[i]?(vals[i]/60).toFixed(1).replace(/\.0$/,"")+"h":""}</div><div class="st-bar">${vals[i]?`<i style="height:${vals[i]/mx*100}%"></i>`:""}</div><small>${wk[new Date(d+"T00:00:00").getDay()]}</small></div>`).join("");
  $("stSum").textContent=`최근 7일 합계 ${fmtMin(sum)} · 하루 평균 ${fmtMin(sum/7)}`;
  $("studyToday").textContent=fmtMin(SH[today()]||0);
 }
@@ -1312,6 +1337,9 @@ function setStudy(m){
 $("stSave").onclick=()=>setStudy((+$("stH").value||0)*60+(+$("stM").value||0));
 ["stH","stM"].forEach(i=>$(i).onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)$("stSave").click()});
 document.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>setStudy((SH[tdDay||today()]||0)+Number(b.dataset.st)));
+$("stPrev").onclick=()=>{tdDay=addDays(tdDay||today(),-1);renderTodo()};
+$("stNext").onclick=()=>{tdDay=addDays(tdDay||today(),1);renderTodo()};
+$("stToday").onclick=()=>{tdDay=today();renderTodo()};
 $("stReset").onclick=()=>{if(!SH[tdDay||today()]||confirm("이 날의 순공부 시간을 0으로 초기화할까요?"))setStudy(0)};
 
 // ---- 뇌과학적 할 일 / 하루 계획 ----
