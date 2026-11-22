@@ -719,7 +719,7 @@ details.box-card summary{cursor:pointer}
 <div class="td-add"><input id="tdText" placeholder="할 일 (예: 오후 3시 운영체제 복습)" aria-label="할 일"><button class="smallbtn primary" id="tdAdd">추가</button></div>
 <div class="td-opts">
 <button type="button" class="td-type-btn on" data-type="mit">🔥 핵심(MIT)</button>
-<button type="button" class="td-type-btn" data-type="review">🔄 복습</button>
+<button type="button" class="td-type-btn" data-type="review">📖 공부</button>
 <button type="button" class="td-type-btn" data-type="normal">🌱 가벼운 일</button>
 <input id="tdCue" placeholder="시작 단서 (선택)" aria-label="시작 단서">
 </div>
@@ -1447,7 +1447,7 @@ function makeEditRow(x){
  const tm=document.createElement("input");tm.type="time";tm.value=x.time||"";tm.className="td-e-sm";tm.setAttribute("aria-label","시간");
  const dt=document.createElement("input");dt.type="date";dt.value=x.date;dt.className="td-e-sm";dt.setAttribute("aria-label","날짜");
  const sel=document.createElement("select");sel.className="td-e-sm";sel.setAttribute("aria-label","유형");
- [["mit","🔥 핵심(MIT)"],["review","🔄 복습"],["normal","🌱 가벼운 일"]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;sel.appendChild(o)});
+ [["mit","🔥 핵심(MIT)"],["review","📖 공부"],["normal","🌱 가벼운 일"]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;sel.appendChild(o)});
  sel.value=x.type||"normal";
  const cue=document.createElement("input");cue.className="td-e-in";cue.style.marginTop="8px";cue.placeholder="시작 단서 (선택)";cue.value=x.cue||"";cue.setAttribute("aria-label","시작 단서");
  opts.append(tm,dt,sel);
@@ -1527,7 +1527,7 @@ function renderTodo(){
    box.appendChild(gh);
    mits.forEach(x=>box.appendChild(makeTodoRow(x)));
   }
-  [["rev","🔄 복습",revs],["light","🌱 가벼운 일",lights]].forEach(([cls,label,arr])=>{
+  [["rev","📖 공부",revs],["light","🌱 가벼운 일",lights]].forEach(([cls,label,arr])=>{
    if(!arr.length)return;
    const gh=document.createElement("div");gh.className="td-group-label "+cls;
    gh.innerHTML=`<span>${label}</span><span>${arr.filter(x=>x.done).length}/${arr.length}</span>`;
