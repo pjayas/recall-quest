@@ -667,16 +667,6 @@ details.box-card summary{cursor:pointer}
 </div>
 <div class="td-prog-bar" style="margin:14px 0 0" aria-hidden="true"><i id="rvBar"></i></div>
 </div>
-<div class="todo" id="studyBox">
-<div class="st-head"><span class="st-label">순공부 시간</span>
-<div class="st-nav"><button class="smallbtn xs" id="stPrev" aria-label="이전 날">‹</button><span id="stDate"></span><button class="smallbtn xs" id="stNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="stToday">오늘</button></div></div>
-<div class="st-main"><div class="st-big" id="stBig">0분</div><div class="st-sub" id="stSum"></div></div>
-<div class="st-week" id="stWeek"></div>
-<div class="st-quick"><button class="smallbtn xs" data-st="10">+10분</button><button class="smallbtn xs" data-st="30">+30분</button><button class="smallbtn xs" data-st="60">+1시간</button><button class="smallbtn xs" data-st="-10">-10분</button><button class="smallbtn danger xs" id="stReset">초기화</button></div>
-<details class="st-manual"><summary>직접 입력</summary>
-<div class="st-row"><input id="stH" type="number" min="0" max="24" inputmode="numeric" placeholder="0" aria-label="시간"><span>시간</span><input id="stM" type="number" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="분"><span>분</span><button class="smallbtn primary xs" id="stSave">저장</button><span class="st-note">휴대폰·잡담·멍때림을 뺀 집중 시간만 적으세요.</span></div>
-</details>
-</div>
 <div class="todo" id="todoBox">
 <div class="todo-head"><button class="smallbtn xs" id="tdPrev" aria-label="이전 날">‹</button><strong id="tdDate"></strong><button class="smallbtn xs" id="tdNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="tdToday">오늘</button><span class="pill" id="tdProg" style="margin:0 0 0 auto"></span></div>
 <div class="td-prog-bar" aria-hidden="true"><i id="tdBar"></i></div>
@@ -691,6 +681,16 @@ details.box-card summary{cursor:pointer}
 <input id="tdCue" placeholder="시작 단서 (선택)" aria-label="시작 단서">
 </div>
 </div>
+</div>
+<div class="todo" id="studyBox">
+<div class="st-head"><span class="st-label">순공부 시간</span>
+<div class="st-nav"><button class="smallbtn xs" id="stPrev" aria-label="이전 날">‹</button><span id="stDate"></span><button class="smallbtn xs" id="stNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="stToday">오늘</button></div></div>
+<div class="st-main"><div class="st-big" id="stBig">0분</div><div class="st-sub" id="stSum"></div></div>
+<div class="st-week" id="stWeek"></div>
+<div class="st-quick"><button class="smallbtn xs" data-st="10">+10분</button><button class="smallbtn xs" data-st="30">+30분</button><button class="smallbtn xs" data-st="60">+1시간</button><button class="smallbtn xs" data-st="-10">-10분</button><button class="smallbtn danger xs" id="stReset">초기화</button></div>
+<details class="st-manual"><summary>직접 입력</summary>
+<div class="st-row"><input id="stH" type="number" min="0" max="24" inputmode="numeric" placeholder="0" aria-label="시간"><span>시간</span><input id="stM" type="number" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="분"><span>분</span><button class="smallbtn primary xs" id="stSave">저장</button><span class="st-note">휴대폰·잡담·멍때림을 뺀 집중 시간만 적으세요.</span></div>
+</details>
 </div>
 </div>
 <div id="studyView" style="display:none">
