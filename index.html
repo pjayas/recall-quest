@@ -1482,7 +1482,7 @@ function makeTodoRow(x){
  const body=document.createElement("div");body.className="td-body";
  const row=document.createElement("div");row.className="td-row";
  if(x.time){const tm=document.createElement("span");tm.className="td-time";tm.textContent=x.time;row.appendChild(tm)}
- if(x.type==="review"||x.type==="normal"||!x.type){const rv=x.type==="review",tg=document.createElement("span");tg.className="td-tag "+(rv?"review":"light");tg.textContent=rv?"복습":"가벼운 일";row.appendChild(tg)}
+ if(x.type==="review"||x.type==="normal"||!x.type){const rv=x.type==="review",tg=document.createElement("span");tg.className="td-tag "+(rv?"review":"light");tg.textContent=rv?"공부":"가벼운 일";row.appendChild(tg)}
  const t=document.createElement("span");t.className="td-t";t.textContent=x.text;t.ondblclick=()=>{editTd=x.id;renderTodo()};row.appendChild(t);
  body.appendChild(row);
  if(x.cue){
@@ -1773,7 +1773,7 @@ function renderDump(){
   acts.append(ed,del);
   const mv=document.createElement("div");mv.className="dump-move";
   const lab=document.createElement("span");lab.className="dump-lab";lab.textContent="할 일로 옮기기";mv.appendChild(lab);
-  [["mit","핵심"],["review","복습"],["normal","가벼운 일"]].forEach(([ty,tx])=>{const b=mk("dump-chip "+ty,tx);b.onclick=()=>dumpToTodo(x,ty);mv.appendChild(b)});
+  [["mit","핵심"],["review","공부"],["normal","가벼운 일"]].forEach(([ty,tx])=>{const b=mk("dump-chip "+ty,tx);b.onclick=()=>dumpToTodo(x,ty);mv.appendChild(b)});
   r.append(t,acts,mv);box.appendChild(r);
  });
 }
