@@ -11,7 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$']]}}</script>
+<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]}}</script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
 <style>
 :root{
@@ -238,6 +238,42 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .td-item.light-item{border-left:3px solid var(--blue);padding-left:10px}
 .td-group-label.rev{color:var(--green)}
 .td-group-label.light{color:var(--blue)}
+.nt-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;margin-bottom:12px}
+.nt-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
+.nt-chip{border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-2);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:500}
+.nt-chip.on{background:var(--green-soft);border-color:var(--green);color:var(--green);font-weight:600}
+.nt-search{width:100%;border:1px solid var(--line-strong);border-radius:10px;padding:10px 12px;font:inherit;font-size:14.5px;background:var(--input);color:var(--ink);margin-bottom:14px}
+.nt-search:focus{background:var(--paper);border-color:var(--green);outline:none}
+.nt-card{display:block;width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px;box-shadow:var(--shadow)}
+.nt-card:hover{border-color:var(--line-strong)}
+.nt-card h3{margin:0 0 4px;font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.45}
+.nt-meta{display:flex;gap:7px;align-items:center;font-size:11.5px;color:var(--muted);margin-bottom:6px;flex-wrap:wrap}
+.nt-prev{font-size:13px;color:var(--ink-2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nt-read{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:26px 30px;box-shadow:var(--shadow)}
+.nt-toc{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:22px;background:var(--input)}
+.nt-toc summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--ink-2)}
+#ntTocList{max-height:260px;overflow-y:auto;margin-top:8px}
+.nt-toc-item{display:block;width:100%;text-align:left;border:0;background:none;padding:4px 6px;font-size:13px;color:var(--ink-2);border-radius:6px}
+.nt-toc-item:hover{background:var(--soft)}
+.nt-toc-item.sub{padding-left:22px;color:var(--muted);font-size:12.5px}
+.nt-body{font-size:15px;line-height:1.85;overflow-wrap:anywhere;word-break:keep-all}
+.nt-body h1{font-size:20px;margin:36px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line);line-height:1.4}
+.nt-body h1:first-child{margin-top:0}
+.nt-body h2{font-size:16.5px;margin:24px 0 8px;line-height:1.45}
+.nt-body h3{font-size:15px;margin:18px 0 6px}
+.nt-body p{margin:0 0 10px}
+.nt-body ul,.nt-body ol{padding-left:22px;margin:0 0 10px}
+.nt-body blockquote{margin:14px 0;padding:8px 16px;border-left:3px solid var(--green);background:var(--green-soft);border-radius:0 8px 8px 0}
+.nt-body blockquote p{margin:4px 0}
+.nt-body table{border-collapse:collapse;margin:12px 0;font-size:13.5px;display:block;overflow-x:auto;max-width:100%}
+.nt-body th,.nt-body td{border:1px solid var(--line);padding:7px 11px;text-align:left}
+.nt-body th{background:var(--sidebar)}
+.nt-body code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.9em}
+.nt-body pre{background:var(--input);border:1px solid var(--line);padding:12px;border-radius:8px;overflow-x:auto}
+.nt-body pre code{background:none;padding:0}
+.nt-body img{max-width:100%}
+.nt-body a{color:var(--blue)}
+.nt-body mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%}
 .dump-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .dump-compose{display:flex;gap:8px;margin-top:10px;align-items:flex-end}
 #dumpText{flex:1;min-width:0;border:1px solid var(--line-strong);border-radius:10px;padding:10px 12px;font:inherit;font-size:14.5px;line-height:1.55;background:var(--input);color:var(--ink);resize:none;min-height:46px}
@@ -610,6 +646,7 @@ details.box-card summary{cursor:pointer}
 <div class="nav-group">
 <button class="nav active" id="homeNav">오늘 · 할 일</button>
 <button class="nav" id="studyNav">과목 · 문제</button>
+<button class="nav" id="notesNav"><span>정리 노트</span><b id="noteCount">0</b></button>
 <button class="nav" id="reviewNav"><span>오늘의 백지복습</span><b id="reviewCount">0</b></button>
 <button class="nav" id="wrongNav"><span>취약 문제</span><b id="weakCount">0</b></button>
 <button class="nav" id="bankNav">문제 관리 / 추가</button>
@@ -691,6 +728,29 @@ details.box-card summary{cursor:pointer}
 <details class="st-manual"><summary>직접 입력</summary>
 <div class="st-row"><input id="stH" type="number" min="0" max="24" inputmode="numeric" placeholder="0" aria-label="시간"><span>시간</span><input id="stM" type="number" min="0" max="59" inputmode="numeric" placeholder="0" aria-label="분"><span>분</span><button class="smallbtn primary xs" id="stSave">저장</button><span class="st-note">휴대폰·잡담·멍때림을 뺀 집중 시간만 적으세요.</span></div>
 </details>
+</div>
+</div>
+<div id="notesView" style="display:none">
+<div id="ntList">
+<div class="nt-bar"><div class="nt-chips" id="ntChips"></div><button class="smallbtn primary" id="ntNew">+ 새 노트</button></div>
+<input class="nt-search" id="ntSearch" placeholder="노트 제목·내용 검색" aria-label="노트 검색">
+<div id="ntWarn" class="warn" style="display:none"></div>
+<div id="ntCards"></div>
+</div>
+<div id="ntRead" class="hide">
+<div class="actionrow" style="margin-bottom:12px"><button class="smallbtn" id="ntBack">← 목록</button><span style="flex:1"></span><button class="smallbtn" id="ntEditBtn">수정</button><button class="smallbtn danger" id="ntDel">삭제</button></div>
+<div class="nt-read">
+<div class="nt-meta" id="ntRMeta"></div>
+<h2 id="ntRTitle" style="margin:0 0 16px;font-size:22px;line-height:1.4;letter-spacing:-.01em"></h2>
+<details class="nt-toc hide" id="ntToc"><summary></summary><div id="ntTocList"></div></details>
+<div class="nt-body" id="ntBodyView"></div>
+</div>
+</div>
+<div id="ntForm" class="hide todo">
+<div class="field"><label for="ntSubj">과목</label><select id="ntSubj"></select></div>
+<div class="field"><label for="ntTitle">제목 (비우면 첫 번째 제목 사용)</label><input id="ntTitle" placeholder="예: 운영체제 – 메모리 관리 전략"></div>
+<div class="field"><label for="ntText">내용 (마크다운·수식 지원)</label><textarea id="ntText" style="min-height:380px" placeholder="AI가 정리해 준 설명을 그대로 붙여넣으세요"></textarea></div>
+<div class="actionrow"><button class="smallbtn primary" id="ntSave">저장</button><button class="smallbtn" id="ntCancel">취소</button></div>
 </div>
 </div>
 <div id="studyView" style="display:none">
@@ -831,7 +891,7 @@ $("themeBtn").onclick=()=>{
 syncTheme();
 
 let Q=[],R={},H={},uid=null,ready=false;
-let T=[],tdDay=null,ST={},tdType="mit",SH={},D=[];
+let T=[],tdDay=null,ST={},tdType="mit",SH={},D=[],N=[],notesOk=true;
 let sel=subjects[0].name,flt="all",dflt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set(),t0=0,tick=null;
 let hintLv=0,confLv=null;
 
@@ -847,8 +907,9 @@ async function batchDelete(refs){for(let i=0;i<refs.length;i+=400){const b=write
 
 try{marked.use(markedHighlight.markedHighlight({langPrefix:"hljs language-",highlight:(c,l)=>hljs.highlight(c,{language:hljs.getLanguage(l)?l:"plaintext"}).value}))}catch(e){console.error(e)}
 function md(t){try{return md2(t)}catch(e){return"<p>"+esc(t).replace(/\n/g,"<br>")+"</p>"}}
+const fixMath=s=>s.replace(/^\\{2}([\[(])/,"\\$1").replace(/\\{2}([\])])$/,"\\$1").replace(/\\_/g,"_");
 function md2(t){
- const m=[];t=t.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g,s=>{m.push(s);return`@@M${m.length-1}@@`});
+ const m=[];t=t.replace(/\\{1,2}\[[\s\S]+?\\{1,2}\]|\\{1,2}\([^\n]+?\\{1,2}\)|\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g,s=>{m.push(fixMath(s));return`@@M${m.length-1}@@`});
  return DOMPurify.sanitize(marked.parse(t)).replace(/@@M(\d+)@@/g,(_,i)=>esc(m[i]));
 }
 function render(id,t){const e=$(id);e.innerHTML=t?md(t):"";if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([e]).catch(()=>{})}
@@ -1122,14 +1183,16 @@ function setNav(id,bank){
  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));$(id).classList.add("active");
  $("homeView").style.display=id==="homeNav"?"block":"none";
  $("studyView").style.display=id==="studyNav"?"block":"none";
+ $("notesView").style.display=id==="notesNav"?"block":"none";
  $("bankPanel").classList.toggle("active",!!bank);
- $("pageTitle").textContent={homeNav:"오늘",studyNav:"과목 · 문제",bankNav:"문제 관리"}[id]||"백지복습 노트";
+ $("pageTitle").textContent={homeNav:"오늘",studyNav:"과목 · 문제",notesNav:"정리 노트",bankNav:"문제 관리"}[id]||"백지복습 노트";
  if(bank){$("bankSearch").value="";if(!editId)$("mSubj").value=sel;renderBankList()}
 }
 $("rvStart").onclick=()=>$("reviewNav").click();
 $("rvWeak").onclick=()=>$("wrongNav").click();
 $("homeNav").onclick=()=>setNav("homeNav",false);
 $("studyNav").onclick=()=>setNav("studyNav",false);
+$("notesNav").onclick=()=>{setNav("notesNav",false);ntView("ntList");renderNotes()};
 $("reviewNav").onclick=()=>{const[a,b]=todayParts(),l=shuffle([...a,...b]);l.length?startLesson(l,0):alert("오늘 예정된 복습 문제가 없습니다.")};
 $("wrongNav").onclick=()=>{const a=weakQs();a.length?startLesson(shuffle(a),0):alert("취약 문제가 없습니다.")};
 $("bankNav").onclick=()=>setNav("bankNav",true);
@@ -1294,7 +1357,7 @@ $("wipeBtn").onclick=()=>{
 
 // ---- 백업 / 복원 ----
 $("exportBtn").onclick=()=>{
- const blob=new Blob([JSON.stringify({version:4,questions:Q,records:R,history:H,study:SH,dump:D},null,1)],{type:"application/json"});
+ const blob=new Blob([JSON.stringify({version:4,questions:Q,records:R,history:H,study:SH,dump:D,notes:N},null,1)],{type:"application/json"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`recall-backup-${today()}.json`;a.click();URL.revokeObjectURL(a.href);
 };
 $("importBtn").onclick=()=>$("importFile").click();
@@ -1319,6 +1382,7 @@ $("importFile").onchange=async e=>{
   if(shChanged)items.push([shDoc(),{days:SH}]);
   let dChanged=false;(Array.isArray(j.dump)?j.dump:[]).forEach(x=>{if(x&&x.text&&!D.some(y=>y.text===x.text)){D.push({id:newId(),text:String(x.text),created:x.created||today()});dChanged=true}});
   if(dChanged)items.push([dumpDoc(),{items:D}]);
+  (Array.isArray(j.notes)?j.notes:[]).forEach(x=>{if(!x||!x.body||N.some(y=>y.subject===x.subject&&y.title===x.title))return;const nid=x.id&&!N.some(y=>y.id===String(x.id))?String(x.id):newId(),n={id:nid,subject:x.subject||"기타",title:String(x.title||"제목 없음"),body:String(x.body),created:x.created||today(),updated:x.updated||x.created||today()};N.push(n);items.push([nDoc(nid),n])});
   refresh();await cloud(()=>batchSet(items));alert(`${n}개 문제를 가져왔습니다.`);
  }catch(err){alert("파일을 읽을 수 없습니다: "+err.message)}
 };
@@ -1491,6 +1555,73 @@ $("tdPrev").onclick=()=>{tdDay=addDays(tdDay||today(),-1);renderTodo()};
 $("tdNext").onclick=()=>{tdDay=addDays(tdDay||today(),1);renderTodo()};
 $("tdToday").onclick=()=>{tdDay=today();renderTodo()};
 
+// ---- 정리 노트 ----
+const nCol=()=>collection(fs,"vaults",uid,"notes"),nDoc=id=>doc(fs,"vaults",uid,"notes",id);
+const NT_SUBJ=[...subjects.map(x=>x.name),"기타"];
+let ntSel="all",ntEditId=null,ntCurId=null;
+$("ntSubj").innerHTML=NT_SUBJ.map(n=>`<option>${n}</option>`).join("");
+const ntColor=n=>(subjects.find(x=>x.name===n)||{color:"#7a766d"}).color;
+const ntPlain=t=>t.replace(/[#>*_`|\\$\[\]()-]/g," ").replace(/\s+/g," ").trim();
+function ntView(v){["ntList","ntRead","ntForm"].forEach(i=>$(i).classList.toggle("hide",i!==v));window.scrollTo(0,0)}
+function renderNotes(){
+ $("noteCount").textContent=N.length;
+ $("ntWarn").style.display=notesOk?"none":"block";
+ $("ntWarn").textContent="노트 저장소에 접근하지 못했어요. Firestore 보안 규칙에서 notes 컬렉션을 허용해 주세요.";
+ const chips=$("ntChips");chips.innerHTML="";
+ [["all","전체",N.length],...NT_SUBJ.map(n=>[n,n,N.filter(x=>x.subject===n).length])].forEach(([v,l,c])=>{
+  if(v!=="all"&&!c&&ntSel!==v)return;
+  const b=document.createElement("button");b.className="nt-chip"+(ntSel===v?" on":"");b.textContent=`${l} ${c}`;
+  b.onclick=()=>{ntSel=v;renderNotes()};chips.appendChild(b);
+ });
+ const k=$("ntSearch").value.trim().toLowerCase();
+ const list=N.filter(n=>(ntSel==="all"||n.subject===ntSel)&&(!k||(n.title+" "+n.body).toLowerCase().includes(k))).sort((a,b)=>(b.updated||"").localeCompare(a.updated||"")||(b.created||"").localeCompare(a.created||""));
+ const box=$("ntCards");box.innerHTML="";
+ if(!list.length){box.innerHTML=`<div class="emptylesson">${N.length?"조건에 맞는 노트가 없습니다.":"아직 노트가 없어요.<br>[+ 새 노트]에 AI가 정리해 준 설명을 붙여넣어 모아 보세요."}</div>`;return}
+ list.forEach(n=>{
+  const c=document.createElement("button");c.className="nt-card";
+  const hn=(n.body.match(/^\s*#\s+/gm)||[]).length;
+  c.innerHTML=`<div class="nt-meta"><i class="path-dot" style="background:${ntColor(n.subject)}"></i><span>${esc(n.subject)}</span><span>· ${esc(n.updated||n.created||"")}</span>${hn>1?`<span>· 목차 ${hn}개</span>`:""}</div><h3>${esc(n.title)}</h3><div class="nt-prev">${esc(ntPlain(n.body).slice(0,160))}</div>`;
+  c.onclick=()=>openNote(n.id);box.appendChild(c);
+ });
+}
+function openNote(id){
+ const n=N.find(x=>x.id===id);if(!n)return;ntCurId=id;
+ $("ntRTitle").textContent=n.title;
+ $("ntRMeta").innerHTML=`<i class="path-dot" style="background:${ntColor(n.subject)}"></i><span>${esc(n.subject)}</span><span>· ${esc(n.updated||n.created||"")}</span>`;
+ render("ntBodyView",n.body);
+ const hs=[...$("ntBodyView").querySelectorAll("h1,h2")],toc=$("ntToc"),tl=$("ntTocList");tl.innerHTML="";
+ if(hs.length>=3){
+  hs.forEach(h=>{const b=document.createElement("button");b.className="nt-toc-item"+(h.tagName==="H2"?" sub":"");b.textContent=h.textContent;b.onclick=()=>h.scrollIntoView({behavior:"smooth",block:"start"});tl.appendChild(b)});
+  toc.querySelector("summary").textContent=`목차 (${hs.length})`;toc.open=false;toc.classList.remove("hide");
+ }else toc.classList.add("hide");
+ ntView("ntRead");
+}
+function editNote(id){
+ ntEditId=id||null;const n=id?N.find(x=>x.id===id):null;
+ $("ntSubj").value=n?n.subject:(ntSel!=="all"?ntSel:NT_SUBJ[0]);$("ntTitle").value=n?n.title:"";$("ntText").value=n?n.body:"";
+ ntView("ntForm");$("ntTitle").focus();
+}
+$("ntNew").onclick=()=>editNote(null);
+$("ntSearch").oninput=renderNotes;
+$("ntBack").onclick=()=>{ntView("ntList");renderNotes()};
+$("ntEditBtn").onclick=()=>editNote(ntCurId);
+$("ntCancel").onclick=()=>{if(ntEditId)openNote(ntEditId);else ntView("ntList")};
+$("ntSave").onclick=()=>{
+ const body=$("ntText").value.trim();if(!body)return alert("내용을 입력해 주세요.");
+ if(body.length>300000)return alert("노트가 너무 깁니다. 여러 개로 나누어 저장해 주세요.");
+ let title=$("ntTitle").value.trim();
+ if(!title){const m=body.match(/^\s*#{1,6}\s*(.+)$/m);title=(m?m[1]:body.split("\n")[0]).replace(/[*_`#]/g,"").trim().slice(0,100)||"제목 없음"}
+ if(!ready)return cloud(()=>{});
+ const subject=$("ntSubj").value;let n;
+ if(ntEditId){n=N.find(x=>x.id===ntEditId);Object.assign(n,{subject,title,body,updated:today()})}
+ else{n={id:newId(),subject,title,body,created:today(),updated:today()};N.unshift(n)}
+ cloud(()=>setDoc(nDoc(n.id),n));renderNotes();openNote(n.id);
+};
+$("ntDel").onclick=()=>{
+ const n=N.find(x=>x.id===ntCurId);if(!n||!confirm(`"${n.title}" 노트를 삭제할까요?`))return;
+ N=N.filter(x=>x.id!==n.id);cloud(()=>deleteDoc(nDoc(n.id)));renderNotes();ntView("ntList");
+};
+
 // ---- Brain Dump ----
 const dumpDoc=()=>doc(fs,"vaults",uid,"meta","braindump");
 const saveD=()=>cloud(()=>setDoc(dumpDoc(),{items:D}));
@@ -1552,9 +1683,9 @@ async function start(code,remember){
  $("loginScreen").classList.add("hide");$("loader").classList.remove("hide");
  uid=code;
  try{
-  const[qs,rs,hs,ts,ss,shs,dms]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc()),getDoc(tDoc()),getDoc(sDoc()),getDoc(shDoc()),getDoc(dumpDoc())]);
+  const[qs,rs,hs,ts,ss,shs,dms,nts]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc()),getDoc(tDoc()),getDoc(sDoc()),getDoc(shDoc()),getDoc(dumpDoc()),getDocs(nCol()).catch(()=>null)]);
   Q=qs.docs.map(d=>({...d.data(),id:d.id}));R={};rs.docs.forEach(d=>R[d.id]=d.data());H=hs.exists()?hs.data().days||{}:{};
-  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60));tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];
+  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60));tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];notesOk=!!nts;N=nts?nts.docs.map(d=>({...d.data(),id:d.id})):[];
   ready=true;$("warn").style.display="none";
   if(remember)LS.set("rq_code",code);else LS.del("rq_code");
  }catch(e){
@@ -1562,7 +1693,7 @@ async function start(code,remember){
   if(e.code==="permission-denied"){uid=null;LS.del("rq_code");return showLogin("접근 번호가 올바르지 않습니다.")}
   $("warn").textContent="클라우드 데이터를 불러오지 못해 저장이 잠겨 있습니다. 새로고침 후 다시 시도해 주세요.";$("warn").style.display="block";
  }
- renderSubjects();renderPath();updateTop();renderTodo();renderDump();$("loader").classList.add("hide");
+ renderSubjects();renderPath();updateTop();renderTodo();renderDump();renderNotes();$("loader").classList.add("hide");
 }
 $("loginBtn").onclick=()=>{
  const c=$("codeInput").value.trim();
