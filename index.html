@@ -11,6 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]}}</script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
 <style>
@@ -238,6 +239,11 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .td-item.light-item{border-left:3px solid var(--blue);padding-left:10px}
 .td-group-label.rev{color:var(--green)}
 .td-group-label.light{color:var(--blue)}
+a.smallbtn{text-decoration:none;display:inline-block}
+.nt-read.pdfmode{padding:18px 16px}
+.pdf-page{background:#fff;margin:0 auto 12px;border:1px solid var(--line);box-shadow:var(--shadow);width:100%;overflow:hidden}
+.pdf-page canvas{display:block;width:100%;height:100%}
+.nt-frame{width:100%;height:80vh;border:1px solid var(--line);border-radius:8px}
 .nt-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;margin-bottom:12px}
 .nt-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
 .nt-chip{border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-2);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:500}
@@ -732,7 +738,7 @@ details.box-card summary{cursor:pointer}
 </div>
 <div id="notesView" style="display:none">
 <div id="ntList">
-<div class="nt-bar"><div class="nt-chips" id="ntChips"></div><button class="smallbtn primary" id="ntNew">+ 새 노트</button></div>
+<div class="nt-bar"><div class="nt-chips" id="ntChips"></div><div class="actionrow"><button class="smallbtn primary" id="ntNewPdf">+ PDF 올리기</button><button class="smallbtn" id="ntNew">+ 텍스트 노트</button></div></div>
 <input class="nt-search" id="ntSearch" placeholder="노트 제목·내용 검색" aria-label="노트 검색">
 <div id="ntWarn" class="warn" style="display:none"></div>
 <div id="ntCards"></div>
@@ -742,14 +748,16 @@ details.box-card summary{cursor:pointer}
 <div class="nt-read">
 <div class="nt-meta" id="ntRMeta"></div>
 <h2 id="ntRTitle" style="margin:0 0 16px;font-size:22px;line-height:1.4;letter-spacing:-.01em"></h2>
+<div class="actionrow hide" id="ntPdfBar" style="margin-bottom:14px;align-items:center"><a class="smallbtn" id="ntPdfOpen" target="_blank" rel="noopener">새 탭에서 열기</a><a class="smallbtn" id="ntPdfDl">다운로드</a><span class="subtle" id="ntPdfInfo" style="margin:0 0 0 auto"></span></div>
 <details class="nt-toc hide" id="ntToc"><summary></summary><div id="ntTocList"></div></details>
 <div class="nt-body" id="ntBodyView"></div>
 </div>
 </div>
 <div id="ntForm" class="hide todo">
 <div class="field"><label for="ntSubj">과목</label><select id="ntSubj"></select></div>
-<div class="field"><label for="ntTitle">제목 (비우면 첫 번째 제목 사용)</label><input id="ntTitle" placeholder="예: 운영체제 – 메모리 관리 전략"></div>
-<div class="field"><label for="ntText">내용 (마크다운·수식 지원)</label><textarea id="ntText" style="min-height:380px" placeholder="AI가 정리해 준 설명을 그대로 붙여넣으세요"></textarea></div>
+<div class="field"><label for="ntTitle">제목 (비우면 자동: 첫 제목 또는 파일 이름)</label><input id="ntTitle" placeholder="예: 운영체제 – 메모리 관리 전략"></div>
+<div class="field hide" id="ntFileF"><label for="ntFile">PDF 파일 (최대 15MB)</label><input type="file" id="ntFile" accept="application/pdf,.pdf"></div>
+<div class="field" id="ntTextF"><label for="ntText">내용 (마크다운·수식 지원)</label><textarea id="ntText" style="min-height:380px" placeholder="AI가 정리해 준 설명을 그대로 붙여넣으세요"></textarea></div>
 <div class="actionrow"><button class="smallbtn primary" id="ntSave">저장</button><button class="smallbtn" id="ntCancel">취소</button></div>
 </div>
 </div>
@@ -1357,7 +1365,7 @@ $("wipeBtn").onclick=()=>{
 
 // ---- 백업 / 복원 ----
 $("exportBtn").onclick=()=>{
- const blob=new Blob([JSON.stringify({version:4,questions:Q,records:R,history:H,study:SH,dump:D,notes:N},null,1)],{type:"application/json"});
+ const blob=new Blob([JSON.stringify({version:4,questions:Q,records:R,history:H,study:SH,dump:D,notes:N.filter(n=>n.type!=="pdf")},null,1)],{type:"application/json"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`recall-backup-${today()}.json`;a.click();URL.revokeObjectURL(a.href);
 };
 $("importBtn").onclick=()=>$("importFile").click();
@@ -1562,7 +1570,7 @@ let ntSel="all",ntEditId=null,ntCurId=null;
 $("ntSubj").innerHTML=NT_SUBJ.map(n=>`<option>${n}</option>`).join("");
 const ntColor=n=>(subjects.find(x=>x.name===n)||{color:"#7a766d"}).color;
 const ntPlain=t=>t.replace(/[#>*_`|\\$\[\]()-]/g," ").replace(/\s+/g," ").trim();
-function ntView(v){["ntList","ntRead","ntForm"].forEach(i=>$(i).classList.toggle("hide",i!==v));window.scrollTo(0,0)}
+function ntView(v){["ntList","ntRead","ntForm"].forEach(i=>$(i).classList.toggle("hide",i!==v));if(v!=="ntRead")pdfCleanup();window.scrollTo(0,0)}
 function renderNotes(){
  $("noteCount").textContent=N.length;
  $("ntWarn").style.display=notesOk?"none":"block";
@@ -1580,46 +1588,154 @@ function renderNotes(){
  list.forEach(n=>{
   const c=document.createElement("button");c.className="nt-card";
   const hn=(n.body.match(/^\s*#\s+/gm)||[]).length;
-  c.innerHTML=`<div class="nt-meta"><i class="path-dot" style="background:${ntColor(n.subject)}"></i><span>${esc(n.subject)}</span><span>· ${esc(n.updated||n.created||"")}</span>${hn>1?`<span>· 목차 ${hn}개</span>`:""}</div><h3>${esc(n.title)}</h3><div class="nt-prev">${esc(ntPlain(n.body).slice(0,160))}</div>`;
+  c.innerHTML=`<div class="nt-meta"><i class="path-dot" style="background:${ntColor(n.subject)}"></i><span>${esc(n.subject)}</span><span>· ${esc(n.updated||n.created||"")}</span>${n.type==="pdf"?`<span>· PDF ${((n.size||0)/1048576).toFixed(1)}MB</span>`:hn>1?`<span>· 목차 ${hn}개</span>`:""}</div><h3>${esc(n.title)}</h3><div class="nt-prev">${n.type==="pdf"?"PDF 문서 · 눌러서 바로 보기":esc(ntPlain(n.body).slice(0,160))}</div>`;
   c.onclick=()=>openNote(n.id);box.appendChild(c);
  });
 }
+const PDF_MAX=15*1024*1024,CH=600000,PDFJS_WORKER="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const fchunk=(id,i)=>doc(fs,"vaults",uid,"notefiles",id+"_"+i);
+const pdfCache=new Map();
+let pdfObs=null,pdfDoc=null,pdfUrl=null,pdfToken=0;
+function pdfCleanup(){
+ pdfToken++;
+ if(pdfObs){pdfObs.disconnect();pdfObs=null}
+ if(pdfDoc){try{pdfDoc.destroy()}catch(e){}pdfDoc=null}
+ if(pdfUrl){URL.revokeObjectURL(pdfUrl);pdfUrl=null}
+ $("ntBodyView").innerHTML="";$("ntPdfBar").classList.add("hide");
+}
+function bufToB64(buf){const u=new Uint8Array(buf);let t="";for(let i=0;i<u.length;i+=0x8000)t+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(t)}
+async function loadPdfBytes(n){
+ if(pdfCache.has(n.id))return pdfCache.get(n.id);
+ const snaps=await Promise.all(Array.from({length:n.chunks||0},(_,i)=>getDoc(fchunk(n.id,i))));
+ let b64="";snaps.forEach((sn,i)=>{if(!sn.exists())throw new Error(`파일 조각 ${i+1}/${snaps.length}을 찾을 수 없습니다`);b64+=sn.data().d});
+ const bin=atob(b64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+ if(pdfCache.size>=2)pdfCache.clear();
+ pdfCache.set(n.id,u);return u;
+}
+async function renderPdfPage(doc0,box){
+ try{
+  const pg=await doc0.getPage(+box.dataset.p),cw=box.clientWidth||800,v0=pg.getViewport({scale:1}),dpr=Math.min(window.devicePixelRatio||1,2);
+  const vp=pg.getViewport({scale:cw/v0.width*dpr}),cv=document.createElement("canvas");
+  cv.width=Math.floor(vp.width);cv.height=Math.floor(vp.height);
+  box.style.aspectRatio=`${v0.width} / ${v0.height}`;
+  await pg.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise;
+  box.appendChild(cv);
+ }catch(e){console.error(e)}
+}
+async function pdfOutline(doc0,host,tok){
+ try{
+  const ol=await doc0.getOutline();if(!ol||tok!==pdfToken)return;
+  const flat=[];(function walk(items,d){items.forEach(it=>{flat.push([it,d]);if(it.items&&it.items.length&&d<1)walk(it.items,d+1)})})(ol,0);
+  if(flat.length<3)return;
+  const tl=$("ntTocList");tl.innerHTML="";
+  flat.forEach(([it,d])=>{
+   const b=document.createElement("button");b.className="nt-toc-item"+(d?" sub":"");b.textContent=it.title;
+   b.onclick=async()=>{
+    try{let dest=it.dest;if(typeof dest==="string")dest=await doc0.getDestination(dest);if(!dest)return;
+     const idx=typeof dest[0]==="number"?dest[0]:await doc0.getPageIndex(dest[0]);
+     host.children[idx]&&host.children[idx].scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}
+   };
+   tl.appendChild(b);
+  });
+  $("ntToc").querySelector("summary").textContent=`목차 (${flat.length})`;$("ntToc").open=false;$("ntToc").classList.remove("hide");
+ }catch(e){}
+}
+async function showPdf(n){
+ const tok=pdfToken,host=$("ntBodyView");
+ host.innerHTML='<div class="subtle">PDF를 불러오는 중...</div>';
+ try{
+  const u=await loadPdfBytes(n);if(tok!==pdfToken)return;
+  pdfUrl=URL.createObjectURL(new Blob([u],{type:"application/pdf"}));
+  $("ntPdfOpen").href=pdfUrl;$("ntPdfDl").href=pdfUrl;$("ntPdfDl").download=n.title.replace(/[\\/:*?"<>|]/g,"_")+".pdf";$("ntPdfBar").classList.remove("hide");
+  if(!window.pdfjsLib){host.innerHTML=`<iframe class="nt-frame" src="${pdfUrl}"></iframe>`;$("ntPdfInfo").textContent=`${((n.size||u.length)/1048576).toFixed(1)}MB`;return}
+  pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_WORKER;
+  const d0=await pdfjsLib.getDocument({data:u.slice()}).promise;
+  if(tok!==pdfToken){d0.destroy();return}
+  pdfDoc=d0;host.innerHTML="";
+  $("ntPdfInfo").textContent=`${d0.numPages}쪽 · ${((n.size||u.length)/1048576).toFixed(1)}MB`;
+  const p1=await d0.getPage(1),v1=p1.getViewport({scale:1});
+  pdfObs=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting&&!en.target.dataset.done){en.target.dataset.done="1";renderPdfPage(d0,en.target)}}),{rootMargin:"700px 0px"});
+  for(let i=1;i<=d0.numPages;i++){
+   const box=document.createElement("div");box.className="pdf-page";box.dataset.p=i;box.style.aspectRatio=`${v1.width} / ${v1.height}`;
+   host.appendChild(box);pdfObs.observe(box);
+  }
+  pdfOutline(d0,host,tok);
+ }catch(e){
+  console.error(e);if(tok===pdfToken)host.innerHTML=`<div class="warn" style="display:block">PDF를 불러오지 못했습니다: ${esc(e.message||e)}</div>`;
+ }
+}
 function openNote(id){
  const n=N.find(x=>x.id===id);if(!n)return;ntCurId=id;
+ pdfCleanup();
  $("ntRTitle").textContent=n.title;
  $("ntRMeta").innerHTML=`<i class="path-dot" style="background:${ntColor(n.subject)}"></i><span>${esc(n.subject)}</span><span>· ${esc(n.updated||n.created||"")}</span>`;
+ $("ntToc").classList.add("hide");$("ntTocList").innerHTML="";
+ $("ntRead").querySelector(".nt-read").classList.toggle("pdfmode",n.type==="pdf");
+ ntView("ntRead");
+ if(n.type==="pdf"){showPdf(n);return}
  render("ntBodyView",n.body);
- const hs=[...$("ntBodyView").querySelectorAll("h1,h2")],toc=$("ntToc"),tl=$("ntTocList");tl.innerHTML="";
+ const hs=[...$("ntBodyView").querySelectorAll("h1,h2")],tl=$("ntTocList");
  if(hs.length>=3){
   hs.forEach(h=>{const b=document.createElement("button");b.className="nt-toc-item"+(h.tagName==="H2"?" sub":"");b.textContent=h.textContent;b.onclick=()=>h.scrollIntoView({behavior:"smooth",block:"start"});tl.appendChild(b)});
-  toc.querySelector("summary").textContent=`목차 (${hs.length})`;toc.open=false;toc.classList.remove("hide");
- }else toc.classList.add("hide");
- ntView("ntRead");
+  $("ntToc").querySelector("summary").textContent=`목차 (${hs.length})`;$("ntToc").open=false;$("ntToc").classList.remove("hide");
+ }
 }
-function editNote(id){
+let ntMode="text";
+function editNote(id,mode){
  ntEditId=id||null;const n=id?N.find(x=>x.id===id):null;
- $("ntSubj").value=n?n.subject:(ntSel!=="all"?ntSel:NT_SUBJ[0]);$("ntTitle").value=n?n.title:"";$("ntText").value=n?n.body:"";
- ntView("ntForm");$("ntTitle").focus();
+ ntMode=n?(n.type==="pdf"?"pdfedit":"text"):(mode||"text");
+ $("ntTextF").classList.toggle("hide",ntMode!=="text");$("ntFileF").classList.toggle("hide",ntMode!=="pdfnew");
+ $("ntSubj").value=n?n.subject:(ntSel!=="all"?ntSel:NT_SUBJ[0]);$("ntTitle").value=n?n.title:"";$("ntText").value=n&&n.type!=="pdf"?n.body:"";$("ntFile").value="";
+ $("ntSave").textContent=ntMode==="pdfnew"?"업로드":"저장";$("ntSave").disabled=false;
+ ntView("ntForm");$(ntMode==="pdfnew"?"ntFile":"ntTitle").focus();
 }
-$("ntNew").onclick=()=>editNote(null);
+$("ntNew").onclick=()=>editNote(null,"text");
+$("ntNewPdf").onclick=()=>editNote(null,"pdfnew");
+$("ntFile").onchange=()=>{const f=$("ntFile").files[0];if(f&&!$("ntTitle").value.trim())$("ntTitle").value=f.name.replace(/\.pdf$/i,"")};
 $("ntSearch").oninput=renderNotes;
 $("ntBack").onclick=()=>{ntView("ntList");renderNotes()};
 $("ntEditBtn").onclick=()=>editNote(ntCurId);
 $("ntCancel").onclick=()=>{if(ntEditId)openNote(ntEditId);else ntView("ntList")};
-$("ntSave").onclick=()=>{
+$("ntSave").onclick=async()=>{
+ if(!ready)return cloud(()=>{});
+ const subject=$("ntSubj").value;let title=$("ntTitle").value.trim();
+ if(ntMode==="pdfnew"){
+  const f=$("ntFile").files[0];
+  if(!f)return alert("PDF 파일을 선택해 주세요.");
+  if(f.type!=="application/pdf"&&!/\.pdf$/i.test(f.name))return alert("PDF 파일만 올릴 수 있어요.");
+  if(f.size>PDF_MAX)return alert(`파일이 너무 큽니다 (${(f.size/1048576).toFixed(1)}MB). 15MB 이하로 줄이거나 나누어 올려 주세요.`);
+  if(!title)title=f.name.replace(/\.pdf$/i,"");
+  const btn=$("ntSave");btn.disabled=true;btn.textContent="준비 중...";
+  try{
+   const b64=bufToB64(await f.arrayBuffer()),parts=[];
+   for(let i=0;i<b64.length;i+=CH)parts.push(b64.slice(i,i+CH));
+   const id=newId();
+   for(let i=0;i<parts.length;i+=6){
+    const b=writeBatch(fs);parts.slice(i,i+6).forEach((d,j)=>b.set(fchunk(id,i+j),{n:id,i:i+j,d}));
+    await b.commit();btn.textContent=`업로드 중 ${Math.min(100,Math.round((i+6)/parts.length*100))}%`;
+   }
+   const n={id,type:"pdf",subject,title:title.slice(0,120),body:"",size:f.size,chunks:parts.length,created:today(),updated:today()};
+   await setDoc(nDoc(id),n);
+   N.unshift(n);renderNotes();openNote(id);
+  }catch(e){console.error(e);alert("업로드 실패: "+(e.message||e));btn.disabled=false;btn.textContent="업로드"}
+  return;
+ }
+ if(ntMode==="pdfedit"){
+  const n=N.find(x=>x.id===ntEditId);if(!n)return;if(!title)return alert("제목을 입력해 주세요.");
+  Object.assign(n,{subject,title,updated:today()});cloud(()=>setDoc(nDoc(n.id),n));renderNotes();openNote(n.id);return;
+ }
  const body=$("ntText").value.trim();if(!body)return alert("내용을 입력해 주세요.");
  if(body.length>300000)return alert("노트가 너무 깁니다. 여러 개로 나누어 저장해 주세요.");
- let title=$("ntTitle").value.trim();
  if(!title){const m=body.match(/^\s*#{1,6}\s*(.+)$/m);title=(m?m[1]:body.split("\n")[0]).replace(/[*_`#]/g,"").trim().slice(0,100)||"제목 없음"}
- if(!ready)return cloud(()=>{});
- const subject=$("ntSubj").value;let n;
+ let n;
  if(ntEditId){n=N.find(x=>x.id===ntEditId);Object.assign(n,{subject,title,body,updated:today()})}
  else{n={id:newId(),subject,title,body,created:today(),updated:today()};N.unshift(n)}
  cloud(()=>setDoc(nDoc(n.id),n));renderNotes();openNote(n.id);
 };
 $("ntDel").onclick=()=>{
  const n=N.find(x=>x.id===ntCurId);if(!n||!confirm(`"${n.title}" 노트를 삭제할까요?`))return;
- N=N.filter(x=>x.id!==n.id);cloud(()=>deleteDoc(nDoc(n.id)));renderNotes();ntView("ntList");
+ const refs=[nDoc(n.id)];if(n.type==="pdf")for(let i=0;i<(n.chunks||0);i++)refs.push(fchunk(n.id,i));
+ N=N.filter(x=>x.id!==n.id);pdfCache.delete(n.id);cloud(()=>batchDelete(refs));renderNotes();ntView("ntList");
 };
 
 // ---- Brain Dump ----
