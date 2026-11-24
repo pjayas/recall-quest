@@ -325,23 +325,58 @@ a.smallbtn{text-decoration:none;display:inline-block}
 .st-row input{width:64px;border:1px solid var(--line-strong);border-radius:8px;padding:6px 8px;font:inherit;font-size:14.5px;background:var(--input);color:var(--ink);text-align:center}
 .st-row input:focus{background:var(--paper);border-color:var(--green);outline:none}
 .st-note{font-size:11.5px;color:var(--muted);flex-basis:100%}
-.pomo{margin:14px 0 4px;padding:14px 14px 12px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
-.pomo.brk{background:var(--blue-soft);border-color:var(--line-strong)}
-.pomo-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
-.pomo-mode{color:var(--green)}.pomo.brk .pomo-mode{color:var(--blue)}
-.pomo-dots{display:flex;gap:5px}.pomo-dots i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--line-strong);background:transparent}
-.pomo-dots i.on{background:var(--green);border-color:var(--green)}
-.pomo-time{font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1.15;color:var(--ink);font-variant-numeric:tabular-nums;margin:6px 0 8px}
-.pomo-bar{height:5px;border-radius:3px;background:var(--line);overflow:hidden}
-.pomo-bar i{display:block;height:100%;width:0;background:var(--green);transition:width .4s linear}
-.pomo.brk .pomo-bar i{background:var(--blue)}
-.pomo-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;align-items:center}
-.pomo-btns .smallbtn{padding:6px 14px;font-size:12.5px}
-.pomo-info{font-size:11.5px;color:var(--muted);margin-left:auto}
-.pomo-set{margin-top:10px;font-size:12.5px;color:var(--ink-2)}
-.pomo-set summary{cursor:pointer;color:var(--muted);font-weight:500;font-size:12px}
-.pomo-set .st-row{margin-top:8px}
-.pomo-set label{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.pomo{--pc:var(--green);--pc-soft:var(--green-soft);--pc-line:var(--green-line);margin:16px 0 4px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--input)}
+.pomo.brk{--pc:var(--blue);--pc-soft:var(--blue-soft);--pc-line:var(--line-strong)}
+.pomo-main{display:flex;align-items:center;justify-content:center;gap:26px;flex-wrap:wrap}
+.pomo-dial{position:relative;width:184px;height:184px;flex:none}
+.pomo-dial svg{display:block;width:100%;height:100%}
+.pomo-tick{fill:none;stroke:var(--line-strong);stroke-width:5;stroke-dasharray:1.1 8.64;opacity:.7}
+.pomo-track{fill:none;stroke:var(--line);stroke-width:9}
+.pomo-arc{fill:none;stroke:var(--pc);stroke-width:9;stroke-linecap:round;stroke-dasharray:477.5;stroke-dashoffset:477.5}
+.pomo-knob{fill:var(--pc);stroke:var(--input);stroke-width:3}
+.pomo-halo{fill:var(--pc);opacity:0}
+.pomo.run .pomo-halo{animation:pomoPulse 2s ease-out infinite}
+@keyframes pomoPulse{0%{opacity:.35;r:7}100%{opacity:0;r:17}}
+.pomo-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;pointer-events:none}
+.pomo-time{font-size:42px;font-weight:650;letter-spacing:-.03em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.pomo-state{font-size:12px;color:var(--muted);font-weight:500}
+.pomo-side{display:flex;flex-direction:column;gap:14px;min-width:212px;flex:1 1 212px;max-width:300px}
+.pomo-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border-radius:10px;background:var(--soft)}
+.pomo-tabs button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:500;color:var(--muted);padding:6px 4px;border-radius:7px;cursor:default;white-space:nowrap}
+.pomo-tabs button.on{background:var(--paper);color:var(--pc);font-weight:700;box-shadow:var(--shadow)}
+.pomo-tabs.idle button:not(.on){cursor:pointer}
+.pomo-tabs.idle button:not(.on):hover{color:var(--ink)}
+.pomo-cyc{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+.pomo-segs{display:flex;gap:4px}
+.pomo-segs i{width:26px;height:6px;border-radius:3px;background:var(--line)}
+.pomo-segs i.on{background:var(--green)}
+.pomo-segs i.cur{background:linear-gradient(90deg,var(--green) var(--p,0%),var(--line) var(--p,0%))}
+.pomo-btns{display:flex;gap:8px}
+.pomo-go{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--pc);background:var(--pc);color:#fff;font:inherit;font-size:14px;font-weight:700;padding:11px 16px;border-radius:12px;cursor:pointer;transition:background .15s,color .15s}
+.pomo-go svg{width:14px;height:14px;fill:currentColor}
+.pomo-go:hover{filter:brightness(1.06)}
+.pomo-go.pause{background:transparent;color:var(--pc)}
+.pomo-go.pause:hover{background:var(--pc-soft);filter:none}
+.pomo-stop{border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-2);font:inherit;font-size:13px;font-weight:600;padding:11px 14px;border-radius:12px;cursor:pointer;white-space:nowrap}
+.pomo-stop:hover:not(:disabled){background:var(--soft);color:var(--ink)}
+.pomo-stop:disabled{opacity:.4;cursor:not-allowed}
+.pomo-go:focus-visible,.pomo-stop:focus-visible,.pomo-tabs button:focus-visible{outline:2px solid var(--pc);outline-offset:2px}
+.pomo-set{margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+.pomo-set summary{cursor:pointer;color:var(--muted);font-weight:500;font-size:12.5px}
+.pomo-cfg{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end;margin-top:12px}
+.pomo-fld{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--muted);font-weight:500}
+.pomo-fld span{display:flex;align-items:center;gap:5px;color:var(--ink-2);font-size:12.5px}
+.pomo-fld input[type=number]{width:62px;border:1px solid var(--line-strong);border-radius:8px;padding:6px 8px;font:inherit;font-size:14.5px;background:var(--paper);color:var(--ink);text-align:center}
+.pomo-fld input[type=number]:focus{border-color:var(--green);outline:none}
+.pomo-sw{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);cursor:pointer}
+.pomo-sw input{appearance:none;-webkit-appearance:none;width:32px;height:18px;border-radius:9px;background:var(--line-strong);position:relative;margin:0;cursor:pointer;transition:background .15s;flex:none}
+.pomo-sw input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .15s}
+.pomo-sw input:checked{background:var(--green)}
+.pomo-sw input:checked::after{transform:translateX(14px)}
+.pomo-sw input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.pomo-note{flex-basis:100%;font-size:11.5px;color:var(--muted);line-height:1.5}
+@media(max-width:480px){.pomo{padding:14px}.pomo-side{max-width:none}}
+@media(prefers-reduced-motion:reduce){.pomo.run .pomo-halo{animation:none}.pomo-go{transition:none}}
 .td-cue{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
 .td-acts{display:flex;align-items:center;gap:2px;flex-shrink:0}
 .td-x{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 7px;opacity:.6}
@@ -747,14 +782,31 @@ details.box-card summary{cursor:pointer}
 <div class="st-nav"><button class="smallbtn xs" id="stPrev" aria-label="이전 날">‹</button><span id="stDate"></span><button class="smallbtn xs" id="stNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="stToday">오늘</button></div></div>
 <div class="st-main"><div class="st-big" id="stBig">0분</div><div class="st-sub" id="stSum"></div></div>
 <div class="pomo" id="pomo">
-<div class="pomo-top"><span class="pomo-mode" id="pomoMode">🍅 집중</span><span class="pomo-dots" id="pomoDots"><i></i><i></i><i></i><i></i></span></div>
-<div class="pomo-time" id="pomoTime">25:00</div>
-<div class="pomo-bar"><i id="pomoBar"></i></div>
-<div class="pomo-btns"><button class="smallbtn primary" id="pomoGo">시작</button><button class="smallbtn" id="pomoStop">정지·저장</button><span class="pomo-info" id="pomoInfo"></span></div>
+<div class="pomo-main">
+<div class="pomo-dial">
+<svg viewBox="0 0 200 200" aria-hidden="true"><g transform="rotate(-90 100 100)">
+<circle class="pomo-tick" cx="100" cy="100" r="93"/>
+<circle class="pomo-track" cx="100" cy="100" r="76"/>
+<circle class="pomo-arc" id="pomoArc" cx="100" cy="100" r="76"/>
+<g id="pomoDot"><circle class="pomo-halo" cx="176" cy="100" r="7"/><circle class="pomo-knob" cx="176" cy="100" r="7"/></g>
+</g></svg>
+<div class="pomo-center" role="timer" aria-live="off"><div class="pomo-time" id="pomoTime">25:00</div><div class="pomo-state" id="pomoState">집중 대기</div></div>
+</div>
+<div class="pomo-side">
+<div class="pomo-tabs idle" id="pomoTabs"><button type="button" data-m="focus">집중</button><button type="button" data-m="short">짧은 휴식</button><button type="button" data-m="long">긴 휴식</button></div>
+<div class="pomo-cyc"><span class="pomo-segs" id="pomoSegs"><i></i><i></i><i></i><i></i></span><span id="pomoInfo"></span></div>
+<div class="pomo-btns"><button type="button" class="pomo-go" id="pomoGo"></button><button type="button" class="pomo-stop" id="pomoStop">정지·저장</button></div>
+</div>
+</div>
 <details class="pomo-set"><summary>타이머 설정</summary>
-<div class="st-row"><input id="pcF" type="number" min="1" max="180" aria-label="집중 분"><span>집중</span><input id="pcS" type="number" min="1" max="60" aria-label="짧은 휴식 분"><span>짧은 휴식</span><input id="pcL" type="number" min="1" max="90" aria-label="긴 휴식 분"><span>긴 휴식(분)</span>
-<label><input type="checkbox" id="pcAuto">다음 단계 자동 시작</label><label><input type="checkbox" id="pcSnd">알림음</label>
-<span class="st-note">집중 시간이 끝나면 자동으로 오늘의 순공부 시간에 더해집니다. 4번 집중 후 긴 휴식이 나와요.</span></div></details>
+<div class="pomo-cfg">
+<label class="pomo-fld">집중<span><input id="pcF" type="number" min="1" max="180" inputmode="numeric">분</span></label>
+<label class="pomo-fld">짧은 휴식<span><input id="pcS" type="number" min="1" max="60" inputmode="numeric">분</span></label>
+<label class="pomo-fld">긴 휴식<span><input id="pcL" type="number" min="1" max="90" inputmode="numeric">분</span></label>
+<label class="pomo-sw"><input type="checkbox" id="pcAuto">다음 단계 자동 시작</label>
+<label class="pomo-sw"><input type="checkbox" id="pcSnd">알림음</label>
+<div class="pomo-note">집중이 끝나면 그 시간이 오늘의 순공부 시간에 바로 더해져요. 4번 집중하면 긴 휴식이 나와요.</div>
+</div></details>
 </div>
 <div class="st-week" id="stWeek"></div>
 <div class="st-quick"><button class="smallbtn xs" data-st="10">+10분</button><button class="smallbtn xs" data-st="30">+30분</button><button class="smallbtn xs" data-st="60">+1시간</button><button class="smallbtn xs" data-st="-10">-10분</button><button class="smallbtn danger xs" id="stReset">초기화</button></div>
@@ -1495,23 +1547,34 @@ function pFinish(){
   pNext("focus",pcfg.auto);
  }
 }
+const P_C=2*Math.PI*76;
+const ICON_PLAY='<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z"/></svg>',ICON_PAUSE='<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 1.5h3.2v11H2.5zM8.3 1.5h3.2v11H8.3z"/></svg>';
 function pRender(){
  const left=pLeft(),total=pdur(P.mode),sec=Math.ceil(left/1000);
  const mm=String(Math.floor(sec/60)).padStart(2,"0"),ss=String(sec%60).padStart(2,"0");
- const foc=P.mode==="focus";
- $("pomo").classList.toggle("brk",!foc);
- $("pomoMode").textContent=foc?"🍅 집중":P.mode==="short"?"☕ 짧은 휴식":"🌿 긴 휴식";
+ const foc=P.mode==="focus",started=left<total,pct=total?Math.min(1,Math.max(0,1-left/total)):0;
+ const box=$("pomo");
+ box.classList.toggle("brk",!foc);box.classList.toggle("run",!!P.running);
  $("pomoTime").textContent=`${mm}:${ss}`;
- $("pomoBar").style.width=(total?Math.min(100,(1-left/total)*100):0)+"%";
- const done=P.mode==="long"?4:(P.cycle||0);
- [...$("pomoDots").children].forEach((d,i)=>d.classList.toggle("on",i<done));
- const started=left<total;
- $("pomoGo").textContent=P.running?"일시정지":started?"계속":(foc?"집중 시작":"휴식 시작");
+ $("pomoState").textContent=P.running?(foc?"집중하는 중":"쉬는 중"):started?"일시정지":(foc?"집중 대기":"휴식 대기");
+ $("pomoArc").style.strokeDashoffset=P_C*(1-pct);
+ $("pomoDot").setAttribute("transform",`rotate(${pct*360} 100 100)`);
+ document.querySelectorAll("#pomoTabs button").forEach(b=>b.classList.toggle("on",b.dataset.m===P.mode));
+ $("pomoTabs").classList.toggle("idle",!started&&!P.running);
+ const segs=[...$("pomoSegs").children],done=P.mode==="long"?4:(P.cycle||0);
+ segs.forEach((d,i)=>{d.classList.toggle("on",i<done);d.classList.toggle("cur",foc&&i===done&&started);d.style.setProperty("--p",(pct*100)+"%")});
+ $("pomoGo").className="pomo-go"+(P.running?" pause":"");
+ $("pomoGo").innerHTML=(P.running?ICON_PAUSE:ICON_PLAY)+(P.running?"일시정지":started?"이어서 하기":(foc?"집중 시작":"휴식 시작"));
  $("pomoStop").textContent=foc?"정지·저장":"건너뛰기";
  $("pomoStop").disabled=foc&&!started;
- $("pomoInfo").textContent=`오늘 ${pCount()}뽀모`;
+ const n=pCount();
+ $("pomoInfo").textContent=`${Math.min(done+(foc?1:0),4)||1}/4 세트 · 오늘 ${n}뽀모`;
  document.title=P.running?`${mm}:${ss} ${foc?"집중":"휴식"} · ${baseTitle}`:baseTitle;
 }
+document.querySelectorAll("#pomoTabs button").forEach(b=>b.onclick=()=>{
+ if(P.running||pLeft()<pdur(P.mode)||b.dataset.m===P.mode)return;
+ pNext(b.dataset.m,false);
+});
 $("pomoGo").onclick=()=>{
  if(P.running){P.left=pLeft();P.running=false}
  else{
