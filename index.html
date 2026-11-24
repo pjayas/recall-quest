@@ -280,6 +280,38 @@ a.smallbtn{text-decoration:none;display:inline-block}
 .nt-body img{max-width:100%}
 .nt-body a{color:var(--blue)}
 .nt-body mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%}
+.nt-body .al-left{text-align:left}.nt-body .al-center{text-align:center}.nt-body .al-right{text-align:right}
+.nt-body .al-center ul,.nt-body .al-center ol,.nt-body .al-right ul,.nt-body .al-right ol{list-style-position:inside;padding-left:0}
+.nt-body .fs-s{font-size:.85em}.nt-body .fs-l{font-size:1.3em;line-height:1.5}.nt-body .fs-xl{font-size:1.75em;line-height:1.4}
+.nt-body .tc-red{color:var(--red)}.nt-body .tc-blue{color:var(--blue)}.nt-body .tc-green{color:var(--green)}.nt-body .tc-ochre{color:var(--ochre)}.nt-body .tc-gray{color:var(--muted)}
+.nt-body mark{background:var(--ochre-soft);background:color-mix(in srgb,var(--ochre) 26%,transparent);color:inherit;padding:0 .15em;border-radius:3px}
+.nt-body hr{border:0;border-top:1px solid var(--line-strong);margin:22px 0}
+.nt-body li:has(>input[type=checkbox]){list-style:none}
+.nt-body li>input[type=checkbox]{margin:0 7px 0 -1.4em;accent-color:var(--green);vertical-align:-1px}
+.nt-body ol ol,.nt-body ul ul,.nt-body ol ul,.nt-body ul ol{margin-bottom:0}
+.ed-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ed-views{display:flex;gap:2px;padding:2px;background:var(--soft);border-radius:8px}
+.ed-views button{border:0;background:transparent;font:inherit;font-size:12px;padding:4px 11px;border-radius:6px;color:var(--muted);cursor:pointer}
+.ed-views button.on{background:var(--paper);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
+.ed-bar{display:flex;flex-wrap:wrap;align-items:center;gap:3px;padding:6px;border:1px solid var(--line-strong);border-bottom:0;border-radius:10px 10px 0 0;background:var(--sidebar)}
+.ed-bar button{min-width:30px;height:30px;padding:0 7px;border:0;background:transparent;border-radius:7px;color:var(--ink-2);font:inherit;font-size:13px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap}
+.ed-bar button:hover{background:var(--soft);color:var(--ink)}
+.ed-bar button:focus-visible,.field .ed-bar select:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.ed-bar svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.field .ed-bar select{width:auto;height:30px;padding:0 6px;border-radius:7px;font-size:12.5px;background:var(--paper);cursor:pointer}
+.ed-sep{width:1px;height:18px;background:var(--line-strong);margin:0 5px;opacity:.7}
+.ed-hl{background:color-mix(in srgb,var(--ochre) 30%,transparent);padding:0 4px;border-radius:3px}
+.ed-panes{display:grid;grid-template-columns:1fr}
+.ed-panes[data-v="split"]{grid-template-columns:1fr 1fr}
+.ed-panes[data-v="write"] .ed-prev,.ed-panes[data-v="prev"] #ntText{display:none}
+.field .ed-panes #ntText{height:500px;min-height:0;resize:none;border-radius:0 0 10px 10px;line-height:1.75}
+.ed-panes[data-v="split"] #ntText{border-radius:0 0 0 10px;border-right-width:0}
+.ed-panes[data-v="write"] #ntText{resize:vertical;min-height:300px}
+.ed-prev{height:500px;overflow:auto;padding:14px 18px;background:var(--paper);border:1px solid var(--line-strong);border-radius:0 0 10px 10px;font-size:14.5px}
+.ed-panes[data-v="split"] .ed-prev{border-radius:0 0 10px 0}
+.ed-empty{color:var(--muted);font-size:13px}
+.ed-help{font-size:11.5px;color:var(--muted);line-height:1.6}
+@media(max-width:760px){.ed-panes[data-v="split"]{grid-template-columns:1fr}.ed-panes[data-v="split"] #ntText{border-radius:0;border-right-width:1px}.ed-panes[data-v="split"] .ed-prev{border-top:0;border-radius:0 0 10px 10px;height:360px}.field .ed-panes #ntText{height:380px}}
 .dump-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .dump-compose{display:flex;gap:8px;margin-top:10px;align-items:flex-end}
 #dumpText{flex:1;min-width:0;border:1px solid var(--line-strong);border-radius:10px;padding:10px 12px;font:inherit;font-size:14.5px;line-height:1.55;background:var(--input);color:var(--ink);resize:none;min-height:46px}
@@ -836,7 +868,40 @@ details.box-card summary{cursor:pointer}
 <div class="field"><label for="ntSubj">과목</label><select id="ntSubj"></select></div>
 <div class="field"><label for="ntTitle">제목 (비우면 자동: 첫 제목 또는 파일 이름)</label><input id="ntTitle" placeholder="예: 운영체제 – 메모리 관리 전략"></div>
 <div class="field hide" id="ntFileF"><label for="ntFile">PDF 파일 (최대 15MB)</label><input type="file" id="ntFile" accept="application/pdf,.pdf"></div>
-<div class="field" id="ntTextF"><label for="ntText">내용 (마크다운·수식 지원)</label><textarea id="ntText" style="min-height:380px" placeholder="AI가 정리해 준 설명을 그대로 붙여넣으세요"></textarea></div>
+<div class="field" id="ntTextF">
+<div class="ed-top"><label for="ntText">내용</label><div class="ed-views" id="edViews"><button type="button" data-v="write">쓰기</button><button type="button" data-v="split">나란히</button><button type="button" data-v="prev">미리보기</button></div></div>
+<div>
+<div class="ed-bar" id="edBar" role="toolbar" aria-label="글 서식">
+<select data-sel="head" aria-label="제목 스타일"><option value="">제목</option><option value="0">본문</option><option value="1">제목 1</option><option value="2">제목 2</option><option value="3">제목 3</option></select>
+<select data-sel="size" aria-label="글자 크기"><option value="">크기</option><option value="s">작게</option><option value="m">보통</option><option value="l">크게</option><option value="xl">아주 크게</option></select>
+<select data-sel="color" aria-label="글자색"><option value="">글자색</option><option value="none">기본</option><option value="red">빨강</option><option value="blue">파랑</option><option value="green">초록</option><option value="ochre">황토</option><option value="gray">회색</option></select>
+<span class="ed-sep"></span>
+<button type="button" data-act="bold" title="굵게 (Ctrl+B)" aria-label="굵게"><b>B</b></button>
+<button type="button" data-act="italic" title="기울임 (Ctrl+I)" aria-label="기울임"><i>I</i></button>
+<button type="button" data-act="underline" title="밑줄 (Ctrl+U)" aria-label="밑줄"><u>U</u></button>
+<button type="button" data-act="strike" title="취소선" aria-label="취소선"><s>S</s></button>
+<button type="button" data-act="mark" title="형광펜" aria-label="형광펜"><span class="ed-hl">형</span></button>
+<span class="ed-sep"></span>
+<button type="button" data-act="left" title="왼쪽 정렬" aria-label="왼쪽 정렬"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M2 6.5h8M2 9.5h12M2 12.5h8"/></svg></button>
+<button type="button" data-act="center" title="가운데 정렬" aria-label="가운데 정렬"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M4 6.5h8M2 9.5h12M4 12.5h8"/></svg></button>
+<button type="button" data-act="right" title="오른쪽 정렬" aria-label="오른쪽 정렬"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M6 6.5h8M2 9.5h12M6 12.5h8"/></svg></button>
+<span class="ed-sep"></span>
+<button type="button" data-act="ol" title="번호 목록" aria-label="번호 목록">1.</button>
+<button type="button" data-act="ul" title="글머리 목록" aria-label="글머리 목록">•</button>
+<button type="button" data-act="check" title="체크리스트" aria-label="체크리스트"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M5.5 8.2l1.8 1.8 3.4-3.8"/></svg></button>
+<button type="button" data-act="outdent" title="내어쓰기 (Shift+Tab)" aria-label="내어쓰기"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M7 6.5h7M7 9.5h7M2 12.5h12M5 6l-3 2 3 2"/></svg></button>
+<button type="button" data-act="indent" title="들여쓰기 (Tab)" aria-label="들여쓰기"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M7 6.5h7M7 9.5h7M2 12.5h12M2 6l3 2-3 2"/></svg></button>
+<span class="ed-sep"></span>
+<button type="button" data-act="quote" title="인용">인용</button>
+<button type="button" data-act="hr" title="구분선 넣기">구분선</button>
+<button type="button" data-act="table" title="표 넣기">표</button>
+<button type="button" data-act="code" title="코드">&lt;/&gt;</button>
+<button type="button" data-act="math" title="수식">∑</button>
+</div>
+<div class="ed-panes" id="edPanes" data-v="split"><textarea id="ntText" placeholder="내용을 쓰거나 AI가 정리해 준 설명을 붙여넣으세요. 위 도구로 글자 크기, 정렬, 번호, 구분선을 넣을 수 있어요."></textarea><div class="nt-body ed-prev" id="ntPrevBox"></div></div>
+</div>
+<div class="ed-help">Enter로 번호·글머리가 이어지고, 목록에서 Tab으로 들여쓰기, Ctrl+B 굵게, Ctrl+S 저장. 크기를 고르면 선택한 글자(선택이 없으면 현재 줄)에 적용돼요.</div>
+</div>
 <div class="actionrow"><button class="smallbtn primary" id="ntSave">저장</button><button class="smallbtn" id="ntCancel">취소</button></div>
 </div>
 </div>
@@ -997,6 +1062,7 @@ function md(t){try{return md2(t)}catch(e){return"<p>"+esc(t).replace(/\n/g,"<br>
 const fixMath=s=>s.replace(/^\\{2}([\[(])/,"\\$1").replace(/\\{2}([\])])$/,"\\$1").replace(/\\_/g,"_");
 function md2(t){
  const m=[];t=t.replace(/\\{1,2}\[[\s\S]+?\\{1,2}\]|\\{1,2}\([^\n]+?\\{1,2}\)|\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g,s=>{m.push(fixMath(s));return`@@M${m.length-1}@@`});
+ t=t.replace(/^[ \t]*:::[ \t]*(left|center|right)[ \t]*$/gm,'\n\n<div class="al-$1">\n\n').replace(/^[ \t]*:::[ \t]*$/gm,'\n\n</div>\n\n').replace(/==([^\s=](?:[^=\n]*?[^\s=])?)==/g,"<mark>$1</mark>");
  return DOMPurify.sanitize(marked.parse(t)).replace(/@@M(\d+)@@/g,(_,i)=>esc(m[i]));
 }
 function render(id,t){const e=$(id);e.innerHTML=t?md(t):"";if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([e]).catch(()=>{})}
@@ -1764,7 +1830,7 @@ const NT_SUBJ=[...subjects.map(x=>x.name),"기타"];
 let ntSel="all",ntEditId=null,ntCurId=null;
 $("ntSubj").innerHTML=NT_SUBJ.map(n=>`<option>${n}</option>`).join("");
 const ntColor=n=>(subjects.find(x=>x.name===n)||{color:"#7a766d"}).color;
-const ntPlain=t=>t.replace(/[#>*_`|\\$\[\]()-]/g," ").replace(/\s+/g," ").trim();
+const ntPlain=t=>t.replace(/<[^>]+>/g," ").replace(/^\s*:::.*$/gm," ").replace(/==/g," ").replace(/&emsp;/g," ").replace(/[#>*_`|\\$\[\]()-]/g," ").replace(/\s+/g," ").trim();
 function ntView(v){["ntList","ntRead","ntForm"].forEach(i=>$(i).classList.toggle("hide",i!==v));if(v!=="ntRead")pdfCleanup();window.scrollTo(0,0)}
 function renderNotes(){
  $("noteCount").textContent=N.length;
@@ -1882,7 +1948,177 @@ function editNote(id,mode){
  $("ntTextF").classList.toggle("hide",ntMode!=="text");$("ntFileF").classList.toggle("hide",ntMode!=="pdfnew");
  $("ntSubj").value=n?n.subject:(ntSel!=="all"?ntSel:NT_SUBJ[0]);$("ntTitle").value=n?n.title:"";$("ntText").value=n&&n.type!=="pdf"?n.body:"";$("ntFile").value="";
  $("ntSave").textContent=ntMode==="pdfnew"?"업로드":"저장";$("ntSave").disabled=false;
- ntView("ntForm");$(ntMode==="pdfnew"?"ntFile":"ntTitle").focus();
+ edOpen(); ntView("ntForm");$(ntMode==="pdfnew"?"ntFile":"ntTitle").focus();
+}
+
+// ---- 노트 편집기 (서식 도구 + 실시간 미리보기) ----
+const edT=()=>$("ntText");
+const BLK=/^(\s*)(#{1,6}\s+|>\s?|[-*+]\s+\[[ xX]\]\s+|[-*+]\s+|\d+[.)]\s+)?/;
+const DIRL=/^\s*(:::|---\s*$)/;
+function edRep(a,b,text,s0,e0){
+ const t=edT();t.focus();t.setSelectionRange(a,b);
+ let ok=false;try{ok=document.execCommand("insertText",false,text)}catch(x){}
+ if(!ok||t.value.slice(a,a+text.length)!==text){t.setRangeText(text,a,b,"end");t.dispatchEvent(new Event("input",{bubbles:true}))}
+ t.setSelectionRange(s0,e0);
+}
+function edLines(){
+ const t=edT(),v=t.value,s0=t.selectionStart,e0=t.selectionEnd;
+ const a=s0===0?0:v.lastIndexOf("\n",s0-1)+1;
+ let b=v.indexOf("\n",e0>s0&&v[e0-1]==="\n"?e0-1:e0);if(b<0)b=v.length;
+ return{v,s:s0,e:e0,a,b};
+}
+function edMap(fn){const{v,a,b}=edLines();const out=fn(v.slice(a,b).split("\n")).join("\n");edRep(a,b,out,a,a+out.length)}
+function edWrap(l,r,ph){
+ const t=edT(),v=t.value,s0=t.selectionStart,e0=t.selectionEnd,sel=v.slice(s0,e0);
+ if(s0>=l.length&&v.slice(s0-l.length,s0)===l&&v.slice(e0,e0+r.length)===r&&!(l==="*"&&v[s0-2]==="*")){edRep(s0-l.length,e0+r.length,sel,s0-l.length,s0-l.length+sel.length);return}
+ if(sel.length>=l.length+r.length&&sel.startsWith(l)&&sel.endsWith(r)&&!(l==="*"&&sel.startsWith("**"))){const inner=sel.slice(l.length,sel.length-r.length);edRep(s0,e0,inner,s0,s0+inner.length);return}
+ const txt=sel||ph;edRep(s0,e0,l+txt+r,s0+l.length,s0+l.length+txt.length);
+}
+function edHead(n){
+ edMap(ls=>ls.map(l=>{
+  if(!l.trim()||DIRL.test(l))return l;
+  const m=BLK.exec(l),pre=m[2]||"",cur=/^#/.test(pre)?pre.trim().length:0,rest=l.slice(m[0].length);
+  return (n&&n!==cur?"#".repeat(n)+" ":"")+rest;
+ }));
+}
+function edList(kind){
+ const test={ol:/^\s*\d+[.)]\s/,ul:/^\s*[-*+]\s(?!\[[ xX]\])/,ck:/^\s*[-*+]\s\[[ xX]\]\s/}[kind];
+ edMap(ls=>{
+  const act=ls.filter(l=>l.trim()&&!DIRL.test(l)),all=act.length&&act.every(l=>test.test(l));let n=0;
+  return ls.map(l=>{
+   if(!l.trim()||DIRL.test(l))return l;
+   const m=BLK.exec(l),rest=l.slice(m[0].length),ind=m[1];
+   if(all)return ind+rest;
+   n++;return ind+(kind==="ol"?n+". ":kind==="ul"?"- ":"- [ ] ")+rest;
+  });
+ });
+}
+function edQuote(){
+ edMap(ls=>{
+  const act=ls.filter(l=>l.trim()),all=act.length&&act.every(l=>/^\s*>/.test(l));
+  return ls.map(l=>!l.trim()?l:all?l.replace(/^(\s*)>\s?/,"$1"):"> "+l);
+ });
+}
+function edIndent(d){
+ edMap(ls=>ls.map(l=>{
+  if(!l.trim()||DIRL.test(l))return l;
+  const list=/^\s*([-*+]|\d+[.)])\s/.test(l);
+  if(d>0)return list?"    "+l:"&emsp;&emsp;"+l;
+  return l.replace(/^(?: {1,4}|\t)/,"").replace(/^&emsp;(&emsp;)?/,"");
+ }));
+}
+function edSpan(kind,cls){
+ const t=edT(),v=t.value;let s0=t.selectionStart,e0=t.selectionEnd;
+ const re=new RegExp('^<span class="'+kind+'-\\w+">([\\s\\S]*)</span>$');
+ const apply=txt=>{const m=re.exec(txt),inner=m?m[1]:txt;return cls&&inner.trim()?`<span class="${kind}-${cls}">${inner}</span>`:inner};
+ const sel=v.slice(s0,e0);
+ if(e0>s0&&!sel.includes("\n")){
+  const pre=v.slice(0,s0).match(new RegExp('<span class="'+kind+'-\\w+">$'));
+  if(pre&&v.startsWith("</span>",e0)){s0-=pre[0].length;e0+=7}
+  const out=apply(v.slice(s0,e0));edRep(s0,e0,out,s0,s0+out.length);return;
+ }
+ edMap(ls=>ls.map(l=>{
+  if(!l.trim()||DIRL.test(l))return l;
+  const m=BLK.exec(l);return l.slice(0,m[0].length)+apply(l.slice(m[0].length));
+ }));
+}
+function edAlign(kind){
+ const t=edT(),v=t.value,lines=v.split("\n"),L=edLines();
+ let st=v.slice(0,L.a).split("\n").length-1,en=st+v.slice(L.a,L.b).split("\n").length-1;
+ if(t.selectionStart===t.selectionEnd){
+  while(st>0&&lines[st-1].trim()&&!/^\s*:::/.test(lines[st-1]))st--;
+  while(en<lines.length-1&&lines[en+1].trim()&&!/^\s*:::/.test(lines[en+1]))en++;
+ }
+ const hasW=st>0&&en<lines.length-1&&/^\s*:::\s*(left|center|right)\s*$/.test(lines[st-1])&&/^\s*:::\s*$/.test(lines[en+1]);
+ let lo=hasW?st-1:st,hi=hasW?en+1:en,inner=lines.slice(st,en+1),out;
+ if(hasW){
+  const cur=lines[st-1].replace(/\s/g,"").slice(3);
+  out=(kind==="left"||kind===cur)?inner:[":::"+kind,...inner,":::"];
+ }else{
+  if(kind==="left")return;
+  out=inner.length===1&&!inner[0].trim()?[":::"+kind,"",":::"]:[":::"+kind,...inner,":::"];
+ }
+ let off=0;for(let i=0;i<lo;i++)off+=lines[i].length+1;
+ let end=off;for(let i=lo;i<=hi;i++)end+=lines[i].length+(i<hi?1:0);
+ const text=out.join("\n");
+ let c0=off,c1=off+text.length;
+ if(out[0].startsWith(":::")&&out.length>=3){c0=off+out[0].length+1;c1=off+text.length-4}
+ edRep(off,end,text,c0,Math.max(c0,c1));
+}
+function edInsertBlock(txt,selA,selB){
+ const{v,a,b}=edLines(),cur=v.slice(a,b).trim();
+ const prev=a>0?v.slice(v.lastIndexOf("\n",a-2)+1,a-1):"";
+ const lead=cur?"\n\n":(a>0&&prev.trim()?"\n":"");
+ edRep(b,b,lead+txt+"\n\n",b+lead.length+selA,b+lead.length+selB);
+}
+const ED={
+ bold:()=>edWrap("**","**","굵게"),italic:()=>edWrap("*","*","기울임"),underline:()=>edWrap("<u>","</u>","밑줄"),
+ strike:()=>edWrap("~~","~~","취소선"),mark:()=>edWrap("==","==","강조"),
+ left:()=>edAlign("left"),center:()=>edAlign("center"),right:()=>edAlign("right"),
+ ol:()=>edList("ol"),ul:()=>edList("ul"),check:()=>edList("ck"),quote:edQuote,
+ indent:()=>edIndent(1),outdent:()=>edIndent(-1),
+ hr:()=>edInsertBlock("---",4,4),
+ table:()=>{const x="| 제목 | 제목 | 제목 |\n| --- | --- | --- |\n| 내용 | 내용 | 내용 |";edInsertBlock(x,2,4)},
+ code:()=>{const t=edT(),sel=t.value.slice(t.selectionStart,t.selectionEnd);sel.includes("\n")?edWrap("```\n","\n```","코드"):edWrap("`","`","코드")},
+ math:()=>edWrap("$","$","수식")
+};
+const EDS={
+ head:v=>edHead(+v),
+ size:v=>edSpan("fs",v==="m"?"":v),
+ color:v=>edSpan("tc",v==="none"?"":v)
+};
+$("edBar").addEventListener("mousedown",e=>{if(e.target.closest("button"))e.preventDefault()});
+$("edBar").addEventListener("click",e=>{const b=e.target.closest("button[data-act]");if(b&&ED[b.dataset.act])ED[b.dataset.act]()});
+$("edBar").addEventListener("change",e=>{const sl=e.target.closest("select[data-sel]");if(!sl||!sl.value)return;EDS[sl.dataset.sel](sl.value);sl.value=""});
+edT().addEventListener("keydown",e=>{
+ if(e.isComposing||e.keyCode===229)return;
+ const t=e.target,mod=e.ctrlKey||e.metaKey;
+ if(mod&&!e.altKey){
+  const k=e.key.toLowerCase();
+  if(k==="s"){e.preventDefault();$("ntSave").click();return}
+  const f={b:ED.bold,i:ED.italic,u:ED.underline}[k];if(f&&!e.shiftKey){e.preventDefault();f();return}
+ }
+ if(e.key==="Tab"&&!mod){
+  const{v,a,b}=edLines(),ls=v.slice(a,b).split("\n");
+  if(ls.some(l=>/^\s*([-*+]|\d+[.)])\s/.test(l))||(t.selectionStart!==t.selectionEnd&&ls.length>1)){e.preventDefault();edIndent(e.shiftKey?-1:1)}
+  return;
+ }
+ if(e.key==="Enter"&&!e.shiftKey&&!mod&&t.selectionStart===t.selectionEnd){
+  const{v,a,b}=edLines(),cur=t.selectionStart,line=v.slice(a,b);
+  const m=/^(\s*)(?:(\d+)([.)])|([-*+]))\s+(\[[ xX]\]\s+)?/.exec(line);
+  if(m&&cur>=a+m[0].length){
+   e.preventDefault();
+   if(!line.slice(m[0].length).trim()){edRep(a,b,"",a,a);return}
+   const pre=m[1]+(m[2]?(+m[2]+1)+m[3]:m[4])+" "+(m[5]?"[ ] ":"");
+   edRep(cur,cur,"\n"+pre,cur+1+pre.length,cur+1+pre.length);
+  }
+ }
+});
+// 미리보기
+let edTimer=0,mjTimer=0;
+function ntPrev(){
+ clearTimeout(edTimer);
+ edTimer=setTimeout(()=>{
+  const box=$("ntPrevBox"),v=edT().value;
+  box.innerHTML=v.trim()?md(v):'<div class="ed-empty">쓰는 내용이 여기에 그대로 보여요.</div>';
+  clearTimeout(mjTimer);mjTimer=setTimeout(()=>{if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([box]).catch(()=>{})},300);
+ },120);
+}
+edT().addEventListener("input",ntPrev);
+edT().addEventListener("scroll",()=>{
+ if($("edPanes").dataset.v!=="split"||innerWidth<=760)return;
+ const t=edT(),pv=$("ntPrevBox"),r=t.scrollTop/Math.max(1,t.scrollHeight-t.clientHeight);
+ pv.scrollTop=r*(pv.scrollHeight-pv.clientHeight);
+});
+function edView(v){
+ $("edPanes").dataset.v=v;LS.set("rq_ed_view",v);
+ document.querySelectorAll("#edViews button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+}
+document.querySelectorAll("#edViews button").forEach(b=>b.onclick=()=>{edView(b.dataset.v);ntPrev()});
+function edOpen(){
+ const sv=LS.get("rq_ed_view");
+ edView(["write","split","prev"].includes(sv)?sv:(innerWidth>760?"split":"write"));
+ ntPrev();
 }
 $("ntNew").onclick=()=>editNote(null,"text");
 $("ntNewPdf").onclick=()=>editNote(null,"pdfnew");
