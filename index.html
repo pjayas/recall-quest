@@ -235,6 +235,12 @@ main{padding:32px 44px 84px;max-width:860px;width:100%;margin:0 auto}
 .td-tag.mit{background:var(--paper);border:1px solid var(--ochre-line);color:var(--ochre)}
 .td-tag.review{background:var(--green-soft);color:var(--green)}
 .td-tag.light{background:var(--blue-soft);color:var(--blue)}
+.td-tag.moved{background:var(--ochre-soft);border:1px solid var(--ochre-line);color:var(--ochre)}
+.td-tag.moved.hot{background:var(--red-soft);border-color:var(--red-line);color:var(--red)}
+.td-ghost{display:flex;align-items:center;gap:8px;margin:2px 0;padding:6px 10px;font-size:12.5px;color:var(--muted);border:1px dashed var(--line-strong);border-radius:8px;background:transparent;width:100%;text-align:left;cursor:pointer;font-family:inherit}
+.td-ghost:hover{background:var(--hover)}
+.td-ghost .gt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.td-ghost.gdone .gt{text-decoration:line-through}
 .td-item.rev-item{border-left:3px solid var(--green);padding-left:10px}
 .td-item.light-item{border-left:3px solid var(--blue);padding-left:10px}
 .td-group-label.rev{color:var(--green)}
@@ -1779,6 +1785,9 @@ window.addEventListener("beforeunload",e=>{if(P.running&&P.mode==="focus"){e.pre
 const tDoc=()=>doc(fs,"vaults",uid,"meta","todos"),sDoc=()=>doc(fs,"vaults",uid,"meta","settings");
 const saveT=()=>cloud(()=>setDoc(tDoc(),{items:T}));
 const MIT_MAX=3;
+const shortD=d=>d.slice(5).replace("-","/");
+function moveTodo(x,nd){if(nd===x.date)return;(x.moves=x.moves||[]).push({from:x.date,to:nd});x.date=nd}
+const postCount=x=>(x.moves||[]).filter(m=>m.to>m.from).length;
 const mitCount=(day,exceptId)=>T.filter(x=>x.date===day&&x.type==="mit"&&x.id!==exceptId).length;
 const mitFull=()=>alert(`핵심(MIT)은 하루 ${MIT_MAX}개까지만 정할 수 있어요. 가장 중요한 일에 집중하기 위한 제한입니다.\n다른 유형으로 바꾸거나 다른 날짜에 넣어 주세요.`);
 const dayLabel=d=>{const w=["일","월","화","수","목","금","토"][new Date(d+"T00:00:00").getDay()];return `${d.slice(5).replace("-","/")} (${w})${d===today()?" · 오늘":""}`};
@@ -1813,7 +1822,7 @@ function makeEditRow(x){
   if(!time){const p=parseTime(raw);time=p.time;text=p.text}
   const nd=dt.value||x.date,od=x.date;
   if(sel.value==="mit"&&mitCount(nd,x.id)>=MIT_MAX)return mitFull();
-  Object.assign(x,{text,time,type:sel.value,cue:cue.value.trim(),date:nd});
+  Object.assign(x,{text,time,type:sel.value,cue:cue.value.trim()});moveTodo(x,nd);
   editTd=null;saveT();renderTodo();
  };
  const cancel=()=>{editTd=null;renderTodo()};
@@ -1835,6 +1844,8 @@ function makeTodoRow(x){
  const row=document.createElement("div");row.className="td-row";
  if(x.time){const tm=document.createElement("span");tm.className="td-time";tm.textContent=x.time;row.appendChild(tm)}
  if(x.type==="review"||x.type==="normal"||!x.type){const rv=x.type==="review",tg=document.createElement("span");tg.className="td-tag "+(rv?"review":"light");tg.textContent=rv?"공부":"가벼운 일";row.appendChild(tg)}
+ const pc=postCount(x);
+ if(pc){const pg=document.createElement("span");pg.className="td-tag moved"+(pc>=3?" hot":"");pg.textContent=`↪ ${pc}회 · ${shortD(x.moves[0].from)}부터`;pg.title=x.moves.map(m=>`${shortD(m.from)} → ${shortD(m.to)}`).join("\n");row.appendChild(pg)}
  const t=document.createElement("span");t.className="td-t";t.textContent=x.text;t.ondblclick=()=>{editTd=x.id;renderTodo()};row.appendChild(t);
  body.appendChild(row);
  if(x.cue){
@@ -1848,7 +1859,17 @@ function makeTodoRow(x){
  const del=document.createElement("button");del.className="td-x";del.textContent="✕";del.setAttribute("aria-label","삭제");
  del.onclick=()=>{T=T.filter(y=>y.id!==x.id);saveT();renderTodo();toast("할 일을 삭제했어요","되돌리기",()=>{T.push(x);saveT();renderTodo()})};
  const nx=document.createElement("button");nx.className="td-x";nx.textContent="→";nx.title="내일로 미루기";nx.setAttribute("aria-label","내일로 미루기");
- nx.onclick=()=>{const nd=addDays(x.date,1);if(x.type==="mit"&&mitCount(nd,x.id)>=MIT_MAX)return mitFull();x.date=nd;saveT();renderTodo();toast("내일로 미뤘어요")};
+ nx.onclick=()=>{
+  const nd=addDays(x.date,1);
+  if(x.type==="mit"&&mitCount(nd,x.id)>=MIT_MAX)return mitFull();
+  const prevDate=x.date,prevMoves=x.moves?x.moves.slice():null;
+  moveTodo(x,nd);saveT();renderTodo();
+  const n=postCount(x);
+  toast(n>=3?`${n}번째 미루고 있어요. 더 작게 쪼개보면 어떨까요?`:"내일로 미뤘어요","되돌리기",()=>{
+   x.date=prevDate;if(prevMoves)x.moves=prevMoves;else delete x.moves;
+   saveT();renderTodo();
+  });
+ };
  acts.append(ed,nx,del);
 
  r.append(c,body,acts);
@@ -1867,14 +1888,16 @@ function renderTodo(){
  $("tdProg").classList.toggle("done",l.length>0&&doneCnt===l.length);
  $("tdBar").style.width=tdPct+"%";
 
+ const ghosts=T.filter(x=>x.date!==tdDay&&(x.moves||[]).some(m=>m.from===tdDay)).sort(sortFn);
  const late=T.filter(x=>!x.done&&x.date<today()),lb=$("tdLate");
  lb.classList.toggle("hide",!late.length||tdDay!==today());lb.innerHTML="";
- if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{late.forEach(x=>x.date=today());saveT();renderTodo()};lb.append(sp,b)}
+ if(late.length){const sp=document.createElement("span");sp.textContent=`밀린 일 ${late.length}개`;const b=document.createElement("button");b.className="smallbtn xs";b.textContent="오늘로 옮기기";b.onclick=()=>{late.forEach(x=>moveTodo(x,today()));saveT();renderTodo()};lb.append(sp,b)}
 
  const box=$("tdList");box.innerHTML="";
  if(!l.length){
-  box.innerHTML='<div class="emptylesson" style="padding:14px">이 날의 계획이 없습니다.</div>';
- }else{
+  box.innerHTML=ghosts.length?'':'<div class="emptylesson" style="padding:14px">이 날의 계획이 없습니다.</div>';
+ }
+ if(l.length){
   if(mits.length){
    const gh=document.createElement("div");gh.className="td-group-label mit";
    gh.innerHTML=`<span>🔥 핵심</span><span>${mits.filter(x=>x.done).length}/${mits.length}</span>`;
@@ -1887,6 +1910,19 @@ function renderTodo(){
    gh.innerHTML=`<span>${label}</span><span>${arr.filter(x=>x.done).length}/${arr.length}</span>`;
    box.appendChild(gh);
    arr.forEach(x=>box.appendChild(makeTodoRow(x)));
+  });
+ }
+ if(ghosts.length){
+  const gh=document.createElement("div");gh.className="td-group-label";
+  gh.innerHTML=`<span>↪ 다른 날로 옮긴 일</span><span>${ghosts.length}</span>`;
+  box.appendChild(gh);
+  ghosts.forEach(x=>{
+   const g=document.createElement("button");g.className="td-ghost"+(x.done?" gdone":"");
+   const gt=document.createElement("span");gt.className="gt";gt.textContent=x.text;
+   const dest=document.createElement("span");dest.textContent=`→ ${dayLabel(x.date).replace(" · 오늘","")}${x.done?" ✓":""}`;
+   g.append(gt,dest);g.title="옮겨간 날로 이동";
+   g.onclick=()=>{tdDay=x.date;renderTodo()};
+   box.appendChild(g);
   });
  }
 }
