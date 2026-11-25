@@ -1155,7 +1155,7 @@ function updateTop(){
  $("goalBar").style.width=(tg?Math.min(100,done/tg*100):0)+"%";
 }
 function selectSubject(name){
- sel=name;
+ sel=name;qsearch="";
  if(!$("studyNav").classList.contains("active"))setNav("studyNav",false);
  renderSubjects();renderPath();
 }
@@ -1182,32 +1182,45 @@ function renderPath(){
  $("pathTitle").innerHTML=`<i class="path-dot" style="background:${s.color}"></i><span>${esc(sel)} 전체 문제</span>`;
  drawNodes();
 }
+let qsearch="",qsort="new";
 function drawNodes(){
  const all=Q.filter(q=>q.subject===sel);
  if(!all.length){$("nodes").innerHTML='<div class="emptylesson">이 과목에는 아직 문제가 없습니다.<br><b>[문제 관리 / 추가]</b>에서 문제를 등록해 보세요.</div>';return}
  const dates=[...new Set(all.map(dateOf))].sort().reverse();
  if(dflt!=="all"&&!dates.includes(dflt))dflt="all";
- const qs=all.filter(q=>(flt==="all"||status(q)===flt)&&(dflt==="all"||dateOf(q)===dflt)).sort((a,b)=>(b.created||"0").localeCompare(a.created||"0"));
- $("nodes").innerHTML=`<div class="unit-title"><span>문제 ${qs.length}개</span><div>
+ $("nodes").innerHTML=`<div class="unit-title"><span id="qCount"></span><div>
 <select id="dateSel" aria-label="날짜"><option value="all">전체 날짜</option>${dates.map(d=>`<option value="${d}">${d} (${all.filter(q=>dateOf(q)===d).length})</option>`).join("")}</select>
 <select id="fltSel" aria-label="필터"><option value="all">전체</option><option value="new">미학습</option><option value="weak">취약</option><option value="known">숙지완료</option></select>
+<select id="sortSel" aria-label="정렬"><option value="new">최신순</option><option value="old">오래된순</option><option value="mem">기억 낮은순</option><option value="weak">취약 먼저</option><option value="abc">가나다순</option></select>
 <button class="smallbtn xs" id="shufBtn">섞어서 풀기</button>
-<button class="smallbtn xs" id="allBtn">전체 풀기</button></div></div><div class="subtle">뱃지의 %는 추정 기억 유지율입니다. 85% 아래로 내려가면 오늘의 백지복습에 올라옵니다.</div><div class="q-list"></div>`;
- $("dateSel").value=dflt;$("dateSel").onchange=e=>{dflt=e.target.value;drawNodes()};
- $("fltSel").value=flt;$("fltSel").onchange=e=>{flt=e.target.value;drawNodes()};
+<button class="smallbtn xs" id="allBtn">전체 풀기</button></div></div><input class="nt-search" id="qSearch" placeholder="이 과목의 문제·정답·키워드 검색" aria-label="문제 검색"><div class="subtle">뱃지의 %는 추정 기억 유지율입니다. 85% 아래로 내려가면 오늘의 백지복습에 올라옵니다.</div><div class="q-list"></div>`;
+ $("dateSel").value=dflt;$("fltSel").value=flt;$("sortSel").value=qsort;$("qSearch").value=qsearch;
+ let qs=[];
+ const lbl={known:"숙지완료",weak:"취약",new:"미학습"},rank={weak:2,new:1,known:0},byNew=(a,b)=>(b.created||"0").localeCompare(a.created||"0");
+ const cmps={new:byNew,old:(a,b)=>byNew(b,a),mem:(a,b)=>(ret(a)??2)-(ret(b)??2)||byNew(a,b),weak:(a,b)=>rank[status(b)]-rank[status(a)]||byNew(a,b),abc:(a,b)=>a.q.localeCompare(b.q,"ko")};
+ const fill=()=>{
+  const k=qsearch.trim().toLowerCase();
+  qs=all.filter(q=>(flt==="all"||status(q)===flt)&&(dflt==="all"||dateOf(q)===dflt)&&(!k||(q.q+" "+q.a+" "+kwList(q.keywords).join(" ")).toLowerCase().includes(k))).sort(cmps[qsort]||byNew);
+  $("qCount").textContent=`문제 ${qs.length}개`+(qs.length!==all.length?` / 전체 ${all.length}`:"");
+  const list=$("nodes").querySelector(".q-list");list.innerHTML="";
+  if(!qs.length){list.innerHTML=`<div class="emptylesson">${k?"검색 결과가 없습니다.":"조건에 맞는 문제가 없습니다."}</div>`;return}
+  const grouped=qsort==="new"||qsort==="old";let last=null;
+  qs.forEach((q,j)=>{
+   const dt=dateOf(q);
+   if(grouped&&dt!==last){last=dt;const h=document.createElement("div");h.className="date-head";h.textContent=`${dt} · ${qs.filter(x=>dateOf(x)===dt).length}문제`;list.appendChild(h)}
+   const r=rec(q),miss=r.miss||[],flags=(r.overconf?"착각 주의 · ":"")+(r.confused?"이해 필요 · ":"")+(miss.length?"빠뜨린 키워드: "+esc(miss.join(", ")):"");
+   const c=document.createElement("button");c.className="q-card";
+   c.innerHTML=`<span class="q-text">${j+1}. ${esc(q.q)}${flags?`<small>${flags.replace(/ · $/,"")}</small>`:""}</span><span class="badge ${status(q)}">${lbl[status(q)]}${pct(q)}</span>`;
+   c.onclick=()=>startLesson(qs,j);list.appendChild(c);
+  });
+ };
+ $("dateSel").onchange=e=>{dflt=e.target.value;fill()};
+ $("fltSel").onchange=e=>{flt=e.target.value;fill()};
+ $("sortSel").onchange=e=>{qsort=e.target.value;fill()};
+ $("qSearch").oninput=e=>{qsearch=e.target.value;fill()};
  $("allBtn").onclick=()=>qs.length&&startLesson(qs,0);
  $("shufBtn").onclick=()=>qs.length&&startLesson(shuffle(qs),0);
- const list=$("nodes").querySelector(".q-list");
- if(!qs.length)list.innerHTML='<div class="emptylesson">조건에 맞는 문제가 없습니다.</div>';
- const lbl={known:"숙지완료",weak:"취약",new:"미학습"};let last=null;
- qs.forEach((q,j)=>{
-  const dt=dateOf(q);
-  if(dt!==last){last=dt;const h=document.createElement("div");h.className="date-head";h.textContent=`${dt} · ${qs.filter(x=>dateOf(x)===dt).length}문제`;list.appendChild(h)}
-  const r=rec(q),miss=r.miss||[],flags=(r.overconf?"착각 주의 · ":"")+(r.confused?"이해 필요 · ":"")+(miss.length?"빠뜨린 키워드: "+esc(miss.join(", ")):"");
-  const c=document.createElement("button");c.className="q-card";
-  c.innerHTML=`<span class="q-text">${j+1}. ${esc(q.q)}${flags?`<small>${flags.replace(/ · $/,"")}</small>`:""}</span><span class="badge ${status(q)}">${lbl[status(q)]}${pct(q)}</span>`;
-  c.onclick=()=>startLesson(qs,j);list.appendChild(c);
- });
+ fill();
 }
 
 // ---- 백지복습 세션 ----
