@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Recall Quest | 백지복습 노트</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"><link rel="preconnect" href="https://cdnjs.cloudflare.com"><link rel="preconnect" href="https://www.gstatic.com">
 <script>try{var t=localStorage.getItem("rq_theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme:dark)").matches))document.documentElement.dataset.theme="dark"}catch(e){}</script>
-<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked-highlight@2.1.3/lib/index.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.umd.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/marked-highlight@2.1.3/lib/index.umd.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="print" onload="this.media='all'">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]}}</script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
 <style>
@@ -24,7 +24,7 @@
  --hover:#f6f4ee;
  --ink:#1f1e1b;
  --ink-2:#4a4842;
- --muted:#7a766d;
+ --muted:#69655c;
  --line:#d6d1c4;
  --line-strong:#bfb9aa;
  --green:#2f5d46;
@@ -55,7 +55,7 @@
  --hover:#2d2b25;
  --ink:#ebe8df;
  --ink-2:#c4bfb4;
- --muted:#8f8a7e;
+ --muted:#a29d91;
  --line:#38352e;
  --line-strong:#4c483f;
  --green:#5aa37c;
@@ -740,6 +740,16 @@ details.box-card summary{cursor:pointer}
  .nav-group{order:4;position:fixed;left:0;right:0;bottom:0;z-index:4;background:var(--sidebar);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom));gap:4px;overflow-x:auto}
  .nav{flex:0 0 auto;font-size:12.5px;padding:9px 11px}
 }
+.side-label,.nav b,.td-group-label{font-size:12px}
+.grass-title,.pill,.td-tag,.toc-item small{font-size:12px}
+.brief-stats,.nt-meta,.cmp-label,.wmeta{font-size:12.5px}
+.conf-row,.conf-btn,.nt-chip{font-size:13px}
+@media(pointer:coarse){
+ .td-x{min-width:40px;min-height:40px}
+ .smallbtn.xs{min-height:36px;padding-left:12px;padding-right:12px}
+ .nt-chip{padding:8px 14px}.conf-btn{padding:9px 15px}
+ .td-item input[type="checkbox"]{width:22px;height:22px;margin-top:1px}
+}
 </style>
 </head>
 <body>
@@ -802,12 +812,6 @@ details.box-card summary{cursor:pointer}
 </div>
 
 <div id="homeView">
-<div class="todo" id="dumpBox">
-<div class="dump-head"><span class="st-label">BRAIN DUMP</span><span class="st-sub" id="dumpCount"></span></div>
-<div class="dump-compose"><textarea id="dumpText" rows="1" placeholder="머릿속에 있는 걸 일단 적어 두세요" aria-label="브레인 덤프"></textarea><button class="smallbtn primary" id="dumpAdd">추가</button></div>
-<div class="dump-hint">Enter 저장 · Shift+Enter 줄바꿈 · 여러 줄을 붙여넣으면 한 줄씩 따로 저장돼요</div>
-<div id="dumpList"></div>
-</div>
 <div class="todo" id="reviewBox">
 <span class="st-label">오늘의 백지복습</span>
 <div class="rv-main">
@@ -816,6 +820,12 @@ details.box-card summary{cursor:pointer}
 </div>
 <div class="td-prog-bar" style="margin:14px 0 0" aria-hidden="true"><i id="rvBar"></i></div>
 <div class="fc" id="rvFc" role="img" aria-label="앞으로 7일 복습 예정 문제 수"></div>
+</div>
+<div class="todo" id="dumpBox">
+<div class="dump-head"><span class="st-label">BRAIN DUMP</span><span class="st-sub" id="dumpCount"></span></div>
+<div class="dump-compose"><textarea id="dumpText" rows="1" placeholder="머릿속에 있는 걸 일단 적어 두세요" aria-label="브레인 덤프"></textarea><button class="smallbtn primary" id="dumpAdd">추가</button></div>
+<div class="dump-hint">Enter 저장 · Shift+Enter 줄바꿈 · 여러 줄을 붙여넣으면 한 줄씩 따로 저장돼요</div>
+<div id="dumpList"></div>
 </div>
 <div class="todo" id="todoBox">
 <div class="todo-head"><button class="smallbtn xs" id="tdPrev" aria-label="이전 날">‹</button><strong id="tdDate"></strong><button class="smallbtn xs" id="tdNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="tdToday">오늘</button><span class="pill" id="tdProg" style="margin:0 0 0 auto"></span></div>
@@ -1236,6 +1246,9 @@ function drawNodes(){
 }
 
 // ---- 백지복습 세션 ----
+let rfT=0;
+function flushRefresh(){clearTimeout(rfT);rfT=0;updateTop();renderSubjects();drawNodes()}
+function lazyRefresh(){clearTimeout(rfT);rfT=setTimeout(flushRefresh,400)}
 let sess={known:0,partial:0,missed:0,n:0,t0:0};
 function startLesson(list,i){queue=list.slice();qi=i;again=new Set();sess={known:0,partial:0,missed:0,n:0,t0:Date.now()};openLesson(queue[qi])}
 function showSummary(){
@@ -1345,7 +1358,7 @@ function revealAnswer(){
 }
 $("revealBtn").onclick=revealAnswer;
 $("autoBtn").onclick=()=>rate($("autoBtn").dataset.rate);
-const closeModal=()=>{clearInterval(tick);$("modalback").classList.remove("open");locked=false;cur=null};
+const closeModal=()=>{if(rfT)flushRefresh();clearInterval(tick);$("modalback").classList.remove("open");locked=false;cur=null};
 
 function advance(){if(qi<queue.length-1){qi++;openLesson(queue[qi])}else if(sess.n)showSummary();else closeModal()}
 function showExplain(){
@@ -1386,7 +1399,7 @@ function rate(k){
  r.next=addDays(t,Math.max(1,Math.ceil(r.S*K)));if(!retry)H[t]=(H[t]||0)+1;
  cloud(()=>setDoc(rDoc(id),r));if(!retry)cloud(()=>setDoc(hDoc(),{days:{[t]:increment(1)}},{merge:true}));
  if(k==="missed"&&!again.has(id)){again.add(id);queue.push(cur)}
- updateTop();renderSubjects();drawNodes();
+ lazyRefresh();
  $("feedback").textContent=overconf?`확신했지만 틀린 문제 — 착각 주의로 기록했어요 · 다음 복습 ${r.next}`:`기록 완료 · 다음 복습 ${r.next} (기억 안정도 ${r.S}일)`;
  if(conf)showExplain();else setTimeout(advance,overconf?900:(qi<queue.length-1?350:450));
 }
@@ -1934,6 +1947,8 @@ function renderNotes(){
  });
 }
 const PDF_MAX=15*1024*1024,CH=600000,PDFJS_WORKER="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const PDFJS_SRC="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+const loadScript=src=>new Promise((res,rej)=>{const e=document.createElement("script");e.src=src;e.onload=res;e.onerror=()=>rej(new Error("PDF 뷰어를 불러오지 못했습니다"));document.head.appendChild(e)});
 const fchunk=(id,i)=>doc(fs,"vaults",uid,"notefiles",id+"_"+i);
 const pdfCache=new Map();
 let pdfObs=null,pdfDoc=null,pdfUrl=null,pdfToken=0;
@@ -1988,6 +2003,7 @@ async function showPdf(n){
   const u=await loadPdfBytes(n);if(tok!==pdfToken)return;
   pdfUrl=URL.createObjectURL(new Blob([u],{type:"application/pdf"}));
   $("ntPdfOpen").href=pdfUrl;$("ntPdfDl").href=pdfUrl;$("ntPdfDl").download=n.title.replace(/[\\/:*?"<>|]/g,"_")+".pdf";$("ntPdfBar").classList.remove("hide");
+  if(!window.pdfjsLib){try{await loadScript(PDFJS_SRC)}catch(e){}}
   if(!window.pdfjsLib){host.innerHTML=`<iframe class="nt-frame" src="${pdfUrl}"></iframe>`;$("ntPdfInfo").textContent=`${((n.size||u.length)/1048576).toFixed(1)}MB`;return}
   pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_WORKER;
   const d0=await pdfjsLib.getDocument({data:u.slice()}).promise;
