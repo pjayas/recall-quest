@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]}}</script>
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]}}</script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
 <style>
 :root{
@@ -730,6 +730,16 @@ details.box-card summary{cursor:pointer}
 .sum-grid div{background:var(--input);border:1px solid var(--line);border-radius:10px;padding:14px 8px;text-align:center;font-size:12px;color:var(--muted)}
 .sum-grid b{display:block;font-size:24px;color:var(--ink);margin-bottom:2px}
 .sum-grid .k b{color:var(--green)}.sum-grid .m b{color:var(--red)}
+@media(max-width:860px){
+ .shell{display:flex;flex-direction:column}
+ aside{display:contents}
+ .brand{order:0;padding:12px 16px;background:var(--sidebar);border-bottom:1px solid var(--line)}
+ main{order:1;padding-bottom:40px}
+ .side-sec{order:2;margin:0 16px 16px;padding-top:12px}
+ .user-profile{order:3;margin:0 16px calc(84px + env(safe-area-inset-bottom));padding-top:12px}
+ .nav-group{order:4;position:fixed;left:0;right:0;bottom:0;z-index:4;background:var(--sidebar);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom));gap:4px;overflow-x:auto}
+ .nav{flex:0 0 auto;font-size:12.5px;padding:9px 11px}
+}
 </style>
 </head>
 <body>
@@ -771,7 +781,7 @@ details.box-card summary{cursor:pointer}
 <span>상한 <select id="capSel" aria-label="하루 복습 상한"><option>10</option><option>20</option><option>30</option><option>50</option></select></span>
 </div>
 <div class="grass-wrap">
-<div class="grass-title"><span>최근 35일 기록</span><span>오늘 →</span></div>
+<div class="grass-title"><span>최근 35일</span><span>과거 → 오늘</span></div>
 <div class="grass-grid" id="grassGrid"></div>
 </div>
 </div>
@@ -1088,9 +1098,10 @@ async function batchDelete(refs){for(let i=0;i<refs.length;i+=400){const b=write
 
 try{marked.use(markedHighlight.markedHighlight({langPrefix:"hljs language-",highlight:(c,l)=>hljs.highlight(c,{language:hljs.getLanguage(l)?l:"plaintext"}).value}))}catch(e){console.error(e)}
 function md(t){try{return md2(t)}catch(e){return"<p>"+esc(t).replace(/\n/g,"<br>")+"</p>"}}
-const fixMath=s=>s.replace(/^\\{2}([\[(])/,"\\$1").replace(/\\{2}([\])])$/,"\\$1").replace(/\\_/g,"_");
+const fixMath=s=>{s=fixMath0(s);return/^\$(?!\$)/.test(s)&&/[^$]\$$/.test(s)?"\\("+s.slice(1,-1)+"\\)":s};
+const fixMath0=s=>s.replace(/^\\{2}([\[(])/,"\\$1").replace(/\\{2}([\])])$/,"\\$1").replace(/\\_/g,"_");
 function md2(t){
- const m=[];t=t.replace(/\\{1,2}\[[\s\S]+?\\{1,2}\]|\\{1,2}\([^\n]+?\\{1,2}\)|\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g,s=>{m.push(fixMath(s));return`@@M${m.length-1}@@`});
+ const m=[];t=t.replace(/\\{1,2}\[[\s\S]+?\\{1,2}\]|\\{1,2}\([^\n]+?\\{1,2}\)|\$\$[\s\S]+?\$\$|\$[^\s$](?:[^$\n]*?[^\s$])?\$(?!\d)/g,s=>{m.push(fixMath(s));return`@@M${m.length-1}@@`});
  t=t.replace(/^[ \t]*:::[ \t]*(left|center|right)[ \t]*$/gm,'\n\n<div class="al-$1">\n\n').replace(/^[ \t]*:::[ \t]*$/gm,'\n\n</div>\n\n').replace(/==([^\s=](?:[^=\n]*?[^\s=])?)==/g,"<mark>$1</mark>");
  return DOMPurify.sanitize(marked.parse(t)).replace(/@@M(\d+)@@/g,(_,i)=>esc(m[i]));
 }
@@ -1104,7 +1115,7 @@ const pct=q=>{const x=ret(q);return x===null?"":" "+Math.round(x*100)+"%"};
 const due=q=>{const x=ret(q);return x!==null&&x<=TARGET};
 const dueQs=()=>Q.filter(due).sort((a,b)=>ret(a)-ret(b)),weakQs=()=>Q.filter(q=>["partial","missed"].includes(rec(q).status)||rec(q).overconf);
 function todayParts(){
- const dq=dueQs().slice(0,cap()),left=Math.max(0,cap()-dq.length);
+ const done=Q.filter(q=>rec(q).last===today()).length,room=Math.max(0,cap()-done),dq=dueQs().slice(0,room),left=Math.max(0,room-dq.length);
  const nw=Q.filter(q=>!rec(q).last).sort((a,b)=>(b.created||"").localeCompare(a.created||"")).slice(0,left);
  return[dq,nw];
 }
@@ -1120,7 +1131,7 @@ function findRelated(q){
 
 function renderGrass(){
  const g=$("grassGrid");g.innerHTML="";
- for(let i=0;i<35;i++){
+ for(let i=34;i>=0;i--){
   const d=new Date();d.setDate(d.getDate()-i);const ds=fmt(d),c=H[ds]||0;
   const b=document.createElement("div");b.className="grass-day";
   b.dataset.level=c>30?4:c>15?3:c>5?2:c>0?1:0;
@@ -1360,7 +1371,7 @@ function rate(k){
  const t=today(),r=R[cur.id]=R[cur.id]||{},id=cur.id,R0=ret(cur),S0=stab(r);
  const kws=kwList(cur.keywords);
  r.miss=kws.length?[...document.querySelectorAll("#kwBox input")].filter(c=>!c.checked).map(c=>c.value):[];
- const conf=k==="confused";if(conf)k="missed";sess[k]++;sess.n++;
+ const conf=k==="confused";if(conf)k="missed";const retry=again.has(id);if(!retry){sess[k]++;sess.n++}
  const overconf=confLv==="high"&&k==="missed";
  if(k==="missed")r.lapses=(r.lapses||0)+1;
  let S;
@@ -1371,9 +1382,9 @@ function rate(k){
  if(overconf)S=Math.max(.5,S*.8);
  r.S=Math.min(Math.round(S*100)/100,365);delete r.step;
  r.first=r.first||t;r.confused=conf;r.overconf=k==="known"?false:(overconf||!!r.overconf);
- r.last=t;r.status=k;r.count=(r.count||0)+1;
- r.next=addDays(t,Math.max(1,Math.ceil(r.S*K)));H[t]=(H[t]||0)+1;
- cloud(()=>setDoc(rDoc(id),r));cloud(()=>setDoc(hDoc(),{days:{[t]:increment(1)}},{merge:true}));
+ r.last=t;r.status=k;r.count=(r.count||0)+(retry?0:1);
+ r.next=addDays(t,Math.max(1,Math.ceil(r.S*K)));if(!retry)H[t]=(H[t]||0)+1;
+ cloud(()=>setDoc(rDoc(id),r));if(!retry)cloud(()=>setDoc(hDoc(),{days:{[t]:increment(1)}},{merge:true}));
  if(k==="missed"&&!again.has(id)){again.add(id);queue.push(cur)}
  updateTop();renderSubjects();drawNodes();
  $("feedback").textContent=overconf?`확신했지만 틀린 문제 — 착각 주의로 기록했어요 · 다음 복습 ${r.next}`:`기록 완료 · 다음 복습 ${r.next} (기억 안정도 ${r.S}일)`;
@@ -1573,8 +1584,9 @@ $("wipeBtn").onclick=()=>{
 
 // ---- 백업 / 복원 ----
 $("exportBtn").onclick=()=>{
- const blob=new Blob([JSON.stringify({version:4,questions:Q,records:R,history:H,study:SH,dump:D,notes:N.filter(n=>n.type!=="pdf")},null,1)],{type:"application/json"});
+ const blob=new Blob([JSON.stringify({version:5,questions:Q,records:R,history:H,study:SH,dump:D,todos:T,exam:ST.exam||"",notes:N.filter(n=>n.type!=="pdf")},null,1)],{type:"application/json"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`recall-backup-${today()}.json`;a.click();URL.revokeObjectURL(a.href);
+ if(N.some(n=>n.type==="pdf"))toast("PDF 노트는 백업 파일에 포함되지 않아요. 원본 PDF는 따로 보관해 두세요.");
 };
 $("importBtn").onclick=()=>$("importFile").click();
 $("importFile").onchange=async e=>{
@@ -1598,6 +1610,9 @@ $("importFile").onchange=async e=>{
   if(shChanged)items.push([shDoc(),{days:SH}]);
   let dChanged=false;(Array.isArray(j.dump)?j.dump:[]).forEach(x=>{if(x&&x.text&&!D.some(y=>y.text===x.text)){D.push({id:newId(),text:String(x.text),created:x.created||today()});dChanged=true}});
   if(dChanged)items.push([dumpDoc(),{items:D}]);
+  let tChanged=false;(Array.isArray(j.todos)?j.todos:[]).forEach(x=>{if(x&&x.text&&x.date&&!T.some(y=>y.id===x.id)){T.push({...x,id:x.id||newId()});tChanged=true}});
+  if(tChanged)items.push([tDoc(),{items:T}]);
+  if(j.exam&&!ST.exam){ST.exam=j.exam;items.push([sDoc(),{...ST}])}
   (Array.isArray(j.notes)?j.notes:[]).forEach(x=>{if(!x||!x.body||N.some(y=>y.subject===x.subject&&y.title===x.title))return;const nid=x.id&&!N.some(y=>y.id===String(x.id))?String(x.id):newId(),n={id:nid,subject:x.subject||"기타",title:String(x.title||"제목 없음"),body:String(x.body),created:x.created||today(),updated:x.updated||x.created||today()};N.push(n);items.push([nDoc(nid),n])});
   refresh();await cloud(()=>batchSet(items));alert(`${n}개 문제를 가져왔습니다.`);
  }catch(err){alert("파일을 읽을 수 없습니다: "+err.message)}
@@ -1868,7 +1883,7 @@ function parseTime(t){
  let h=+m[2];const mm=+(m[3]||m[4]||0),pre=m[1];
  if(h>23||mm>59)return{time:"",text:t};
  if(pre&&"오후저녁밤".includes(pre)&&h<12)h+=12;
- else if(!pre&&h>=1&&h<=6)h+=12;
+
  const rest=(t.slice(0,m.index)+" "+t.slice(m.index+m[0].length)).replace(/\s+/g," ").trim();
  return{time:String(h).padStart(2,"0")+":"+String(mm).padStart(2,"0"),text:rest||t};
 }
@@ -2297,7 +2312,7 @@ async function start(code,remember){
  try{
   const[qs,rs,hs,ts,ss,shs,dms,nts]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc()),getDoc(tDoc()),getDoc(sDoc()),getDoc(shDoc()),getDoc(dumpDoc()),getDocs(nCol()).catch(()=>null)]);
   Q=qs.docs.map(d=>({...d.data(),id:d.id}));R={};rs.docs.forEach(d=>R[d.id]=d.data());H=hs.exists()?hs.data().days||{}:{};
-  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60));tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];notesOk=!!nts;N=nts?nts.docs.map(d=>({...d.data(),id:d.id})):[];
+  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60)||!x.done);tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];notesOk=!!nts;N=nts?nts.docs.map(d=>({...d.data(),id:d.id})):[];
   ready=true;$("warn").style.display="none";
   if(remember)LS.set("rq_code",code);else LS.del("rq_code");
  }catch(e){
