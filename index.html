@@ -344,6 +344,14 @@ a.smallbtn{text-decoration:none;display:inline-block}
 .rv-btns{display:flex;gap:8px;flex-wrap:wrap}
 .st-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .st-nav{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink)}
+.sw{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 4px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--input)}
+.sw-clock{display:flex;align-items:baseline;gap:8px;min-width:104px}
+.sw-clock b{font-size:24px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--ink)}
+.sw-clock span{font-size:12px;color:var(--muted)}
+.sw.study .sw-clock b{color:var(--green)}
+.sw.brk .sw-clock b{color:var(--blue)}
+.sw-sum{margin-left:auto;display:flex;gap:10px;font-size:12px;color:var(--muted);white-space:nowrap}
+.sw-sum b{font-weight:600;color:var(--ink-2)}
 .st-main{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:10px 0 2px}
 .st-big{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
 .st-big.zero{color:var(--line-strong)}
@@ -363,58 +371,6 @@ a.smallbtn{text-decoration:none;display:inline-block}
 .st-row input{width:64px;border:1px solid var(--line-strong);border-radius:8px;padding:6px 8px;font:inherit;font-size:14.5px;background:var(--input);color:var(--ink);text-align:center}
 .st-row input:focus{background:var(--paper);border-color:var(--green);outline:none}
 .st-note{font-size:11.5px;color:var(--muted);flex-basis:100%}
-.pomo{--pc:var(--green);--pc-soft:var(--green-soft);--pc-line:var(--green-line);margin:16px 0 4px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--input)}
-.pomo.brk{--pc:var(--blue);--pc-soft:var(--blue-soft);--pc-line:var(--line-strong)}
-.pomo-main{display:flex;align-items:center;justify-content:center;gap:26px;flex-wrap:wrap}
-.pomo-dial{position:relative;width:184px;height:184px;flex:none}
-.pomo-dial svg{display:block;width:100%;height:100%}
-.pomo-tick{fill:none;stroke:var(--line-strong);stroke-width:5;stroke-dasharray:1.1 8.64;opacity:.7}
-.pomo-track{fill:none;stroke:var(--line);stroke-width:9}
-.pomo-arc{fill:none;stroke:var(--pc);stroke-width:9;stroke-linecap:round;stroke-dasharray:477.5;stroke-dashoffset:477.5}
-.pomo-knob{fill:var(--pc);stroke:var(--input);stroke-width:3}
-.pomo-halo{fill:var(--pc);opacity:0}
-.pomo.run .pomo-halo{animation:pomoPulse 2s ease-out infinite}
-@keyframes pomoPulse{0%{opacity:.35;r:7}100%{opacity:0;r:17}}
-.pomo-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;pointer-events:none}
-.pomo-time{font-size:42px;font-weight:650;letter-spacing:-.03em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
-.pomo-state{font-size:12px;color:var(--muted);font-weight:500}
-.pomo-side{display:flex;flex-direction:column;gap:14px;min-width:212px;flex:1 1 212px;max-width:300px}
-.pomo-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border-radius:10px;background:var(--soft)}
-.pomo-tabs button{border:0;background:transparent;font:inherit;font-size:12px;font-weight:500;color:var(--muted);padding:6px 4px;border-radius:7px;cursor:default;white-space:nowrap}
-.pomo-tabs button.on{background:var(--paper);color:var(--pc);font-weight:700;box-shadow:var(--shadow)}
-.pomo-tabs.idle button:not(.on){cursor:pointer}
-.pomo-tabs.idle button:not(.on):hover{color:var(--ink)}
-.pomo-cyc{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
-.pomo-segs{display:flex;gap:4px}
-.pomo-segs i{width:26px;height:6px;border-radius:3px;background:var(--line)}
-.pomo-segs i.on{background:var(--green)}
-.pomo-segs i.cur{background:linear-gradient(90deg,var(--green) var(--p,0%),var(--line) var(--p,0%))}
-.pomo-btns{display:flex;gap:8px}
-.pomo-go{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--pc);background:var(--pc);color:#fff;font:inherit;font-size:14px;font-weight:700;padding:11px 16px;border-radius:12px;cursor:pointer;transition:background .15s,color .15s}
-.pomo-go svg{width:14px;height:14px;fill:currentColor}
-.pomo-go:hover{filter:brightness(1.06)}
-.pomo-go.pause{background:transparent;color:var(--pc)}
-.pomo-go.pause:hover{background:var(--pc-soft);filter:none}
-.pomo-stop{border:1px solid var(--line-strong);background:var(--paper);color:var(--ink-2);font:inherit;font-size:13px;font-weight:600;padding:11px 14px;border-radius:12px;cursor:pointer;white-space:nowrap}
-.pomo-stop:hover:not(:disabled){background:var(--soft);color:var(--ink)}
-.pomo-stop:disabled{opacity:.4;cursor:not-allowed}
-.pomo-go:focus-visible,.pomo-stop:focus-visible,.pomo-tabs button:focus-visible{outline:2px solid var(--pc);outline-offset:2px}
-.pomo-set{margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
-.pomo-set summary{cursor:pointer;color:var(--muted);font-weight:500;font-size:12.5px}
-.pomo-cfg{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end;margin-top:12px}
-.pomo-fld{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--muted);font-weight:500}
-.pomo-fld span{display:flex;align-items:center;gap:5px;color:var(--ink-2);font-size:12.5px}
-.pomo-fld input[type=number]{width:62px;border:1px solid var(--line-strong);border-radius:8px;padding:6px 8px;font:inherit;font-size:14.5px;background:var(--paper);color:var(--ink);text-align:center}
-.pomo-fld input[type=number]:focus{border-color:var(--green);outline:none}
-.pomo-sw{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);cursor:pointer}
-.pomo-sw input{appearance:none;-webkit-appearance:none;width:32px;height:18px;border-radius:9px;background:var(--line-strong);position:relative;margin:0;cursor:pointer;transition:background .15s;flex:none}
-.pomo-sw input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .15s}
-.pomo-sw input:checked{background:var(--green)}
-.pomo-sw input:checked::after{transform:translateX(14px)}
-.pomo-sw input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
-.pomo-note{flex-basis:100%;font-size:11.5px;color:var(--muted);line-height:1.5}
-@media(max-width:480px){.pomo{padding:14px}.pomo-side{max-width:none}}
-@media(prefers-reduced-motion:reduce){.pomo.run .pomo-halo{animation:none}.pomo-go{transition:none}}
 .td-cue{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
 .td-acts{display:flex;align-items:center;gap:2px;flex-shrink:0}
 .td-x{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 7px;opacity:.6}
@@ -852,32 +808,11 @@ details.box-card summary{cursor:pointer}
 <div class="st-head"><span class="st-label">순공부 시간</span>
 <div class="st-nav"><button class="smallbtn xs" id="stPrev" aria-label="이전 날">‹</button><span id="stDate"></span><button class="smallbtn xs" id="stNext" aria-label="다음 날">›</button><button class="smallbtn xs" id="stToday">오늘</button></div></div>
 <div class="st-main"><div class="st-big" id="stBig">0분</div><div class="st-sub" id="stSum"></div></div>
-<div class="pomo" id="pomo">
-<div class="pomo-main">
-<div class="pomo-dial">
-<svg viewBox="0 0 200 200" aria-hidden="true"><g transform="rotate(-90 100 100)">
-<circle class="pomo-tick" cx="100" cy="100" r="93"/>
-<circle class="pomo-track" cx="100" cy="100" r="76"/>
-<circle class="pomo-arc" id="pomoArc" cx="100" cy="100" r="76"/>
-<g id="pomoDot"><circle class="pomo-halo" cx="176" cy="100" r="7"/><circle class="pomo-knob" cx="176" cy="100" r="7"/></g>
-</g></svg>
-<div class="pomo-center" role="timer" aria-live="off"><div class="pomo-time" id="pomoTime">25:00</div><div class="pomo-state" id="pomoState">집중 대기</div></div>
-</div>
-<div class="pomo-side">
-<div class="pomo-tabs idle" id="pomoTabs"><button type="button" data-m="focus">집중</button><button type="button" data-m="short">짧은 휴식</button><button type="button" data-m="long">긴 휴식</button></div>
-<div class="pomo-cyc"><span class="pomo-segs" id="pomoSegs"><i></i><i></i><i></i><i></i></span><span id="pomoInfo"></span></div>
-<div class="pomo-btns"><button type="button" class="pomo-go" id="pomoGo"></button><button type="button" class="pomo-stop" id="pomoStop">정지·저장</button></div>
-</div>
-</div>
-<details class="pomo-set"><summary>타이머 설정</summary>
-<div class="pomo-cfg">
-<label class="pomo-fld">집중<span><input id="pcF" type="number" min="1" max="180" inputmode="numeric">분</span></label>
-<label class="pomo-fld">짧은 휴식<span><input id="pcS" type="number" min="1" max="60" inputmode="numeric">분</span></label>
-<label class="pomo-fld">긴 휴식<span><input id="pcL" type="number" min="1" max="90" inputmode="numeric">분</span></label>
-<label class="pomo-sw"><input type="checkbox" id="pcAuto">다음 단계 자동 시작</label>
-<label class="pomo-sw"><input type="checkbox" id="pcSnd">알림음</label>
-<div class="pomo-note">집중이 끝나면 그 시간이 오늘의 순공부 시간에 바로 더해져요. 4번 집중하면 긴 휴식이 나와요.</div>
-</div></details>
+<div class="sw" id="sw">
+<div class="sw-clock" role="timer" aria-live="off"><b id="swTime">00:00</b><span id="swState">대기</span></div>
+<button type="button" class="smallbtn primary" id="swGo">공부 시작</button>
+<button type="button" class="smallbtn xs hide" id="swCancel">취소</button>
+<div class="sw-sum" id="swSum"></div>
 </div>
 <div class="st-week" id="stWeek"></div>
 <div class="st-quick"><button class="smallbtn xs" data-st="10">+10분</button><button class="smallbtn xs" data-st="30">+30분</button><button class="smallbtn xs" data-st="60">+1시간</button><button class="smallbtn xs" data-st="-10">-10분</button><button class="smallbtn danger xs" id="stReset">초기화</button></div>
@@ -1098,7 +1033,7 @@ $("themeBtn").onclick=()=>{
 syncTheme();
 
 let Q=[],R={},H={},uid=null,ready=false;
-let T=[],tdDay=null,ST={},tdType="mit",SH={},D=[],N=[],notesOk=true;
+let T=[],tdDay=null,ST={},tdType="mit",SH={},BH={},D=[],N=[],notesOk=true;
 let sel=subjects[0].name,flt="all",dflt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set(),t0=0,tick=null;
 let hintLv=0,confLv=null;
 
@@ -1603,7 +1538,7 @@ $("wipeBtn").onclick=()=>{
 
 // ---- 백업 / 복원 ----
 $("exportBtn").onclick=()=>{
- const blob=new Blob([JSON.stringify({version:5,questions:Q,records:R,history:H,study:SH,dump:D,todos:T,exam:ST.exam||"",notes:N.filter(n=>n.type!=="pdf")},null,1)],{type:"application/json"});
+ const blob=new Blob([JSON.stringify({version:5,questions:Q,records:R,history:H,study:SH,rest:BH,dump:D,todos:T,exam:ST.exam||"",notes:N.filter(n=>n.type!=="pdf")},null,1)],{type:"application/json"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`recall-backup-${today()}.json`;a.click();URL.revokeObjectURL(a.href);
  if(N.some(n=>n.type==="pdf"))toast("PDF 노트는 백업 파일에 포함되지 않아요. 원본 PDF는 따로 보관해 두세요.");
 };
@@ -1627,6 +1562,8 @@ $("importFile").onchange=async e=>{
   if(Object.keys(days).length)items.push([hDoc(),{days:H}]);
   let shChanged=false;Object.entries(j.study||{}).forEach(([d,m])=>{if((SH[d]||0)<m){SH[d]=m;shChanged=true}});
   if(shChanged)items.push([shDoc(),{days:SH}]);
+  let bhChanged=false;Object.entries(j.rest||{}).forEach(([d,m])=>{if((BH[d]||0)<m){BH[d]=m;bhChanged=true}});
+  if(bhChanged)items.push([shDoc(),{brk:BH}]);
   let dChanged=false;(Array.isArray(j.dump)?j.dump:[]).forEach(x=>{if(x&&x.text&&!D.some(y=>y.text===x.text)){D.push({id:newId(),text:String(x.text),created:x.created||today()});dChanged=true}});
   if(dChanged)items.push([dumpDoc(),{items:D}]);
   let tChanged=false;(Array.isArray(j.todos)?j.todos:[]).forEach(x=>{if(x&&x.text&&x.date&&!T.some(y=>y.id===x.id)){T.push({...x,id:x.id||newId()});tChanged=true}});
@@ -1651,6 +1588,7 @@ function renderStudy(force){
  const vals=days.map(d=>SH[d]||0),sum=vals.reduce((a,b)=>a+b,0),mx=Math.max(240,...vals),wk=["일","월","화","수","목","금","토"];
  $("stWeek").innerHTML=days.map((d,i)=>`<div class="st-col${d===tdDay?" cur":""}" title="${d}: ${fmtMin(vals[i])}"><div class="st-val">${vals[i]?(vals[i]/60).toFixed(1).replace(/\.0$/,"")+"h":""}</div><div class="st-bar">${vals[i]?`<i style="height:${vals[i]/mx*100}%"></i>`:""}</div><small>${wk[new Date(d+"T00:00:00").getDay()]}</small></div>`).join("");
  $("stSum").textContent=`최근 7일 합계 ${fmtMin(sum)} · 하루 평균 ${fmtMin(sum/7)}`;
+ $("swSum").innerHTML=`<span>공부 <b>${fmtMin(SH[tdDay]||0)}</b></span><span>휴식 <b>${fmtMin(BH[tdDay]||0)}</b></span>`;
  $("studyToday").textContent=fmtMin(SH[today()]||0);
 }
 function setStudy(m){
@@ -1665,121 +1603,50 @@ $("stNext").onclick=()=>{tdDay=addDays(tdDay||today(),1);renderTodo()};
 $("stToday").onclick=()=>{tdDay=today();renderTodo()};
 $("stReset").onclick=()=>{if(!SH[tdDay||today()]||confirm("이 날의 순공부 시간을 0으로 초기화할까요?"))setStudy(0)};
 
-// ---- 뽀모도로 타이머 (순공부 시간과 연동) ----
-const POMO_KEY="rq_pomo",POMO_CFG="rq_pomo_cfg",POMO_CNT="rq_pomo_cnt";
-const pcfg=Object.assign({f:25,s:5,l:15,auto:false,snd:true},(()=>{try{return JSON.parse(LS.get(POMO_CFG))||{}}catch(e){return{}}})());
-const pdur=m=>(m==="focus"?pcfg.f:m==="short"?pcfg.s:pcfg.l)*60000;
-let P=(()=>{try{const x=JSON.parse(LS.get(POMO_KEY));if(x&&["focus","short","long"].includes(x.mode))return x}catch(e){}return{mode:"focus",cycle:0,running:false,endAt:0,left:pdur("focus")}})();
-const pSave=()=>LS.set(POMO_KEY,JSON.stringify(P));
-const pLeft=()=>P.running?Math.max(0,P.endAt-Date.now()):P.left;
-const pCount=()=>{try{const c=JSON.parse(LS.get(POMO_CNT));return c&&c.d===today()?c.n:0}catch(e){return 0}};
-const pCountAdd=()=>LS.set(POMO_CNT,JSON.stringify({d:today(),n:pCount()+1}));
-const baseTitle=document.title;
-let pAudio=null;
-function pBeep(){
- if(!pcfg.snd)return;
- try{
-  pAudio=pAudio||new(window.AudioContext||window.webkitAudioContext)();
-  if(pAudio.state==="suspended")pAudio.resume();
-  [0,.28,.56].forEach((t,i)=>{const o=pAudio.createOscillator(),g=pAudio.createGain();o.type="sine";o.frequency.value=i===2?1046:784;o.connect(g);g.connect(pAudio.destination);const n=pAudio.currentTime+t;g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(.25,n+.03);g.gain.exponentialRampToValueAtTime(.001,n+.24);o.start(n);o.stop(n+.26)});
- }catch(e){}
+// ---- 공부 / 휴식 스톱워치 (누르면 시작, 다시 누르면 저장) ----
+const SW_KEY="rq_sw",baseTitle=document.title;
+let SW=(()=>{try{const x=JSON.parse(LS.get(SW_KEY));if(x&&(x.ph==="study"||x.ph==="brk")&&x.start)return x}catch(e){}return{ph:"idle",start:0}})();
+const swSave=()=>LS.set(SW_KEY,JSON.stringify(SW));
+const swSec=()=>SW.ph==="idle"?0:Math.max(0,Math.floor((Date.now()-SW.start)/1000));
+const swClock=s=>{const p=n=>String(n).padStart(2,"0"),h=Math.floor(s/3600);return (h?h+":":"")+p(Math.floor(s%3600/60))+":"+p(s%60)};
+// 시작한 날짜 기준으로 분 단위 저장
+function swAdd(kind,min){
+ if(min<1)return false;
+ const d=fmt(new Date(SW.start)),map=kind==="study"?SH:BH;
+ map[d]=Math.min(1440,(map[d]||0)+min);
+ cloud(()=>setDoc(shDoc(),kind==="study"?{days:{[d]:map[d]}}:{brk:{[d]:map[d]}},{merge:true}));
+ renderStudy(true);return true;
 }
-function pNotify(msg){
- pBeep();
- try{if("Notification" in window&&Notification.permission==="granted"&&document.hidden)new Notification("뽀모도로",{body:msg})}catch(e){}
+function swRender(){
+ const sec=swSec(),ph=SW.ph,box=$("sw");
+ box.classList.toggle("study",ph==="study");box.classList.toggle("brk",ph==="brk");
+ $("swTime").textContent=swClock(sec);
+ $("swState").textContent=ph==="study"?"공부 중":ph==="brk"?"휴식 중":"대기";
+ const go=$("swGo");
+ go.textContent=ph==="study"?"공부 종료 · 휴식 시작":ph==="brk"?"휴식 종료":"공부 시작";
+ go.classList.toggle("primary",ph!=="brk");
+ $("swCancel").classList.toggle("hide",ph==="idle");
+ document.title=ph==="idle"?baseTitle:`${swClock(sec)} ${ph==="study"?"공부":"휴식"} · ${baseTitle}`;
 }
-// 집중한 분만큼 오늘 순공부 시간에 더한다
-function pCredit(min){
- min=Math.floor(min);if(min<1)return;
- const d=today();SH[d]=Math.min(1440,(SH[d]||0)+min);
- cloud(()=>setDoc(shDoc(),{days:{[d]:SH[d]}},{merge:true}));
- renderStudy(true);
-}
-function pNext(mode,run){
- P.mode=mode;P.left=pdur(mode);P.running=!!run;P.endAt=run?Date.now()+P.left:0;pSave();pRender();
-}
-function pFinish(){
- if(P.mode==="focus"){
-  pCredit(pcfg.f);pCountAdd();P.cycle=(P.cycle||0)+1;
-  const long=P.cycle>=4;
-  pNotify(`${pcfg.f}분 집중 완료! 순공부 시간에 반영했어요. ${long?"긴":"짧은"} 휴식을 시작하세요.`);
-  pNext(long?"long":"short",pcfg.auto);
+$("swGo").onclick=()=>{
+ const min=Math.round(swSec()/60);
+ if(SW.ph==="idle"){SW={ph:"study",start:Date.now()}}
+ else if(SW.ph==="study"){
+  toast(swAdd("study",min)?`공부 ${fmtMin(min)} 저장했어요. 휴식 시작!`:"1분 미만이라 저장하지 않았어요. 휴식 시작!");
+  SW={ph:"brk",start:Date.now()};
  }else{
-  if(P.mode==="long")P.cycle=0;
-  pNotify("휴식 끝! 다시 집중할 시간이에요.");
-  pNext("focus",pcfg.auto);
+  toast(swAdd("brk",min)?`휴식 ${fmtMin(min)} 저장했어요.`:"1분 미만이라 저장하지 않았어요.");
+  SW={ph:"idle",start:0};
  }
-}
-const P_C=2*Math.PI*76;
-const ICON_PLAY='<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z"/></svg>',ICON_PAUSE='<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 1.5h3.2v11H2.5zM8.3 1.5h3.2v11H8.3z"/></svg>';
-function pRender(){
- const left=pLeft(),total=pdur(P.mode),sec=Math.ceil(left/1000);
- const mm=String(Math.floor(sec/60)).padStart(2,"0"),ss=String(sec%60).padStart(2,"0");
- const foc=P.mode==="focus",started=left<total,pct=total?Math.min(1,Math.max(0,1-left/total)):0;
- const box=$("pomo");
- box.classList.toggle("brk",!foc);box.classList.toggle("run",!!P.running);
- $("pomoTime").textContent=`${mm}:${ss}`;
- $("pomoState").textContent=P.running?(foc?"집중하는 중":"쉬는 중"):started?"일시정지":(foc?"집중 대기":"휴식 대기");
- $("pomoArc").style.strokeDashoffset=P_C*(1-pct);
- $("pomoDot").setAttribute("transform",`rotate(${pct*360} 100 100)`);
- document.querySelectorAll("#pomoTabs button").forEach(b=>b.classList.toggle("on",b.dataset.m===P.mode));
- $("pomoTabs").classList.toggle("idle",!started&&!P.running);
- const segs=[...$("pomoSegs").children],done=P.mode==="long"?4:(P.cycle||0);
- segs.forEach((d,i)=>{d.classList.toggle("on",i<done);d.classList.toggle("cur",foc&&i===done&&started);d.style.setProperty("--p",(pct*100)+"%")});
- $("pomoGo").className="pomo-go"+(P.running?" pause":"");
- $("pomoGo").innerHTML=(P.running?ICON_PAUSE:ICON_PLAY)+(P.running?"일시정지":started?"이어서 하기":(foc?"집중 시작":"휴식 시작"));
- $("pomoStop").textContent=foc?"정지·저장":"건너뛰기";
- $("pomoStop").disabled=foc&&!started;
- const n=pCount();
- $("pomoInfo").textContent=`${Math.min(done+(foc?1:0),4)||1}/4 세트 · 오늘 ${n}뽀모`;
- document.title=P.running?`${mm}:${ss} ${foc?"집중":"휴식"} · ${baseTitle}`:baseTitle;
-}
-document.querySelectorAll("#pomoTabs button").forEach(b=>b.onclick=()=>{
- if(P.running||pLeft()<pdur(P.mode)||b.dataset.m===P.mode)return;
- pNext(b.dataset.m,false);
-});
-$("pomoGo").onclick=()=>{
- if(P.running){P.left=pLeft();P.running=false}
- else{
-  P.endAt=Date.now()+P.left;P.running=true;
-  try{pAudio=pAudio||new(window.AudioContext||window.webkitAudioContext)();pAudio.resume&&pAudio.resume()}catch(e){}
-  try{if("Notification" in window&&Notification.permission==="default")Notification.requestPermission()}catch(e){}
- }
- pSave();pRender();
+ swSave();swRender();
 };
-$("pomoStop").onclick=()=>{
- if(P.mode==="focus"){
-  const el=Math.floor((pdur("focus")-pLeft())/60000);
-  if(el>=1){
-   if(!confirm(`지금까지 ${el}분 집중했어요. 순공부 시간에 ${el}분을 저장하고 종료할까요?`))return;
-   pCredit(el);
-  }else if(!confirm("1분 미만이라 저장되지 않습니다. 이번 타이머를 종료할까요?"))return;
-  pNext("focus",false);
- }else{
-  if(P.mode==="long")P.cycle=0;
-  pNext("focus",false);
- }
+$("swCancel").onclick=()=>{
+ if(!confirm(`지금 ${SW.ph==="study"?"공부":"휴식"} 기록(${fmtClock(swSec())})을 저장하지 않고 취소할까요?`))return;
+ SW={ph:"idle",start:0};swSave();swRender();
 };
-function pCfgInit(){
- $("pcF").value=pcfg.f;$("pcS").value=pcfg.s;$("pcL").value=pcfg.l;$("pcAuto").checked=pcfg.auto;$("pcSnd").checked=pcfg.snd;
- const apply=()=>{
-  const old=pdur(P.mode),untouched=!P.running&&P.left===old;
-  const n=(id,min,max,def)=>Math.max(min,Math.min(max,Math.round(+$(id).value)||def));
-  pcfg.f=n("pcF",1,180,25);pcfg.s=n("pcS",1,60,5);pcfg.l=n("pcL",1,90,15);pcfg.auto=$("pcAuto").checked;pcfg.snd=$("pcSnd").checked;
-  LS.set(POMO_CFG,JSON.stringify(pcfg));
-  if(untouched){P.left=pdur(P.mode);pSave()}
-  pRender();
- };
- ["pcF","pcS","pcL","pcAuto","pcSnd"].forEach(i=>$(i).onchange=apply);
-}
-pCfgInit();pRender();
-// 탭이 백그라운드여도 정확하도록 실제 시각 기준으로 계산. 클라우드 로딩 전에는 완료 처리를 미룬다.
-setInterval(()=>{
- if(P.running&&ready&&P.endAt<=Date.now())pFinish();
- else if(!P.running||ready)pRender();
-},250);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)pRender()});
-window.addEventListener("beforeunload",e=>{if(P.running&&P.mode==="focus"){e.preventDefault();e.returnValue=""}});
+swRender();setInterval(swRender,500);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)swRender()});
+window.addEventListener("beforeunload",e=>{if(SW.ph!=="idle"){e.preventDefault();e.returnValue=""}});
 
 // ---- 뇌과학적 할 일 / 하루 계획 ----
 const tDoc=()=>doc(fs,"vaults",uid,"meta","todos"),sDoc=()=>doc(fs,"vaults",uid,"meta","settings");
@@ -2364,7 +2231,7 @@ async function start(code,remember){
  try{
   const[qs,rs,hs,ts,ss,shs,dms,nts]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc()),getDoc(tDoc()),getDoc(sDoc()),getDoc(shDoc()),getDoc(dumpDoc()),getDocs(nCol()).catch(()=>null)]);
   Q=qs.docs.map(d=>({...d.data(),id:d.id}));R={};rs.docs.forEach(d=>R[d.id]=d.data());H=hs.exists()?hs.data().days||{}:{};
-  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60)||!x.done);tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};D=dms.exists()?dms.data().items||[]:[];notesOk=!!nts;N=nts?nts.docs.map(d=>({...d.data(),id:d.id})):[];
+  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60)||!x.done);tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};BH=shs.exists()?shs.data().brk||{}:{};D=dms.exists()?dms.data().items||[]:[];notesOk=!!nts;N=nts?nts.docs.map(d=>({...d.data(),id:d.id})):[];
   ready=true;$("warn").style.display="none";
   if(remember)LS.set("rq_code",code);else LS.del("rq_code");
  }catch(e){
