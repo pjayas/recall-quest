@@ -363,13 +363,24 @@ a.smallbtn{text-decoration:none;display:inline-block}
 .sw-go:focus{outline:none}.sw-go:focus-visible{outline:2px solid var(--c);outline-offset:2px}
 .sw-x{border:0;background:transparent;color:var(--muted);width:30px;height:30px;border-radius:50%;font-size:14px;cursor:pointer}
 .sw-x:hover{background:var(--soft);color:var(--ink)}
+.sw-mid{flex:1 1 220px;min-width:200px;display:flex;flex-direction:column;gap:6px}
+.sw-goal{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted)}
+.sw-goalb{border:0;background:none;font:inherit;color:var(--ink-2);cursor:pointer;padding:0;border-bottom:1px dotted var(--line-strong)}
+.sw-goalb:hover{color:var(--ink)}
+.sw-goal b{font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums}
+.sw-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.sw-bar i{display:block;height:100%;width:0;background:var(--green);border-radius:99px;transition:width .4s}
+.sw-rt{display:flex;height:5px;border-radius:99px;overflow:hidden;background:var(--line)}
+.sw-rt i{display:block;height:100%;transition:width .4s}
+.sw-rt .a{background:var(--green)}.sw-rt .b{background:var(--blue)}
+.sw-cap{display:flex;justify-content:space-between;gap:4px 10px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
 .sw-sum{margin-left:auto;display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);padding-left:14px;border-left:1px solid var(--cl)}
 .sw-sum span{display:flex;align-items:center;gap:6px;justify-content:space-between;gap:12px}
 .sw-sum b{font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums}
 .sw-sum em{font-style:normal;display:inline-flex;align-items:center;gap:5px}
 .sw-sum em::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
 .sw-sum .r em::before{background:var(--blue)}
-@media(max-width:480px){.sw-sum{margin-left:0;flex-direction:row;width:100%;padding:10px 0 0;border-left:0;border-top:1px solid var(--cl)}.sw-sum span{flex:1}}
+@media(max-width:480px){.sw-mid{flex-basis:100%}.sw-sum{margin-left:0;flex-direction:row;width:100%;padding:10px 0 0;border-left:0;border-top:1px solid var(--cl)}.sw-sum span{flex:1}}
 @media(prefers-reduced-motion:reduce){.sw .sw-state i{animation:none!important}}
 .st-main{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:10px 0 2px}
 .st-big{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
@@ -830,6 +841,12 @@ details.box-card summary{cursor:pointer}
 <div class="sw" id="sw">
 <div class="sw-clock" role="timer" aria-live="off"><span class="sw-state"><i></i><span id="swState">대기</span></span><b id="swTime">00:00</b></div>
 <div class="sw-btns"><button type="button" class="sw-go" id="swGo"></button><button type="button" class="sw-x hide" id="swCancel" aria-label="저장하지 않고 취소" title="저장하지 않고 취소">✕</button></div>
+<div class="sw-mid">
+<div class="sw-goal"><button type="button" class="sw-goalb" id="swGoal" title="눌러서 목표 시간 바꾸기"></button><b id="swPct"></b></div>
+<div class="sw-bar" aria-hidden="true"><i id="swBarG"></i></div>
+<div class="sw-rt" aria-hidden="true"><i class="a" id="swRa"></i><i class="b" id="swRb"></i></div>
+<div class="sw-cap"><span id="swSes"></span><span id="swRatio"></span></div>
+</div>
 <div class="sw-sum" id="swSum"></div>
 </div>
 </div>
@@ -1052,7 +1069,7 @@ $("themeBtn").onclick=()=>{
 syncTheme();
 
 let Q=[],R={},H={},uid=null,ready=false;
-let T=[],tdDay=null,ST={},tdType="mit",SH={},BH={},D=[],N=[],notesOk=true;
+let T=[],tdDay=null,ST={},tdType="mit",SH={},BH={},SS={},GOAL=240,D=[],N=[],notesOk=true;
 let sel=subjects[0].name,flt="all",dflt="all",queue=[],qi=0,cur=null,editId=null,locked=false,again=new Set(),t0=0,tick=null;
 let hintLv=0,confLv=null;
 
@@ -1557,7 +1574,7 @@ $("wipeBtn").onclick=()=>{
 
 // ---- 백업 / 복원 ----
 $("exportBtn").onclick=()=>{
- const blob=new Blob([JSON.stringify({version:5,questions:Q,records:R,history:H,study:SH,rest:BH,dump:D,todos:T,exam:ST.exam||"",notes:N.filter(n=>n.type!=="pdf")},null,1)],{type:"application/json"});
+ const blob=new Blob([JSON.stringify({version:5,questions:Q,records:R,history:H,study:SH,rest:BH,sessions:SS,dump:D,todos:T,exam:ST.exam||"",notes:N.filter(n=>n.type!=="pdf")},null,1)],{type:"application/json"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`recall-backup-${today()}.json`;a.click();URL.revokeObjectURL(a.href);
  if(N.some(n=>n.type==="pdf"))toast("PDF 노트는 백업 파일에 포함되지 않아요. 원본 PDF는 따로 보관해 두세요.");
 };
@@ -1583,6 +1600,8 @@ $("importFile").onchange=async e=>{
   if(shChanged)items.push([shDoc(),{days:SH}]);
   let bhChanged=false;Object.entries(j.rest||{}).forEach(([d,m])=>{if((BH[d]||0)<m){BH[d]=m;bhChanged=true}});
   if(bhChanged)items.push([shDoc(),{brk:BH}]);
+  let ssChanged=false;Object.entries(j.sessions||{}).forEach(([d,v])=>{if(v&&!SS[d]){SS[d]=v;ssChanged=true}});
+  if(ssChanged)items.push([shDoc(),{ses:SS}]);
   let dChanged=false;(Array.isArray(j.dump)?j.dump:[]).forEach(x=>{if(x&&x.text&&!D.some(y=>y.text===x.text)){D.push({id:newId(),text:String(x.text),created:x.created||today()});dChanged=true}});
   if(dChanged)items.push([dumpDoc(),{items:D}]);
   let tChanged=false;(Array.isArray(j.todos)?j.todos:[]).forEach(x=>{if(x&&x.text&&x.date&&!T.some(y=>y.id===x.id)){T.push({...x,id:x.id||newId()});tChanged=true}});
@@ -1608,6 +1627,13 @@ function renderStudy(force){
  $("stWeek").innerHTML=days.map((d,i)=>`<div class="st-col${d===tdDay?" cur":""}" title="${d}: ${fmtMin(vals[i])}"><div class="st-val">${vals[i]?(vals[i]/60).toFixed(1).replace(/\.0$/,"")+"h":""}</div><div class="st-bar">${vals[i]?`<i style="height:${vals[i]/mx*100}%"></i>`:""}</div><small>${wk[new Date(d+"T00:00:00").getDay()]}</small></div>`).join("");
  $("stSum").textContent=`최근 7일 합계 ${fmtMin(sum)} · 하루 평균 ${fmtMin(sum/7)}`;
  $("swSum").innerHTML=`<span><em>공부</em><b>${fmtMin(SH[tdDay]||0)}</b></span><span class="r"><em>휴식</em><b>${fmtMin(BH[tdDay]||0)}</b></span>`;
+ {const st=SH[tdDay]||0,br=BH[tdDay]||0,tot=st+br,se=SS[tdDay]||{n:0,sum:0,max:0},pc=Math.min(100,Math.round(st/GOAL*100));
+  $("swGoal").textContent=`목표 ${fmtMin(GOAL)}`;
+  $("swPct").textContent=st>=GOAL?"달성 ✓":`${pc}% · ${fmtMin(GOAL-st)} 남음`;
+  $("swBarG").style.width=pc+"%";
+  $("swRa").style.width=tot?st/tot*100+"%":"0";$("swRb").style.width=tot?br/tot*100+"%":"0";
+  $("swRatio").textContent=tot?`공부 ${Math.round(st/tot*100)}% · 휴식 ${Math.round(br/tot*100)}%`:"공부·휴식 비율 없음";
+  $("swSes").textContent=se.n?`공부 ${se.n}회 · 평균 ${fmtMin(se.sum/se.n)} · 최장 ${fmtMin(se.max)}`:"타이머 기록 없음";}
  $("studyToday").textContent=fmtMin(SH[today()]||0);
 }
 function setStudy(m){
@@ -1620,7 +1646,7 @@ document.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>setStudy((SH[tdD
 $("stPrev").onclick=()=>{tdDay=addDays(tdDay||today(),-1);renderTodo()};
 $("stNext").onclick=()=>{tdDay=addDays(tdDay||today(),1);renderTodo()};
 $("stToday").onclick=()=>{tdDay=today();renderTodo()};
-$("stReset").onclick=()=>{if(!SH[tdDay||today()]||confirm("이 날의 순공부 시간을 0으로 초기화할까요?"))setStudy(0)};
+$("stReset").onclick=()=>{const d=tdDay||today();if(!SH[d]||confirm("이 날의 순공부 시간을 0으로 초기화할까요?")){SS[d]={n:0,sum:0,max:0};cloud(()=>setDoc(shDoc(),{ses:{[d]:SS[d]}},{merge:true}));setStudy(0)}};
 
 // ---- 공부 / 휴식 스톱워치 (누르면 시작, 다시 누르면 저장) ----
 const SW_KEY="rq_sw",baseTitle=document.title;
@@ -1633,7 +1659,9 @@ function swAdd(kind,min){
  if(min<1)return false;
  const d=fmt(new Date(SW.start)),map=kind==="study"?SH:BH;
  map[d]=Math.min(1440,(map[d]||0)+min);
- cloud(()=>setDoc(shDoc(),kind==="study"?{days:{[d]:map[d]}}:{brk:{[d]:map[d]}},{merge:true}));
+ const patch=kind==="study"?{days:{[d]:map[d]}}:{brk:{[d]:map[d]}};
+ if(kind==="study"){const o=SS[d]||{n:0,sum:0,max:0};SS[d]={n:o.n+1,sum:o.sum+min,max:Math.max(o.max,min)};patch.ses={[d]:SS[d]}}
+ cloud(()=>setDoc(shDoc(),patch,{merge:true}));
  renderStudy(true);return true;
 }
 function swRender(){
@@ -1658,6 +1686,11 @@ $("swGo").onclick=()=>{
   SW={ph:"idle",start:0};
  }
  swSave();swRender();
+};
+$("swGoal").onclick=()=>{
+ const v=prompt("하루 목표 공부 시간 (시간 단위, 예: 4 또는 3.5)",String(GOAL/60));if(v===null)return;
+ const h=parseFloat(v);if(!(h>0&&h<=24))return toast("0보다 크고 24 이하의 숫자로 입력해 주세요");
+ GOAL=Math.round(h*60);cloud(()=>setDoc(shDoc(),{goal:GOAL},{merge:true}));renderStudy(true);
 };
 $("swCancel").onclick=()=>{
  if(!confirm(`지금 ${SW.ph==="study"?"공부":"휴식"} 기록(${fmtClock(swSec())})을 저장하지 않고 취소할까요?`))return;
@@ -2250,7 +2283,7 @@ async function start(code,remember){
  try{
   const[qs,rs,hs,ts,ss,shs,dms,nts]=await Promise.all([getDocs(qCol()),getDocs(rCol()),getDoc(hDoc()),getDoc(tDoc()),getDoc(sDoc()),getDoc(shDoc()),getDoc(dumpDoc()),getDocs(nCol()).catch(()=>null)]);
   Q=qs.docs.map(d=>({...d.data(),id:d.id}));R={};rs.docs.forEach(d=>R[d.id]=d.data());H=hs.exists()?hs.data().days||{}:{};
-  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60)||!x.done);tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};BH=shs.exists()?shs.data().brk||{}:{};D=dms.exists()?dms.data().items||[]:[];notesOk=!!nts;N=nts?nts.docs.map(d=>({...d.data(),id:d.id})):[];
+  T=(ts.exists()?ts.data().items||[]:[]).filter(x=>x.date>=addDays(today(),-60)||!x.done);tdDay=today();ST=ss.exists()?ss.data():{};SH=shs.exists()?shs.data().days||{}:{};BH=shs.exists()?shs.data().brk||{}:{};SS=shs.exists()?shs.data().ses||{}:{};GOAL=shs.exists()&&shs.data().goal||240;D=dms.exists()?dms.data().items||[]:[];notesOk=!!nts;N=nts?nts.docs.map(d=>({...d.data(),id:d.id})):[];
   ready=true;$("warn").style.display="none";
   if(remember)LS.set("rq_code",code);else LS.del("rq_code");
  }catch(e){
