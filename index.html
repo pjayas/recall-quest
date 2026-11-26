@@ -1724,13 +1724,29 @@ $("swGo").onclick=()=>{
  swSave();swRender();
 };
 $("swGoal").onclick=()=>{
- const v=prompt("하루 목표 공부 시간 (시간 단위, 예: 4 또는 3.5)",String(GOAL/60));if(v===null)return;
- const h=parseFloat(v);if(!(h>0&&h<=24))return toast("0보다 크고 24 이하의 숫자로 입력해 주세요");
- GOAL=Math.round(h*60);cloud(()=>setDoc(shDoc(),{goal:GOAL},{merge:true}));renderStudy(true);
+ const b=$("swGoal");if(b.dataset.edit)return;b.dataset.edit="1";b.style.display="none";
+ const w=document.createElement("span");w.style.cssText="display:inline-flex;align-items:center;gap:5px;color:var(--ink-2)";
+ const inp=document.createElement("input");inp.type="number";inp.min="0.5";inp.max="24";inp.step="0.5";inp.value=GOAL/60;inp.setAttribute("aria-label","하루 목표 시간 (시간 단위)");
+ inp.style.cssText="width:62px;border:1px solid var(--line-strong);border-radius:6px;padding:2px 6px;font:inherit;background:var(--paper);color:var(--ink)";
+ w.append("목표 ",inp," 시간");b.parentNode.insertBefore(w,b);
+ let done=false;
+ const fin=ok=>{
+  if(done)return;done=true;w.remove();b.style.display="";delete b.dataset.edit;
+  if(ok){const h=parseFloat(inp.value);
+   if(h>0&&h<=24){GOAL=Math.round(h*60);cloud(()=>setDoc(shDoc(),{goal:GOAL},{merge:true}))}
+   else toast("0보다 크고 24 이하의 숫자로 입력해 주세요");}
+  renderStudy(true);
+ };
+ inp.onkeydown=e=>{if(e.isComposing)return;if(e.key==="Enter")fin(true);else if(e.key==="Escape")fin(false)};
+ inp.onblur=()=>fin(true);
+ inp.focus();inp.select();
 };
+// 확인창 없이 바로 취소하고, 토스트의 "되돌리기"로 복구할 수 있게 한다
 $("swCancel").onclick=()=>{
- if(!confirm(`지금 ${SW.ph==="study"?"공부":"휴식"} 기록(${fmtClock(swSec())})을 저장하지 않고 취소할까요?`))return;
+ if(SW.ph==="idle")return;
+ const prev=SW,label=prev.ph==="study"?"공부":"휴식",t=swClock(swSec());
  SW={ph:"idle",start:0};swSave();swRender();
+ toast(`${label} 기록(${t})을 저장하지 않고 취소했어요`,"되돌리기",()=>{if(SW.ph==="idle"){SW=prev;swSave();swRender()}},8000);
 };
 swRender();setInterval(swRender,500);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)swRender()});
