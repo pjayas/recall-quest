@@ -368,6 +368,7 @@ a.smallbtn{text-decoration:none;display:inline-block}
 .sw-goalb{border:0;background:none;font:inherit;color:var(--ink-2);cursor:pointer;padding:0;border-bottom:1px dotted var(--line-strong)}
 .sw-goalb:hover{color:var(--ink)}
 .sw-goal b{font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums}
+.sw-goal b.ok{cursor:pointer;color:var(--green)}
 .sw-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
 .sw-bar i{display:block;height:100%;width:0;background:var(--green);border-radius:99px;transition:width .4s}
 .sw-rt{display:flex;height:5px;border-radius:99px;overflow:hidden;background:var(--line)}
@@ -1630,6 +1631,7 @@ function renderStudy(force){
  {const st=SH[tdDay]||0,br=BH[tdDay]||0,tot=st+br,se=SS[tdDay]||{n:0,sum:0,max:0},pc=Math.min(100,Math.round(st/GOAL*100));
   $("swGoal").textContent=`목표 ${fmtMin(GOAL)}`;
   $("swPct").textContent=st>=GOAL?"달성 ✓":`${pc}% · ${fmtMin(GOAL-st)} 남음`;
+  $("swPct").classList.toggle("ok",st>=GOAL);$("swPct").title=st>=GOAL?"눌러서 축하 다시 보기":"";
   $("swBarG").style.width=pc+"%";
   $("swRa").style.width=tot?st/tot*100+"%":"0";$("swRb").style.width=tot?br/tot*100+"%":"0";
   $("swRatio").textContent=tot?`공부 ${Math.round(st/tot*100)}% · 휴식 ${Math.round(br/tot*100)}%`:"공부·휴식 비율 없음";
@@ -1638,7 +1640,7 @@ function renderStudy(force){
 }
 function setStudy(m){
  const d=tdDay||today();m=Math.max(0,Math.min(1440,Math.round(m)));SH[d]=m;
- cloud(()=>setDoc(shDoc(),{days:{[d]:m}},{merge:true}));renderStudy(true);
+ cloud(()=>setDoc(shDoc(),{days:{[d]:m}},{merge:true}));renderStudy(true);if(d===today())goalCheck(0);
 }
 $("stSave").onclick=()=>setStudy((+$("stH").value||0)*60+(+$("stM").value||0));
 ["stH","stM"].forEach(i=>$(i).onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)$("stSave").click()});
@@ -1662,10 +1664,44 @@ function swAdd(kind,min){
  const patch=kind==="study"?{days:{[d]:map[d]}}:{brk:{[d]:map[d]}};
  if(kind==="study"){const o=SS[d]||{n:0,sum:0,max:0};SS[d]={n:o.n+1,sum:o.sum+min,max:Math.max(o.max,min)};patch.ses={[d]:SS[d]}}
  cloud(()=>setDoc(shDoc(),patch,{merge:true}));
- renderStudy(true);return true;
+ renderStudy(true);if(kind==="study")goalCheck(0);return true;
 }
+// ---- 목표 달성 축하 (하루 한 번) ----
+function goalCheck(extra,live){
+ const d=today();if(LS.get("rq_goal_cel")===d)return;
+ if(live&&(SH[d]||0)>=GOAL)return;
+ if((SH[d]||0)+extra>=GOAL){LS.set("rq_goal_cel",d);goalCelebrate()}
+}
+function goalCelebrate(){
+ toast(`🎉 오늘 목표 ${fmtMin(GOAL)} 달성! 정말 수고했어요`,null,null,6000);
+ confetti();
+ const o=document.createElement("div");o.textContent="🎉 목표 달성!";
+ o.style.cssText="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(34px,9vw,80px);font-weight:800;color:#fff;text-shadow:0 4px 28px rgba(0,0,0,.4);background:rgba(20,30,25,.28);pointer-events:none;z-index:9998;opacity:0;transform:scale(.85);transition:opacity .4s,transform .4s";
+ document.body.appendChild(o);requestAnimationFrame(()=>{o.style.opacity=1;o.style.transform="scale(1)"});
+ setTimeout(()=>{o.style.opacity=0},2600);setTimeout(()=>o.remove(),3200);
+}
+function confetti(){
+ if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const c=document.createElement("canvas"),W=c.width=innerWidth,H=c.height=innerHeight;
+ c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999";
+ document.body.appendChild(c);const x=c.getContext("2d");
+ const cols=["#2f5d46","#385978","#e0a43a","#d9604f","#f3d36b","#7fb69a"],ps=[];
+ for(let i=0;i<170;i++){
+  const left=i%2===0,ang=(left?-(50+Math.random()*30):-(100+Math.random()*30))*Math.PI/180,sp=13+Math.random()*13;
+  ps.push({x:left?0:W,y:H,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,w:6+Math.random()*6,h:4+Math.random()*5,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%cols.length]});
+ }
+ const t0=performance.now();
+ (function fr(now){
+  const t=now-t0;x.clearRect(0,0,W,H);
+  ps.forEach(p=>{p.vy+=.36;p.vx*=.992;p.vy*=.992;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+   x.save();x.globalAlpha=Math.max(0,Math.min(1,(3800-t)/1200));x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h);x.restore()});
+  if(t<3800)requestAnimationFrame(fr);else c.remove();
+ })(t0);
+}
+$("swPct").onclick=()=>{if((SH[tdDay||today()]||0)>=GOAL)goalCelebrate()};
 function swRender(){
  const sec=swSec(),ph=SW.ph,box=$("sw");
+ if(ph==="study"&&ready&&fmt(new Date(SW.start))===today())goalCheck(Math.floor(sec/60),true);
  box.classList.toggle("study",ph==="study");box.classList.toggle("brk",ph==="brk");
  $("swTime").textContent=swClock(sec);
  $("swState").textContent=ph==="study"?"공부 중":ph==="brk"?"휴식 중":"대기";
